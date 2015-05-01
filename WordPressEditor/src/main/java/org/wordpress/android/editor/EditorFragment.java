@@ -13,8 +13,6 @@ import android.widget.ToggleButton;
 
 import com.android.volley.toolbox.ImageLoader;
 
-import com.android.volley.toolbox.ImageLoader;
-
 import org.wordpress.android.util.AppLog;
 import org.wordpress.android.util.AppLog.T;
 import org.wordpress.android.util.helpers.MediaFile;
