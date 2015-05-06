@@ -118,7 +118,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         super.onDetach();
     }
 
-    private void initJsEditor() {
+    protected void initJsEditor() {
         String htmlEditor = Utils.getHtmlFromFile(mActivity, "android-editor.html");
 
         mWebView.addJavascriptInterface(new JsCallbackReceiver(this), JS_CALLBACK_HANDLER);
