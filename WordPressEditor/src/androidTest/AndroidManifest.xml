@@ -2,6 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.wordpress.android.editor" >
     <application>
-        <activity android:name=".integration.ExampleEditorActivity" android:exported="false" />
+        <activity android:name=".integration.MockEditorActivity" android:exported="false" />
     </application>>
 </manifest>
