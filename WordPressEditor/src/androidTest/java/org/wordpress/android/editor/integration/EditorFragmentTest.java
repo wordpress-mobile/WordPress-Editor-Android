@@ -2,6 +2,7 @@ package org.wordpress.android.editor.integration;
 
 import android.app.Activity;
 import android.test.ActivityInstrumentationTestCase2;
+import android.view.View;
 import android.widget.ToggleButton;
 
 import org.wordpress.android.editor.R;
@@ -12,8 +13,8 @@ import java.util.Map;
 import static org.wordpress.android.editor.TestingUtils.waitFor;
 
 public class EditorFragmentTest extends ActivityInstrumentationTestCase2<MockEditorActivity> {
-    Activity mActivity;
-    EditorFragmentForTests mFragment;
+    private Activity mActivity;
+    private EditorFragmentForTests mFragment;
 
     public EditorFragmentTest() {
         super(MockEditorActivity.class);
@@ -50,8 +51,37 @@ public class EditorFragmentTest extends ActivityInstrumentationTestCase2<MockEdi
 
         waitFor(100);
 
-        ToggleButton boldButton = (ToggleButton) mFragment.getView().findViewById(R.id.format_bar_button_bold);
+        View view = mFragment.getView();
+
+        if (view == null) {
+            throw(new IllegalStateException("Fragment view is empty"));
+        }
+
+        // The formatting buttons should be disabled while the title field is selected
+        ToggleButton mediaButton = (ToggleButton) view.findViewById(R.id.format_bar_button_media);
+        ToggleButton boldButton = (ToggleButton) view.findViewById(R.id.format_bar_button_bold);
+        ToggleButton italicButton = (ToggleButton) view.findViewById(R.id.format_bar_button_italic);
+        ToggleButton quoteButton = (ToggleButton) view.findViewById(R.id.format_bar_button_quote);
+        ToggleButton ulButton = (ToggleButton) view.findViewById(R.id.format_bar_button_ul);
+        ToggleButton olButton = (ToggleButton) view.findViewById(R.id.format_bar_button_ol);
+        ToggleButton linkButton = (ToggleButton) view.findViewById(R.id.format_bar_button_link);
+        ToggleButton strikethroughButton = (ToggleButton) view.findViewById(R.id.format_bar_button_strikethrough);
+
+        assertFalse(mediaButton.isEnabled());
         assertFalse(boldButton.isEnabled());
+        assertFalse(italicButton.isEnabled());
+        assertFalse(quoteButton.isEnabled());
+        assertFalse(ulButton.isEnabled());
+        assertFalse(olButton.isEnabled());
+        assertFalse(linkButton.isEnabled());
+
+        if (strikethroughButton != null) {
+            assertFalse(strikethroughButton.isEnabled());
+        }
+
+        // The HTML button should always be enabled
+        ToggleButton htmlButton = (ToggleButton) view.findViewById(R.id.format_bar_button_html);
+        assertTrue(htmlButton.isEnabled());
 
         selectionArgs.clear();
         selectionArgs.put("id", "zss_field_content");
@@ -59,6 +89,20 @@ public class EditorFragmentTest extends ActivityInstrumentationTestCase2<MockEdi
 
         waitFor(100);
 
+        // The formatting buttons should be enabled while the content field is selected
+        assertTrue(mediaButton.isEnabled());
         assertTrue(boldButton.isEnabled());
+        assertTrue(italicButton.isEnabled());
+        assertTrue(quoteButton.isEnabled());
+        assertTrue(ulButton.isEnabled());
+        assertTrue(olButton.isEnabled());
+        assertTrue(linkButton.isEnabled());
+
+        if (strikethroughButton != null) {
+            assertTrue(strikethroughButton.isEnabled());
+        }
+
+        // The HTML button should always be enabled
+        assertTrue(htmlButton.isEnabled());
     }
 }
