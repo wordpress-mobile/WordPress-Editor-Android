@@ -3,9 +3,11 @@ package org.wordpress.android.editor;
 import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Spanned;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
@@ -21,7 +23,7 @@ import org.wordpress.android.util.helpers.MediaGallery;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EditorFragment extends EditorFragmentAbstract implements View.OnClickListener,
+public class EditorFragment extends EditorFragmentAbstract implements View.OnClickListener, View.OnTouchListener,
         OnJsEditorStateChangedListener {
     private static final String ARG_PARAM_TITLE = "param_title";
     private static final String ARG_PARAM_CONTENT = "param_content";
@@ -74,6 +76,19 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_editor, container, false);
         mWebView = (EditorWebViewAbstract) view.findViewById(R.id.webview);
+
+        mWebView.setOnTouchListener(this);
+
+        // Intercept back key presses while the keyboard is up, and reveal the action bar
+        mWebView.setOnImeBackListener(new EditorWebViewAbstract.OnImeBackListener() {
+            @Override
+            public void onImeBack() {
+                if (mActivity.getSupportActionBar() != null && !mActivity.getSupportActionBar().isShowing()) {
+                    mActivity.getSupportActionBar().show();
+                }
+            }
+        });
+
         initJsEditor();
 
         ToggleButton mediaButton = (ToggleButton) view.findViewById(R.id.format_bar_button_media);
@@ -153,6 +168,19 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             // TODO: Handle HTML mode toggling
             ((ToggleButton) v).setChecked(false);
         }
+    }
+
+    @Override
+    public boolean onTouch(View view, MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            // If the WebView has received a touch event, the keyboard will be displayed and the action bar should hide
+            ActionBar actionBar = mActivity.getSupportActionBar();
+            if (isAdded() && actionBar != null && actionBar.isShowing()) {
+                actionBar.hide();
+                return false;
+            }
+        }
+        return false;
     }
 
     @SuppressLint("NewApi")
