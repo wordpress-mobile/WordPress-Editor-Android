@@ -1,9 +1,9 @@
 package org.wordpress.android.editor;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,7 +43,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     private String mParamTitle;
     private String mParamContent;
 
-    private Activity mActivity;
+    private ActionBarActivity mActivity;
     private EditorWebViewAbstract mWebView;
 
     private final Map<String, ToggleButton> mTagToggleButtonMap = new HashMap<>();
@@ -63,7 +63,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActivity = getActivity();
+        mActivity = (ActionBarActivity) getActivity();
         if (getArguments() != null) {
             mParamTitle = getArguments().getString(ARG_PARAM_TITLE);
             mParamContent = getArguments().getString(ARG_PARAM_CONTENT);
@@ -213,6 +213,8 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                         Utils.escapeHtml(title) + "');");
                 mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_content').setHTML('" +
                         Utils.escapeHtml(contentHtml) + "');");
+
+                mActivity.getSupportActionBar().hide();
             }
         });
     }
