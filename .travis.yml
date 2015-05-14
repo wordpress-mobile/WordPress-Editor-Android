@@ -13,4 +13,5 @@ env:
     - ANDROID_TARGET=android-14
 
 script:
+  - mv WordPressEditor/src/androidTest/java/android/support/v4/widget/DrawerLayoutImpl.file WordPressEditor/src/androidTest/java/android/support/v4/widget/DrawerLayoutImpl.java
   - ./gradlew -PdisablePreDex build
