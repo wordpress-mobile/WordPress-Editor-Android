@@ -1,6 +1,7 @@
 package org.wordpress.android.editor;
 
 import android.annotation.SuppressLint;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -47,6 +48,9 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
     private ActionBarActivity mActivity;
     private EditorWebViewAbstract mWebView;
+    private ActionBar mActionBar;
+
+    private boolean mHideActionBarOnSoftKeyboardUp;
 
     private final Map<String, ToggleButton> mTagToggleButtonMap = new HashMap<>();
 
@@ -66,6 +70,8 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActivity = (ActionBarActivity) getActivity();
+        mActionBar = mActivity.getSupportActionBar();
+
         if (getArguments() != null) {
             mParamTitle = getArguments().getString(ARG_PARAM_TITLE);
             mParamContent = getArguments().getString(ARG_PARAM_CONTENT);
@@ -75,19 +81,27 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_editor, container, false);
+
         mWebView = (EditorWebViewAbstract) view.findViewById(R.id.webview);
 
         mWebView.setOnTouchListener(this);
 
-        // Intercept back key presses while the keyboard is up, and reveal the action bar
-        mWebView.setOnImeBackListener(new EditorWebViewAbstract.OnImeBackListener() {
-            @Override
-            public void onImeBack() {
-                if (mActivity.getSupportActionBar() != null && !mActivity.getSupportActionBar().isShowing()) {
-                    mActivity.getSupportActionBar().show();
+        // Setup hiding the action bar when the soft keyboard is displayed for narrow viewports
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE
+                && !getResources().getBoolean(R.bool.is_large_tablet_landscape)) {
+
+            mHideActionBarOnSoftKeyboardUp = true;
+
+            // Intercept back key presses while the keyboard is up, and reveal the action bar
+            mWebView.setOnImeBackListener(new EditorWebViewAbstract.OnImeBackListener() {
+                @Override
+                public void onImeBack() {
+                    if (mActionBar != null && !mActionBar.isShowing()) {
+                        mActionBar.show();
+                    }
                 }
-            }
-        });
+            });
+        }
 
         initJsEditor();
 
@@ -172,11 +186,10 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
     @Override
     public boolean onTouch(View view, MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_UP) {
+        if (mHideActionBarOnSoftKeyboardUp && event.getAction() == MotionEvent.ACTION_UP) {
             // If the WebView has received a touch event, the keyboard will be displayed and the action bar should hide
-            ActionBar actionBar = mActivity.getSupportActionBar();
-            if (isAdded() && actionBar != null && actionBar.isShowing()) {
-                actionBar.hide();
+            if (isAdded() && mActionBar != null && mActionBar.isShowing()) {
+                mActionBar.hide();
                 return false;
             }
         }
@@ -242,7 +255,9 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_content').setHTML('" +
                         Utils.escapeHtml(contentHtml) + "');");
 
-                mActivity.getSupportActionBar().hide();
+                if (mHideActionBarOnSoftKeyboardUp) {
+                    mActionBar.hide();
+                }
             }
         });
     }
