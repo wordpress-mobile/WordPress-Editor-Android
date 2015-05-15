@@ -1,11 +1,6 @@
 language: android
 jdk: oraclejdk7
 
-android:
-  components:
-    - build-tools-21.1.1
-    - android-21
-
 env:
   global:
     - GRADLE_OPTS="-XX:MaxPermSize=4g -Xmx4g"
@@ -29,8 +24,8 @@ before_install:
   - echo yes | android update sdk --filter platform-tools --no-ui --force > /dev/null
   - echo yes | android update sdk --all --filter build-tools-21.1.1 --no-ui --force > /dev/null
   - echo yes | android update sdk --filter android-21 --no-ui --force > /dev/null
-  - echo yes | android update sdk --filter extra-android-support --no-ui > /dev/null
-  - echo yes | android update sdk --filter extra-android-m2repository --no-ui > /dev/null
+  - echo yes | android update sdk --filter extra-android-support --no-ui --force > /dev/null
+  - echo yes | android update sdk --filter extra-android-m2repository --no-ui --force > /dev/null
 
 script:
   - ./gradlew -PdisablePreDex build
