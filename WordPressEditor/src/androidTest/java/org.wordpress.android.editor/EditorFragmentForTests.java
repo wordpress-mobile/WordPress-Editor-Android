@@ -1,4 +1,4 @@
-package org.wordpress.android.editor.integration;
+package org.wordpress.android.editor;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

@@ -1,4 +1,4 @@
-package org.wordpress.android.editor.integration;
+package org.wordpress.android.editor;
 
 import android.app.Activity;
 import android.test.ActivityInstrumentationTestCase2;
