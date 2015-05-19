@@ -32,7 +32,7 @@ Unit testing is done with the [Robolectric framework](http://robolectric.org/). 
 
 Integration testing is done with the [Android testing framework](http://developer.android.com/tools/testing/testing_android.html). To run integration tests run `gradlew connectedAndroidTest`.
 
-Add new unit tests to `androidTest/java/org.wordpress.android.editor` and integration tests to `androidTest/java/org.wordpress.android.editor/integration`.
+Add new unit tests to `src/test/java/` and integration tests to `stc/androidTest/java/`.
 
 ## LICENSE ##
 
