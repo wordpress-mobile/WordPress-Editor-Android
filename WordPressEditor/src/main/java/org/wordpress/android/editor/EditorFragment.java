@@ -289,6 +289,9 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         });
     }
 
+    public void onGetHtmlResponse(final Map<String, String> inputArgs) {
+    }
+
     void updateToolbarEnabledState(boolean enabled) {
         float alpha = (enabled ? TOOLBAR_ALPHA_ENABLED : TOOLBAR_ALPHA_DISABLED);
         for(ToggleButton button : mTagToggleButtonMap.values()) {
