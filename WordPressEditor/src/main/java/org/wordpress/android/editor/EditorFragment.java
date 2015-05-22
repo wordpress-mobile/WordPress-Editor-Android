@@ -89,19 +89,18 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         // Setup hiding the action bar when the soft keyboard is displayed for narrow viewports
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE
                 && !getResources().getBoolean(R.bool.is_large_tablet_landscape)) {
-
             mHideActionBarOnSoftKeyboardUp = true;
-
-            // Intercept back key presses while the keyboard is up, and reveal the action bar
-            mWebView.setOnImeBackListener(new EditorWebViewAbstract.OnImeBackListener() {
-                @Override
-                public void onImeBack() {
-                    if (mActionBar != null && !mActionBar.isShowing()) {
-                        mActionBar.show();
-                    }
-                }
-            });
         }
+
+        // Intercept back key presses while the keyboard is up, and reveal the action bar
+        mWebView.setOnImeBackListener(new EditorWebViewAbstract.OnImeBackListener() {
+            @Override
+            public void onImeBack() {
+                if (mHideActionBarOnSoftKeyboardUp && mActionBar != null && !mActionBar.isShowing()) {
+                    mActionBar.show();
+                }
+            }
+        });
 
         mEditorFragmentListener.onEditorFragmentInitialized();
 
@@ -147,6 +146,19 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        // Toggle action bar auto-hiding for the new orientation
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
+                && !getResources().getBoolean(R.bool.is_large_tablet_landscape)) {
+            mHideActionBarOnSoftKeyboardUp = true;
+        } else {
+            mHideActionBarOnSoftKeyboardUp = false;
+        }
     }
 
     protected void initJsEditor() {
