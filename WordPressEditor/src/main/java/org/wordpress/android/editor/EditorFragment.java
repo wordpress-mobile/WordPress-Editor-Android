@@ -40,8 +40,8 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     private static final float TOOLBAR_ALPHA_ENABLED = 1;
     private static final float TOOLBAR_ALPHA_DISABLED = 0.5f;
 
-    private String mParamTitle;
-    private String mParamContent;
+    private String mTitle;
+    private String mContentHtml;
 
     private Activity mActivity;
     private EditorWebViewAbstract mWebView;
@@ -64,16 +64,14 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActivity = getActivity();
-        if (getArguments() != null) {
-            mParamTitle = getArguments().getString(ARG_PARAM_TITLE);
-            mParamContent = getArguments().getString(ARG_PARAM_CONTENT);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_editor, container, false);
         mWebView = (EditorWebViewAbstract) view.findViewById(R.id.webview);
+        mEditorFragmentListener.onEditorFragmentInitialized();
+
         initJsEditor();
 
         ToggleButton mediaButton = (ToggleButton) view.findViewById(R.id.format_bar_button_media);
@@ -165,12 +163,12 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
     @Override
     public void setTitle(CharSequence text) {
-        // TODO
+        mTitle = text.toString();
     }
 
     @Override
     public void setContent(CharSequence text) {
-        // TODO
+        mContentHtml = text.toString();
     }
 
     @Override
@@ -203,16 +201,13 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     public void onDomLoaded() {
         mWebView.post(new Runnable() {
             public void run() {
-                String title = "I'm editing a post!";
-                String contentHtml = Utils.getHtmlFromFile(mActivity, "example-content.html");
-
                 mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_content').setMultiline('true');");
 
-                // Load example content into editor
+                // Load title and content into ZSSEditor
                 mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_title').setHTML('" +
-                        Utils.escapeHtml(title) + "');");
+                        Utils.escapeHtml(mTitle) + "');");
                 mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_content').setHTML('" +
-                        Utils.escapeHtml(contentHtml) + "');");
+                        Utils.escapeHtml(mContentHtml) + "');");
             }
         });
     }
