@@ -4,12 +4,12 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.0.0'
-        classpath 'org.robolectric:robolectric-gradle-plugin:0.14.1'
+        classpath 'org.robolectric:robolectric-gradle-plugin:1.1.0'
     }
 }
 
 apply plugin: 'com.android.library'
-apply plugin: 'robolectric'
+apply plugin: 'org.robolectric'
 apply plugin: 'jacoco'
 apply plugin: 'maven'
 apply plugin: 'signing'
@@ -125,10 +125,9 @@ uploadArchives {
 // Testing and code coverage
 //
 
-robolectric {
+android.testOptions.unitTests.all {
     include '**/*Test.class'
     exclude '**/ApplicationTest.class'
-    exclude '**/integration/**'
 }
 
 jacoco {

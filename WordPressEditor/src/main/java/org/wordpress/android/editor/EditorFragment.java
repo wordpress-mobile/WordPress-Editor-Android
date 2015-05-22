@@ -1,11 +1,14 @@
 package org.wordpress.android.editor;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Spanned;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
@@ -21,7 +24,7 @@ import org.wordpress.android.util.helpers.MediaGallery;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EditorFragment extends EditorFragmentAbstract implements View.OnClickListener,
+public class EditorFragment extends EditorFragmentAbstract implements View.OnClickListener, View.OnTouchListener,
         OnJsEditorStateChangedListener {
     private static final String ARG_PARAM_TITLE = "param_title";
     private static final String ARG_PARAM_CONTENT = "param_content";
@@ -43,8 +46,11 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     private String mTitle;
     private String mContentHtml;
 
-    private Activity mActivity;
+    private ActionBarActivity mActivity;
     private EditorWebViewAbstract mWebView;
+    private ActionBar mActionBar;
+
+    private boolean mHideActionBarOnSoftKeyboardUp;
 
     private final Map<String, ToggleButton> mTagToggleButtonMap = new HashMap<>();
 
@@ -63,13 +69,35 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActivity = getActivity();
+        mActivity = (ActionBarActivity) getActivity();
+        mActionBar = mActivity.getSupportActionBar();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_editor, container, false);
+
         mWebView = (EditorWebViewAbstract) view.findViewById(R.id.webview);
+
+        mWebView.setOnTouchListener(this);
+
+        // Setup hiding the action bar when the soft keyboard is displayed for narrow viewports
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE
+                && !getResources().getBoolean(R.bool.is_large_tablet_landscape)) {
+
+            mHideActionBarOnSoftKeyboardUp = true;
+
+            // Intercept back key presses while the keyboard is up, and reveal the action bar
+            mWebView.setOnImeBackListener(new EditorWebViewAbstract.OnImeBackListener() {
+                @Override
+                public void onImeBack() {
+                    if (mActionBar != null && !mActionBar.isShowing()) {
+                        mActionBar.show();
+                    }
+                }
+            });
+        }
+
         mEditorFragmentListener.onEditorFragmentInitialized();
 
         initJsEditor();
@@ -153,6 +181,18 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         }
     }
 
+    @Override
+    public boolean onTouch(View view, MotionEvent event) {
+        if (mHideActionBarOnSoftKeyboardUp && event.getAction() == MotionEvent.ACTION_UP) {
+            // If the WebView has received a touch event, the keyboard will be displayed and the action bar should hide
+            if (isAdded() && mActionBar != null && mActionBar.isShowing()) {
+                mActionBar.hide();
+                return false;
+            }
+        }
+        return false;
+    }
+
     @SuppressLint("NewApi")
     private void enableWebDebugging(boolean enable) {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -208,6 +248,10 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                         Utils.escapeHtml(mTitle) + "');");
                 mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_content').setHTML('" +
                         Utils.escapeHtml(mContentHtml) + "');");
+
+                if (mHideActionBarOnSoftKeyboardUp) {
+                    mActionBar.hide();
+                }
             }
         });
     }
