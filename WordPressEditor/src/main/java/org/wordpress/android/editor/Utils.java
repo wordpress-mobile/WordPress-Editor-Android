@@ -76,9 +76,9 @@ public class Utils {
     public static Map<String, String> buildMapFromKeyValuePairs(Set<String> keyValueSet) {
         Map<String, String> selectionArgs = new HashMap<>();
         for (String pair : keyValueSet) {
-            String[] splitString = pair.split("=");
-            if (splitString.length == 2) {
-                selectionArgs.put(splitString[0], splitString[1]);
+            int delimLoc = pair.indexOf("=");
+            if (delimLoc != -1) {
+                selectionArgs.put(pair.substring(0, delimLoc), pair.substring(delimLoc + 1));
             }
         }
         return selectionArgs;
