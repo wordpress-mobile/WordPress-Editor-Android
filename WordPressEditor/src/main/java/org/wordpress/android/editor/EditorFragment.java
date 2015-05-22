@@ -23,6 +23,8 @@ import org.wordpress.android.util.helpers.MediaGallery;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class EditorFragment extends EditorFragmentAbstract implements View.OnClickListener, View.OnTouchListener,
         OnJsEditorStateChangedListener {
@@ -51,6 +53,9 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     private ActionBar mActionBar;
 
     private boolean mHideActionBarOnSoftKeyboardUp;
+
+    private CountDownLatch mGetTitleCountDownLatch;
+    private CountDownLatch mGetContentCountDownLatch;
 
     private final Map<String, ToggleButton> mTagToggleButtonMap = new HashMap<>();
 
@@ -211,16 +216,50 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         mContentHtml = text.toString();
     }
 
+    /**
+     * Returns the contents of the title field from the JavaScript editor. Must be called on a background thread.
+     */
     @Override
     public CharSequence getTitle() {
-        // TODO
-        return null;
+        // All WebView methods must be called from the UI thread
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_title').getHTMLForCallback();");
+            }
+        });
+
+        mGetTitleCountDownLatch = new CountDownLatch(1);
+        try {
+            mGetTitleCountDownLatch.await(1, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            AppLog.e(T.EDITOR, e);
+            Thread.currentThread().interrupt();
+        }
+        return mTitle;
     }
 
+    /**
+     * Returns the contents of the content field from the JavaScript editor. Must be called on a background thread.
+     */
     @Override
     public CharSequence getContent() {
-        // TODO
-        return null;
+        // All WebView methods must be called from the UI thread
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_content').getHTMLForCallback();");
+            }
+        });
+
+        mGetContentCountDownLatch = new CountDownLatch(1);
+        try {
+            mGetContentCountDownLatch.await(1, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            AppLog.e(T.EDITOR, e);
+            Thread.currentThread().interrupt();
+        }
+        return mContentHtml;
     }
 
     @Override
@@ -271,12 +310,12 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     }
 
     public void onSelectionChanged(final Map<String, String> selectionArgs) {
-        final String id = selectionArgs.get("id"); // The field currently in focus
+        final String focusedFieldId = selectionArgs.get("id"); // The field now in focus
         mWebView.post(new Runnable() {
             @Override
             public void run() {
-                if (!id.isEmpty()) {
-                    switch(id) {
+                if (!focusedFieldId.isEmpty()) {
+                    switch(focusedFieldId) {
                         case "zss_field_title":
                             updateToolbarEnabledState(false);
                             break;
@@ -290,6 +329,25 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     }
 
     public void onGetHtmlResponse(final Map<String, String> inputArgs) {
+        final String fieldId = inputArgs.get("id");
+        final String fieldContents = inputArgs.get("contents");
+        mWebView.post(new Runnable() {
+            @Override
+            public void run() {
+                if (!fieldId.isEmpty() && !fieldContents.isEmpty()) {
+                    switch (fieldId) {
+                        case "zss_field_title":
+                            mTitle = fieldContents;
+                            mGetTitleCountDownLatch.countDown();
+                            break;
+                        case "zss_field_content":
+                            mContentHtml = fieldContents;
+                            mGetContentCountDownLatch.countDown();
+                            break;
+                    }
+                }
+            }
+        });
     }
 
     void updateToolbarEnabledState(boolean enabled) {
