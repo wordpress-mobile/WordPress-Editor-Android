@@ -42,11 +42,13 @@ public class Utils {
     }
 
     public static String escapeHtml(String html) {
-        html = html.replace("\\", "\\\\");
-        html = html.replace("\"", "\\\"");
-        html = html.replace("'", "\\'");
-        html = html.replace("\r", "\\r");
-        html = html.replace("\n", "\\n");
+        if (html != null) {
+            html = html.replace("\\", "\\\\");
+            html = html.replace("\"", "\\\"");
+            html = html.replace("'", "\\'");
+            html = html.replace("\r", "\\r");
+            html = html.replace("\n", "\\n");
+        }
         return html;
     }
 
