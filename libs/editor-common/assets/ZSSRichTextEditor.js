@@ -16,7 +16,16 @@ var defaultCallbackSeparator = '~';
 
 const NodeName = {
     BLOCKQUOTE: "BLOCKQUOTE",
-    PARAGRAPH: "P"
+    PARAGRAPH: "P",
+    STRONG: "STRONG",
+    DEL: "DEL",
+    EM: "EM",
+    A: "A",
+    OL: "OL",
+    UL: "UL",
+    LI: "LI",
+    CODE: "CODE",
+    SPAN: "SPAN"
 };
 
 // The editor object
@@ -1757,7 +1766,16 @@ ZSSEditor.getAncestorElementForSettingBlockquote = function(range) {
 
     while (parentElement
            && (parentElement.nodeType != document.ELEMENT_NODE
-               || parentElement.nodeName == NodeName.PARAGRAPH)) {
+               || parentElement.nodeName == NodeName.PARAGRAPH
+               || parentElement.nodeName == NodeName.STRONG
+               || parentElement.nodeName == NodeName.EM
+               || parentElement.nodeName == NodeName.DEL
+               || parentElement.nodeName == NodeName.A
+               || parentElement.nodeName == NodeName.UL
+               || parentElement.nodeName == NodeName.OL
+               || parentElement.nodeName == NodeName.LI
+               || parentElement.nodeName == NodeName.CODE
+               || parentElement.nodeName == NodeName.SPAN)) {
         parentElement = parentElement.parentNode;
     }
 
