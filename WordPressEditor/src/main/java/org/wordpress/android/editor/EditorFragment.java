@@ -45,8 +45,8 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     private static final float TOOLBAR_ALPHA_ENABLED = 1;
     private static final float TOOLBAR_ALPHA_DISABLED = 0.5f;
 
-    private String mTitle;
-    private String mContentHtml;
+    private String mTitle = "";
+    private String mContentHtml = "";
 
     private ActionBarActivity mActivity;
     private EditorWebViewAbstract mWebView;
@@ -345,10 +345,10 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         });
     }
 
-    public void onGetHtmlResponse(final Map<String, String> inputArgs) {
+    public void onGetHtmlResponse(Map<String, String> inputArgs) {
         String fieldId = inputArgs.get("id");
         String fieldContents = inputArgs.get("contents");
-        if (!fieldId.isEmpty() && !fieldContents.isEmpty()) {
+        if (!fieldId.isEmpty()) {
             switch (fieldId) {
                 case "zss_field_title":
                     mTitle = fieldContents;
