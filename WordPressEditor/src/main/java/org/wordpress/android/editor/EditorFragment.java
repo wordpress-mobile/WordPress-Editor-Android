@@ -233,6 +233,9 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
      */
     @Override
     public CharSequence getTitle() {
+
+        mGetTitleCountDownLatch = new CountDownLatch(1);
+
         // All WebView methods must be called from the UI thread
         mActivity.runOnUiThread(new Runnable() {
             @Override
@@ -241,13 +244,13 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             }
         });
 
-        mGetTitleCountDownLatch = new CountDownLatch(1);
         try {
             mGetTitleCountDownLatch.await(1, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             AppLog.e(T.EDITOR, e);
             Thread.currentThread().interrupt();
         }
+
         return mTitle;
     }
 
@@ -256,6 +259,8 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
      */
     @Override
     public CharSequence getContent() {
+        mGetContentCountDownLatch = new CountDownLatch(1);
+
         // All WebView methods must be called from the UI thread
         mActivity.runOnUiThread(new Runnable() {
             @Override
@@ -264,13 +269,13 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             }
         });
 
-        mGetContentCountDownLatch = new CountDownLatch(1);
         try {
             mGetContentCountDownLatch.await(1, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             AppLog.e(T.EDITOR, e);
             Thread.currentThread().interrupt();
         }
+
         return mContentHtml;
     }
 
@@ -341,25 +346,20 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     }
 
     public void onGetHtmlResponse(final Map<String, String> inputArgs) {
-        final String fieldId = inputArgs.get("id");
-        final String fieldContents = inputArgs.get("contents");
-        mWebView.post(new Runnable() {
-            @Override
-            public void run() {
-                if (!fieldId.isEmpty() && !fieldContents.isEmpty()) {
-                    switch (fieldId) {
-                        case "zss_field_title":
-                            mTitle = fieldContents;
-                            mGetTitleCountDownLatch.countDown();
-                            break;
-                        case "zss_field_content":
-                            mContentHtml = fieldContents;
-                            mGetContentCountDownLatch.countDown();
-                            break;
-                    }
-                }
+        String fieldId = inputArgs.get("id");
+        String fieldContents = inputArgs.get("contents");
+        if (!fieldId.isEmpty() && !fieldContents.isEmpty()) {
+            switch (fieldId) {
+                case "zss_field_title":
+                    mTitle = fieldContents;
+                    mGetTitleCountDownLatch.countDown();
+                    break;
+                case "zss_field_content":
+                    mContentHtml = fieldContents;
+                    mGetContentCountDownLatch.countDown();
+                    break;
             }
-        });
+        }
     }
 
     void updateToolbarEnabledState(boolean enabled) {
