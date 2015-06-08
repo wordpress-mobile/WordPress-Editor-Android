@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Spanned;
@@ -230,10 +231,14 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     }
 
     /**
-     * Returns the contents of the title field from the JavaScript editor. Must be called on a background thread.
+     * Returns the contents of the title field from the JavaScript editor. Should be called from a background thread
+     * where possible.
      */
     @Override
     public CharSequence getTitle() {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            AppLog.d(T.EDITOR, "getTitle() called from UI thread");
+        }
 
         mGetTitleCountDownLatch = new CountDownLatch(1);
 
@@ -256,10 +261,15 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     }
 
     /**
-     * Returns the contents of the content field from the JavaScript editor. Must be called on a background thread.
+     * Returns the contents of the content field from the JavaScript editor. Should be called from a background thread
+     * where possible.
      */
     @Override
     public CharSequence getContent() {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            AppLog.d(T.EDITOR, "getContent() called from UI thread");
+        }
+
         mGetContentCountDownLatch = new CountDownLatch(1);
 
         // All WebView methods must be called from the UI thread
