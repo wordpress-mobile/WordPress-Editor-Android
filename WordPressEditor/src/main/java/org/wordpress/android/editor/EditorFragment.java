@@ -18,6 +18,7 @@ import com.android.volley.toolbox.ImageLoader;
 
 import org.wordpress.android.util.AppLog;
 import org.wordpress.android.util.AppLog.T;
+import org.wordpress.android.util.StringUtils;
 import org.wordpress.android.util.helpers.MediaFile;
 import org.wordpress.android.util.helpers.MediaGallery;
 
@@ -251,7 +252,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             Thread.currentThread().interrupt();
         }
 
-        return mTitle;
+        return StringUtils.notNullStr(mTitle);
     }
 
     /**
@@ -276,7 +277,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             Thread.currentThread().interrupt();
         }
 
-        return mContentHtml;
+        return StringUtils.notNullStr(mContentHtml);
     }
 
     @Override
