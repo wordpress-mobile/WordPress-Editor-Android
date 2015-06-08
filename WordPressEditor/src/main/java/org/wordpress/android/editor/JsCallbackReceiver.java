@@ -89,6 +89,7 @@ public class JsCallbackReceiver {
                 AppLog.d(AppLog.T.EDITOR, callbackId + ": " + params.substring(4));
                 break;
             case CALLBACK_RESPONSE_STRING:
+                AppLog.d(AppLog.T.EDITOR, callbackId + ": " + params);
                 Set<String> responseKeyValueSet = Utils.splitDelimitedString(params, JS_CALLBACK_DELIMITER);
                 mListener.onGetHtmlResponse(Utils.buildMapFromKeyValuePairs(responseKeyValueSet));
                 break;
