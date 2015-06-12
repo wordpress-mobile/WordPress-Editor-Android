@@ -64,6 +64,9 @@ public class JsCallbackReceiverTest {
 
         mJsCallbackReceiver.executeCallback("callback-log", "arguments");
         assertNotLogged("Unhandled callback");
+
+        mJsCallbackReceiver.executeCallback("callback-response-string", "arguments");
+        assertNotLogged("Unhandled callback");
     }
 
     @Test
