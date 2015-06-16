@@ -173,6 +173,10 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     }
 
     protected void initJsEditor() {
+        if(!isAdded()) {
+            return;
+        }
+
         String htmlEditor = Utils.getHtmlFromFile(getActivity(), "android-editor.html");
 
         mWebView.addJavascriptInterface(new JsCallbackReceiver(this), JS_CALLBACK_HANDLER);
@@ -246,6 +250,10 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
      */
     @Override
     public CharSequence getTitle() {
+        if (!isAdded()) {
+            return "";
+        }
+
         if (Looper.myLooper() == Looper.getMainLooper()) {
             AppLog.d(T.EDITOR, "getTitle() called from UI thread");
         }
@@ -276,6 +284,10 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
      */
     @Override
     public CharSequence getContent() {
+        if (!isAdded()) {
+            return "";
+        }
+
         if (Looper.myLooper() == Looper.getMainLooper()) {
             AppLog.d(T.EDITOR, "getContent() called from UI thread");
         }
