@@ -50,7 +50,6 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     private String mTitle = "";
     private String mContentHtml = "";
 
-    private ActionBarActivity mActivity;
     private EditorWebViewAbstract mWebView;
     private ActionBar mActionBar;
 
@@ -76,8 +75,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActivity = (ActionBarActivity) getActivity();
-        mActionBar = mActivity.getSupportActionBar();
+        mActionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
     }
 
     @Override
@@ -164,7 +162,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     }
 
     protected void initJsEditor() {
-        String htmlEditor = Utils.getHtmlFromFile(mActivity, "android-editor.html");
+        String htmlEditor = Utils.getHtmlFromFile(getActivity(), "android-editor.html");
 
         mWebView.addJavascriptInterface(new JsCallbackReceiver(this), JS_CALLBACK_HANDLER);
 
@@ -243,7 +241,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         mGetTitleCountDownLatch = new CountDownLatch(1);
 
         // All WebView methods must be called from the UI thread
-        mActivity.runOnUiThread(new Runnable() {
+        getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_title').getHTMLForCallback();");
@@ -273,7 +271,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         mGetContentCountDownLatch = new CountDownLatch(1);
 
         // All WebView methods must be called from the UI thread
-        mActivity.runOnUiThread(new Runnable() {
+        getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_content').getHTMLForCallback();");
