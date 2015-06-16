@@ -51,7 +51,6 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     private String mContentHtml = "";
 
     private EditorWebViewAbstract mWebView;
-    private ActionBar mActionBar;
 
     private boolean mHideActionBarOnSoftKeyboardUp;
 
@@ -75,7 +74,6 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
     }
 
     @Override
@@ -96,8 +94,9 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         mWebView.setOnImeBackListener(new EditorWebViewAbstract.OnImeBackListener() {
             @Override
             public void onImeBack() {
-                if (mHideActionBarOnSoftKeyboardUp && mActionBar != null && !mActionBar.isShowing()) {
-                    mActionBar.show();
+                ActionBar actionBar = getActionBar();
+                if (mHideActionBarOnSoftKeyboardUp && actionBar != null && !actionBar.isShowing()) {
+                    actionBar.show();
                 }
             }
         });
@@ -146,6 +145,18 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    private ActionBar getActionBar() {
+        if (!isAdded()) {
+            return null;
+        }
+
+        if (getActivity() instanceof AppCompatActivity) {
+            return ((AppCompatActivity) getActivity()).getSupportActionBar();
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -202,8 +213,9 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     public boolean onTouch(View view, MotionEvent event) {
         if (mHideActionBarOnSoftKeyboardUp && event.getAction() == MotionEvent.ACTION_UP) {
             // If the WebView has received a touch event, the keyboard will be displayed and the action bar should hide
-            if (isAdded() && mActionBar != null && mActionBar.isShowing()) {
-                mActionBar.hide();
+            ActionBar actionBar = getActionBar();
+            if (actionBar != null && actionBar.isShowing()) {
+                actionBar.hide();
                 return false;
             }
         }
@@ -314,8 +326,8 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_content').setHTML('" +
                         Utils.escapeHtml(mContentHtml) + "');");
 
-                if (mHideActionBarOnSoftKeyboardUp) {
-                    mActionBar.hide();
+                if (mHideActionBarOnSoftKeyboardUp && getActionBar() != null) {
+                    getActionBar().hide();
                 }
             }
         });
