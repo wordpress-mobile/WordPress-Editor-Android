@@ -2354,7 +2354,14 @@ ZSSField.prototype.isEmpty = function() {
 ZSSField.prototype.getHTML = function() {
     var html = wp.saveText(this.wrappedObject.html());
     html = ZSSEditor.removeVisualFormatting( html );
-    return html
+    return html;
+};
+
+ZSSField.prototype.getHTMLForCallback = function() {
+    var idArgument = "id=" + this.getNodeId();
+    var contentsArgument = "contents=" + this.getHTML();
+    var joinedArguments = idArgument + defaultCallbackSeparator + contentsArgument;
+    ZSSEditor.callback('callback-response-string', joinedArguments);
 };
 
 ZSSField.prototype.strippedHTML = function() {

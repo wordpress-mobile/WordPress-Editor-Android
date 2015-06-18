@@ -4,8 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -18,11 +19,14 @@ import com.android.volley.toolbox.ImageLoader;
 
 import org.wordpress.android.util.AppLog;
 import org.wordpress.android.util.AppLog.T;
+import org.wordpress.android.util.StringUtils;
 import org.wordpress.android.util.helpers.MediaFile;
 import org.wordpress.android.util.helpers.MediaGallery;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class EditorFragment extends EditorFragmentAbstract implements View.OnClickListener, View.OnTouchListener,
         OnJsEditorStateChangedListener {
@@ -43,14 +47,15 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     private static final float TOOLBAR_ALPHA_ENABLED = 1;
     private static final float TOOLBAR_ALPHA_DISABLED = 0.5f;
 
-    private String mParamTitle;
-    private String mParamContent;
+    private String mTitle = "";
+    private String mContentHtml = "";
 
-    private ActionBarActivity mActivity;
     private EditorWebViewAbstract mWebView;
-    private ActionBar mActionBar;
 
     private boolean mHideActionBarOnSoftKeyboardUp;
+
+    private CountDownLatch mGetTitleCountDownLatch;
+    private CountDownLatch mGetContentCountDownLatch;
 
     private final Map<String, ToggleButton> mTagToggleButtonMap = new HashMap<>();
 
@@ -69,13 +74,6 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActivity = (ActionBarActivity) getActivity();
-        mActionBar = mActivity.getSupportActionBar();
-
-        if (getArguments() != null) {
-            mParamTitle = getArguments().getString(ARG_PARAM_TITLE);
-            mParamContent = getArguments().getString(ARG_PARAM_CONTENT);
-        }
     }
 
     @Override
@@ -89,19 +87,21 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         // Setup hiding the action bar when the soft keyboard is displayed for narrow viewports
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE
                 && !getResources().getBoolean(R.bool.is_large_tablet_landscape)) {
-
             mHideActionBarOnSoftKeyboardUp = true;
-
-            // Intercept back key presses while the keyboard is up, and reveal the action bar
-            mWebView.setOnImeBackListener(new EditorWebViewAbstract.OnImeBackListener() {
-                @Override
-                public void onImeBack() {
-                    if (mActionBar != null && !mActionBar.isShowing()) {
-                        mActionBar.show();
-                    }
-                }
-            });
         }
+
+        // Intercept back key presses while the keyboard is up, and reveal the action bar
+        mWebView.setOnImeBackListener(new EditorWebViewAbstract.OnImeBackListener() {
+            @Override
+            public void onImeBack() {
+                ActionBar actionBar = getActionBar();
+                if (mHideActionBarOnSoftKeyboardUp && actionBar != null && !actionBar.isShowing()) {
+                    actionBar.show();
+                }
+            }
+        });
+
+        mEditorFragmentListener.onEditorFragmentInitialized();
 
         initJsEditor();
 
@@ -147,8 +147,37 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         super.onDetach();
     }
 
+    private ActionBar getActionBar() {
+        if (!isAdded()) {
+            return null;
+        }
+
+        if (getActivity() instanceof AppCompatActivity) {
+            return ((AppCompatActivity) getActivity()).getSupportActionBar();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        // Toggle action bar auto-hiding for the new orientation
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
+                && !getResources().getBoolean(R.bool.is_large_tablet_landscape)) {
+            mHideActionBarOnSoftKeyboardUp = true;
+        } else {
+            mHideActionBarOnSoftKeyboardUp = false;
+        }
+    }
+
     protected void initJsEditor() {
-        String htmlEditor = Utils.getHtmlFromFile(mActivity, "android-editor.html");
+        if(!isAdded()) {
+            return;
+        }
+
+        String htmlEditor = Utils.getHtmlFromFile(getActivity(), "android-editor.html");
 
         mWebView.addJavascriptInterface(new JsCallbackReceiver(this), JS_CALLBACK_HANDLER);
 
@@ -188,8 +217,9 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     public boolean onTouch(View view, MotionEvent event) {
         if (mHideActionBarOnSoftKeyboardUp && event.getAction() == MotionEvent.ACTION_UP) {
             // If the WebView has received a touch event, the keyboard will be displayed and the action bar should hide
-            if (isAdded() && mActionBar != null && mActionBar.isShowing()) {
-                mActionBar.hide();
+            ActionBar actionBar = getActionBar();
+            if (actionBar != null && actionBar.isShowing()) {
+                actionBar.hide();
                 return false;
             }
         }
@@ -206,24 +236,80 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
     @Override
     public void setTitle(CharSequence text) {
-        // TODO
+        mTitle = text.toString();
     }
 
     @Override
     public void setContent(CharSequence text) {
-        // TODO
+        mContentHtml = text.toString();
     }
 
+    /**
+     * Returns the contents of the title field from the JavaScript editor. Should be called from a background thread
+     * where possible.
+     */
     @Override
     public CharSequence getTitle() {
-        // TODO
-        return null;
+        if (!isAdded()) {
+            return "";
+        }
+
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            AppLog.d(T.EDITOR, "getTitle() called from UI thread");
+        }
+
+        mGetTitleCountDownLatch = new CountDownLatch(1);
+
+        // All WebView methods must be called from the UI thread
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_title').getHTMLForCallback();");
+            }
+        });
+
+        try {
+            mGetTitleCountDownLatch.await(1, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            AppLog.e(T.EDITOR, e);
+            Thread.currentThread().interrupt();
+        }
+
+        return StringUtils.notNullStr(mTitle);
     }
 
+    /**
+     * Returns the contents of the content field from the JavaScript editor. Should be called from a background thread
+     * where possible.
+     */
     @Override
     public CharSequence getContent() {
-        // TODO
-        return null;
+        if (!isAdded()) {
+            return "";
+        }
+
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            AppLog.d(T.EDITOR, "getContent() called from UI thread");
+        }
+
+        mGetContentCountDownLatch = new CountDownLatch(1);
+
+        // All WebView methods must be called from the UI thread
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_content').getHTMLForCallback();");
+            }
+        });
+
+        try {
+            mGetContentCountDownLatch.await(1, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            AppLog.e(T.EDITOR, e);
+            Thread.currentThread().interrupt();
+        }
+
+        return StringUtils.notNullStr(mContentHtml);
     }
 
     @Override
@@ -244,19 +330,16 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     public void onDomLoaded() {
         mWebView.post(new Runnable() {
             public void run() {
-                String title = "I'm editing a post!";
-                String contentHtml = Utils.getHtmlFromFile(mActivity, "example-content.html");
-
                 mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_content').setMultiline('true');");
 
-                // Load example content into editor
+                // Load title and content into ZSSEditor
                 mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_title').setHTML('" +
-                        Utils.escapeHtml(title) + "');");
+                        Utils.escapeHtml(mTitle) + "');");
                 mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_content').setHTML('" +
-                        Utils.escapeHtml(contentHtml) + "');");
+                        Utils.escapeHtml(mContentHtml) + "');");
 
-                if (mHideActionBarOnSoftKeyboardUp) {
-                    mActionBar.hide();
+                if (mHideActionBarOnSoftKeyboardUp && getActionBar() != null) {
+                    getActionBar().hide();
                 }
             }
         });
@@ -277,12 +360,12 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     }
 
     public void onSelectionChanged(final Map<String, String> selectionArgs) {
-        final String id = selectionArgs.get("id"); // The field currently in focus
+        final String focusedFieldId = selectionArgs.get("id"); // The field now in focus
         mWebView.post(new Runnable() {
             @Override
             public void run() {
-                if (!id.isEmpty()) {
-                    switch(id) {
+                if (!focusedFieldId.isEmpty()) {
+                    switch(focusedFieldId) {
                         case "zss_field_title":
                             updateToolbarEnabledState(false);
                             break;
@@ -293,6 +376,23 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 }
             }
         });
+    }
+
+    public void onGetHtmlResponse(Map<String, String> inputArgs) {
+        String fieldId = inputArgs.get("id");
+        String fieldContents = inputArgs.get("contents");
+        if (!fieldId.isEmpty()) {
+            switch (fieldId) {
+                case "zss_field_title":
+                    mTitle = fieldContents;
+                    mGetTitleCountDownLatch.countDown();
+                    break;
+                case "zss_field_content":
+                    mContentHtml = fieldContents;
+                    mGetContentCountDownLatch.countDown();
+                    break;
+            }
+        }
     }
 
     void updateToolbarEnabledState(boolean enabled) {
