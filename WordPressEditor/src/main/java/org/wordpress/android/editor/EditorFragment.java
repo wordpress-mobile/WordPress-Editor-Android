@@ -13,6 +13,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.EditText;
 import android.widget.ToggleButton;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -51,6 +52,9 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     private String mContentHtml = "";
 
     private EditorWebViewAbstract mWebView;
+    private View mSourceView;
+    private EditText mSourceViewTitle;
+    private EditText mSourceViewContent;
 
     private boolean mHideActionBarOnSoftKeyboardUp;
 
@@ -81,6 +85,9 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         View view = inflater.inflate(R.layout.fragment_editor, container, false);
 
         mWebView = (EditorWebViewAbstract) view.findViewById(R.id.webview);
+        mSourceView = view.findViewById(R.id.sourceview);
+        mSourceViewTitle = (EditText) view.findViewById(R.id.sourceview_title);
+        mSourceViewContent = (EditText) view.findViewById(R.id.sourceview_content);
 
         mWebView.setOnTouchListener(this);
 
@@ -208,8 +215,20 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             // TODO: Handle inserting a link
             ((ToggleButton) v).setChecked(false);
         } else if (id == R.id.format_bar_button_html) {
-            // TODO: Handle HTML mode toggling
-            ((ToggleButton) v).setChecked(false);
+            if (((ToggleButton) v).isChecked()) {
+                mWebView.setVisibility(View.GONE);
+                mSourceView.setVisibility(View.VISIBLE);
+
+                mSourceViewTitle.setText(getTitle());
+                mSourceViewContent.setText(getContent());
+            } else {
+                mWebView.setVisibility(View.VISIBLE);
+                mSourceView.setVisibility(View.GONE);
+
+                mTitle = mSourceViewTitle.getText().toString();
+                mContentHtml = mSourceViewContent.getText().toString();
+                updateVisualEditorFields();
+            }
         }
     }
 
