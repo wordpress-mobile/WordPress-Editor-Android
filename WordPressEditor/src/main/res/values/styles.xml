@@ -32,6 +32,11 @@
         <item name="android:alpha">0.5</item>
     </style>
 
+    <style name="DividerSourceView" parent="Divider">
+        <item name="android:background">@color/sourceview_separator</item>
+        <item name="android:alpha">1</item>
+    </style>
+
     <style name="FormatBarTabletGroup">
         <item name="android:layout_marginLeft">@dimen/format_bar_button_group_tablet</item>
         <item name="android:layout_marginRight">@dimen/format_bar_button_group_tablet</item>
