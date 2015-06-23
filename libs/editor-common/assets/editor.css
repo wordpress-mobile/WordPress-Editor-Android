@@ -22,6 +22,34 @@
     font-weight: bold;
     font-style: italic;
 }
+@font-face {
+    font-family: 'Merriweather';
+    src: local("Merriweather Light"),
+         url('fonts/Merriweather-Light.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Merriweather';
+    src: local("Merriweather-Italic"),
+         url('fonts/Merriweather-Italic.otf');
+    font-weight: normal;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'Merriweather';
+    src: local("Merriweather-Bold"),
+         url('fonts/Merriweather-Bold.ttf');
+    font-weight: bold;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Merriweather';
+    src: local("Merriweather-BoldItalic"),
+         url('fonts/Merriweather-BoldItalic.otf');
+    font-weight: bold;
+    font-style: italic;
+}
 
 * {outline: 0px solid transparent;
     -webkit-tap-highlight-color: rgba(0,0,0,0);
@@ -35,7 +63,7 @@ html {
 
 html, body {
     margin:0;
-    font-family:OpenSans, sans-serif;
+    font-family:'Merriweather', sans-serif;
     font-size:1em;
     color:#2D2D2D;
 }
@@ -141,6 +169,7 @@ span.img_container.failed::after {
     padding:27px 0 0 0;
     top:50%;
     left:0%;
+    font-family:OpenSans;
     font-size:20px;
     font-weight:600;
     text-align: center;
@@ -159,6 +188,7 @@ span.img_container.failed.largeFail::after {
 }
 
 span.img_container.failed.smallFail::after {
+    font-family:OpenSans;
     content:attr(data-failed);
 }
 
@@ -203,6 +233,7 @@ span.img_container.failed.smallFail::after {
 }
 
 .edit-container .edit-content {
+    font-family:OpenSans;
     font-size:20px;
     font-weight:600;
     text-align: center;
@@ -268,11 +299,14 @@ div.field[placeholderText][contenteditable=true]:empty:focus:before {
 #zss_field_title, #zss_field_title p {
     font-family:'Merriweather', serif;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 24px;
+    line-height: 32px;
     margin-bottom: 0px;
 }
 
 #zss_field_content {
+    font-size: 16px;
+    line-height: 24px;
     margin-bottom: 10px;
 }
 
@@ -290,14 +324,4 @@ div.field[placeholderText][contenteditable=true]:empty:focus:before {
 .ipad_body {
     padding-left: 80px;
     padding-right: 80px;
-}
-
-.ipad_field_title {
-    font-size: 1.3em;
-}
-
-.ipad_field_content {
-    font-size: 1.125em;
-    line-height: 28px;
-}
 }
