@@ -333,10 +333,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_content').setMultiline('true');");
 
                 // Load title and content into ZSSEditor
-                mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_title').setHTML('" +
-                        Utils.escapeHtml(mTitle) + "');");
-                mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_content').setHTML('" +
-                        Utils.escapeHtml(mContentHtml) + "');");
+                updateVisualEditorFields();
 
                 if (mHideActionBarOnSoftKeyboardUp && getActionBar() != null) {
                     getActionBar().hide();
@@ -393,6 +390,13 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                     break;
             }
         }
+    }
+
+    private void updateVisualEditorFields() {
+        mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_title').setHTML('" +
+                Utils.escapeHtml(mTitle) + "');");
+        mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_content').setHTML('" +
+                Utils.escapeHtml(mContentHtml) + "');");
     }
 
     void updateToolbarEnabledState(boolean enabled) {
