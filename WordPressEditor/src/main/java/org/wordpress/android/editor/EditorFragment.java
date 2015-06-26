@@ -37,13 +37,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     private static final String JS_CALLBACK_HANDLER = "nativeCallbackHandler";
 
     private static final String TAG_FORMAT_BAR_BUTTON_MEDIA = "media";
-    private static final String TAG_FORMAT_BAR_BUTTON_BOLD = "bold";
-    private static final String TAG_FORMAT_BAR_BUTTON_ITALIC = "italic";
-    private static final String TAG_FORMAT_BAR_BUTTON_QUOTE = "blockquote";
-    private static final String TAG_FORMAT_BAR_BUTTON_UL = "unorderedList";
-    private static final String TAG_FORMAT_BAR_BUTTON_OL = "orderedList";
     private static final String TAG_FORMAT_BAR_BUTTON_LINK = "link";
-    private static final String TAG_FORMAT_BAR_BUTTON_STRIKETHROUGH = "strikeThrough";
 
     private static final float TOOLBAR_ALPHA_ENABLED = 1;
     private static final float TOOLBAR_ALPHA_DISABLED = 0.5f;
@@ -112,32 +106,32 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
         initJsEditor();
 
-        ToggleButton mediaButton = (ToggleButton) view.findViewById(R.id.format_bar_button_media);
-        mTagToggleButtonMap.put(TAG_FORMAT_BAR_BUTTON_MEDIA, mediaButton);
-
         ToggleButton boldButton = (ToggleButton) view.findViewById(R.id.format_bar_button_bold);
-        mTagToggleButtonMap.put(TAG_FORMAT_BAR_BUTTON_BOLD, boldButton);
+        mTagToggleButtonMap.put(getString(R.string.format_bar_tag_bold), boldButton);
 
         ToggleButton italicButton = (ToggleButton) view.findViewById(R.id.format_bar_button_italic);
-        mTagToggleButtonMap.put(TAG_FORMAT_BAR_BUTTON_ITALIC, italicButton);
+        mTagToggleButtonMap.put(getString(R.string.format_bar_tag_italic), italicButton);
 
         ToggleButton quoteButton = (ToggleButton) view.findViewById(R.id.format_bar_button_quote);
-        mTagToggleButtonMap.put(TAG_FORMAT_BAR_BUTTON_QUOTE, quoteButton);
+        mTagToggleButtonMap.put(getString(R.string.format_bar_tag_blockquote), quoteButton);
 
         ToggleButton ulButton = (ToggleButton) view.findViewById(R.id.format_bar_button_ul);
-        mTagToggleButtonMap.put(TAG_FORMAT_BAR_BUTTON_UL, ulButton);
+        mTagToggleButtonMap.put(getString(R.string.format_bar_tag_unorderedList), ulButton);
 
         ToggleButton olButton = (ToggleButton) view.findViewById(R.id.format_bar_button_ol);
-        mTagToggleButtonMap.put(TAG_FORMAT_BAR_BUTTON_OL, olButton);
-
-        ToggleButton linkButton = (ToggleButton) view.findViewById(R.id.format_bar_button_link);
-        mTagToggleButtonMap.put(TAG_FORMAT_BAR_BUTTON_LINK, linkButton);
+        mTagToggleButtonMap.put(getString(R.string.format_bar_tag_orderedList), olButton);
 
         // Tablet-only
         ToggleButton strikethroughButton = (ToggleButton) view.findViewById(R.id.format_bar_button_strikethrough);
         if (strikethroughButton != null) {
-            mTagToggleButtonMap.put(TAG_FORMAT_BAR_BUTTON_STRIKETHROUGH, strikethroughButton);
+            mTagToggleButtonMap.put(getString(R.string.format_bar_tag_strikethrough), strikethroughButton);
         }
+
+        ToggleButton mediaButton = (ToggleButton) view.findViewById(R.id.format_bar_button_media);
+        mTagToggleButtonMap.put(TAG_FORMAT_BAR_BUTTON_MEDIA, mediaButton);
+
+        ToggleButton linkButton = (ToggleButton) view.findViewById(R.id.format_bar_button_link);
+        mTagToggleButtonMap.put(TAG_FORMAT_BAR_BUTTON_LINK, linkButton);
 
         ToggleButton htmlButton = (ToggleButton) view.findViewById(R.id.format_bar_button_html);
         htmlButton.setOnClickListener(this);

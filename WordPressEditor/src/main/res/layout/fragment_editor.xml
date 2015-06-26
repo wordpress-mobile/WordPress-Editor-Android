@@ -114,35 +114,40 @@
                         style="@style/FormatBarScrollViewButton"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
-                        android:background="@drawable/format_bar_button_bold_selector"/>
+                        android:background="@drawable/format_bar_button_bold_selector"
+                        android:tag="@string/format_bar_tag_bold"/>
 
                     <ToggleButton
                         android:id="@+id/format_bar_button_italic"
                         style="@style/FormatBarScrollViewButton"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
-                        android:background="@drawable/format_bar_button_italic_selector"/>
+                        android:background="@drawable/format_bar_button_italic_selector"
+                        android:tag="@string/format_bar_tag_italic"/>
 
                     <ToggleButton
                         android:id="@+id/format_bar_button_quote"
                         style="@style/FormatBarScrollViewButton"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
-                        android:background="@drawable/format_bar_button_quote_selector"/>
+                        android:background="@drawable/format_bar_button_quote_selector"
+                        android:tag="@string/format_bar_tag_blockquote"/>
 
                     <ToggleButton
                         android:id="@+id/format_bar_button_ul"
                         style="@style/FormatBarScrollViewButton"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
-                        android:background="@drawable/format_bar_button_ul_selector"/>
+                        android:background="@drawable/format_bar_button_ul_selector"
+                        android:tag="@string/format_bar_tag_unorderedList"/>
 
                     <ToggleButton
                         android:id="@+id/format_bar_button_ol"
                         style="@style/FormatBarScrollViewButton"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
-                        android:background="@drawable/format_bar_button_ol_selector"/>
+                        android:background="@drawable/format_bar_button_ol_selector"
+                        android:tag="@string/format_bar_tag_orderedList"/>
 
                     <ToggleButton
                         android:id="@+id/format_bar_button_link"
