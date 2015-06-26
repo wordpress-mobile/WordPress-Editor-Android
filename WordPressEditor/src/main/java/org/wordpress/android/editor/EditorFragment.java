@@ -436,9 +436,9 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         // Replace style tags with their proper HTML tags
         String htmlTag;
         if (tag.equals(getString(R.string.format_bar_tag_bold))) {
-            htmlTag = "strong";
+            htmlTag = "b";
         } else if (tag.equals(getString(R.string.format_bar_tag_italic))) {
-            htmlTag = "em";
+            htmlTag = "i";
         } else if (tag.equals(getString(R.string.format_bar_tag_strikethrough))) {
             htmlTag = "del";
         } else if (tag.equals(getString(R.string.format_bar_tag_unorderedList))) {
