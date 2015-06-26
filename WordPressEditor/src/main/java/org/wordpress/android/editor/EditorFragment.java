@@ -190,25 +190,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        if (id == R.id.format_bar_button_bold) {
-            mWebView.execJavaScriptFromString("ZSSEditor.setBold();");
-        } else if (id == R.id.format_bar_button_italic) {
-            mWebView.execJavaScriptFromString("ZSSEditor.setItalic();");
-        } else if (id == R.id.format_bar_button_strikethrough) {
-            mWebView.execJavaScriptFromString("ZSSEditor.setStrikeThrough();");
-        } else if (id == R.id.format_bar_button_quote) {
-            mWebView.execJavaScriptFromString("ZSSEditor.setBlockquote();");
-        } else if (id == R.id.format_bar_button_ul) {
-            mWebView.execJavaScriptFromString("ZSSEditor.setUnorderedList();");
-        } else if (id == R.id.format_bar_button_ol) {
-            mWebView.execJavaScriptFromString("ZSSEditor.setOrderedList();");
-        } else if (id == R.id.format_bar_button_media) {
-            // TODO: Handle inserting media
-            ((ToggleButton) v).setChecked(false);
-        } else if (id == R.id.format_bar_button_link) {
-            // TODO: Handle inserting a link
-            ((ToggleButton) v).setChecked(false);
-        } else if (id == R.id.format_bar_button_html) {
+        if (id == R.id.format_bar_button_html) {
             if (((ToggleButton) v).isChecked()) {
                 mWebView.setVisibility(View.GONE);
                 mSourceView.setVisibility(View.VISIBLE);
@@ -222,6 +204,16 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 mTitle = mSourceViewTitle.getText().toString();
                 mContentHtml = mSourceViewContent.getText().toString();
                 updateVisualEditorFields();
+            }
+        } else if (id == R.id.format_bar_button_media) {
+            // TODO: Handle inserting media
+            ((ToggleButton) v).setChecked(false);
+        } else if (id == R.id.format_bar_button_link) {
+            // TODO: Handle inserting a link
+            ((ToggleButton) v).setChecked(false);
+        } else {
+            if (v instanceof ToggleButton) {
+                onFormattingButtonClicked((ToggleButton) v);
             }
         }
     }
@@ -417,6 +409,14 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         for(ToggleButton button : mTagToggleButtonMap.values()) {
             button.setEnabled(enabled);
             button.setAlpha(alpha);
+        }
+    }
+
+    private void onFormattingButtonClicked(ToggleButton toggleButton) {
+        String tag = toggleButton.getTag().toString();
+
+        if (mWebView.getVisibility() == View.VISIBLE) {
+            mWebView.execJavaScriptFromString("ZSSEditor.set" + StringUtils.capitalize(tag) + "();");
         }
     }
 }
