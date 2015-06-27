@@ -201,6 +201,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         int id = v.getId();
         if (id == R.id.format_bar_button_html) {
             clearFormatBarButtons();
+            updateFormatBarEnabledState(true);
 
             if (((ToggleButton) v).isChecked()) {
                 mWebView.setVisibility(View.GONE);
@@ -208,6 +209,9 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
                 mSourceViewTitle.setText(getTitle());
                 mSourceViewContent.setText(getContent());
+
+                mSourceViewContent.requestFocus();
+                mSourceViewContent.setSelection(0);
             } else {
                 mWebView.setVisibility(View.VISIBLE);
                 mSourceView.setVisibility(View.GONE);
@@ -215,6 +219,8 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 mTitle = mSourceViewTitle.getText().toString();
                 mContentHtml = mSourceViewContent.getText().toString();
                 updateVisualEditorFields();
+
+                mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_content').focus();");
             }
         } else if (id == R.id.format_bar_button_media) {
             // TODO: Handle inserting media
