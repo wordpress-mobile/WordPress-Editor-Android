@@ -370,10 +370,10 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 if (!focusedFieldId.isEmpty()) {
                     switch(focusedFieldId) {
                         case "zss_field_title":
-                            updateToolbarEnabledState(false);
+                            updateFormatBarEnabledState(false);
                             break;
                         case "zss_field_content":
-                            updateToolbarEnabledState(true);
+                            updateFormatBarEnabledState(true);
                             break;
                     }
                 }
@@ -405,7 +405,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 Utils.escapeHtml(mContentHtml) + "');");
     }
 
-    void updateToolbarEnabledState(boolean enabled) {
+    void updateFormatBarEnabledState(boolean enabled) {
         float alpha = (enabled ? TOOLBAR_ALPHA_ENABLED : TOOLBAR_ALPHA_DISABLED);
         for(ToggleButton button : mTagToggleButtonMap.values()) {
             button.setEnabled(enabled);
