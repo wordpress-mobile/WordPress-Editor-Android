@@ -192,6 +192,8 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.format_bar_button_html) {
+            clearFormatBarButtons();
+
             if (((ToggleButton) v).isChecked()) {
                 mWebView.setVisibility(View.GONE);
                 mSourceView.setVisibility(View.VISIBLE);
@@ -410,6 +412,14 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         for(ToggleButton button : mTagToggleButtonMap.values()) {
             button.setEnabled(enabled);
             button.setAlpha(alpha);
+        }
+    }
+
+    private void clearFormatBarButtons() {
+        for (ToggleButton button : mTagToggleButtonMap.values()) {
+            if (button != null) {
+                button.setChecked(false);
+            }
         }
     }
 
