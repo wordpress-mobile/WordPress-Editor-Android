@@ -84,6 +84,14 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         mSourceViewTitle = (EditText) view.findViewById(R.id.sourceview_title);
         mSourceViewContent = (EditText) view.findViewById(R.id.sourceview_content);
 
+        // Toggle format bar on/off as user changes focus between title and content in HTML mode
+        mSourceViewTitle.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                updateFormatBarEnabledState(!hasFocus);
+            }
+        });
+
         mWebView.setOnTouchListener(this);
 
         // Setup hiding the action bar when the soft keyboard is displayed for narrow viewports
