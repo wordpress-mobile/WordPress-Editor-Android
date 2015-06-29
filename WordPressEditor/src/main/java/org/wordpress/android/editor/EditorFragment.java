@@ -486,6 +486,13 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
         String startTag = "<" + htmlTag + ">";
         String endTag = "</" + htmlTag + ">";
+
+        // Add li tags together with ul and ol tags
+        if (htmlTag.equals("ul") || htmlTag.equals("ol")) {
+            startTag = startTag + "\n\t<li>";
+            endTag = "</li>\n" + endTag;
+        }
+
         Editable content = mSourceViewContent.getText();
         if (textIsSelected) {
             // Surround selected text with opening and closing tags
