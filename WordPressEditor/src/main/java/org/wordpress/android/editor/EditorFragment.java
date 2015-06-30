@@ -30,7 +30,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 public class EditorFragment extends EditorFragmentAbstract implements View.OnClickListener, View.OnTouchListener,
-        OnJsEditorStateChangedListener {
+        OnJsEditorStateChangedListener, OnImeBackListener {
     private static final String ARG_PARAM_TITLE = "param_title";
     private static final String ARG_PARAM_CONTENT = "param_content";
 
@@ -78,11 +78,29 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_editor, container, false);
 
-        mWebView = (EditorWebViewAbstract) view.findViewById(R.id.webview);
-        mSourceView = view.findViewById(R.id.sourceview);
+        // Setup hiding the action bar when the soft keyboard is displayed for narrow viewports
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE
+                && !getResources().getBoolean(R.bool.is_large_tablet_landscape)) {
+            mHideActionBarOnSoftKeyboardUp = true;
+        }
 
+        // -- WebView configuration
+
+        mWebView = (EditorWebViewAbstract) view.findViewById(R.id.webview);
+
+        mWebView.setOnTouchListener(this);
+        mWebView.setOnImeBackListener(this);
+
+        mEditorFragmentListener.onEditorFragmentInitialized();
+
+        initJsEditor();
+
+        // -- HTML mode configuration
+
+        mSourceView = view.findViewById(R.id.sourceview);
         mSourceViewTitle = (SourceViewEditText) view.findViewById(R.id.sourceview_title);
         mSourceViewContent = (SourceViewEditText) view.findViewById(R.id.sourceview_content);
+
         // Toggle format bar on/off as user changes focus between title and content in HTML mode
         mSourceViewTitle.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -91,28 +109,13 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             }
         });
 
-        mWebView.setOnTouchListener(this);
+        mSourceViewTitle.setOnTouchListener(this);
+        mSourceViewContent.setOnTouchListener(this);
 
-        // Setup hiding the action bar when the soft keyboard is displayed for narrow viewports
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE
-                && !getResources().getBoolean(R.bool.is_large_tablet_landscape)) {
-            mHideActionBarOnSoftKeyboardUp = true;
-        }
+        mSourceViewTitle.setOnImeBackListener(this);
+        mSourceViewContent.setOnImeBackListener(this);
 
-        // Intercept back key presses while the keyboard is up, and reveal the action bar
-        mWebView.setOnImeBackListener(new EditorWebViewAbstract.OnImeBackListener() {
-            @Override
-            public void onImeBack() {
-                ActionBar actionBar = getActionBar();
-                if (mHideActionBarOnSoftKeyboardUp && actionBar != null && !actionBar.isShowing()) {
-                    actionBar.show();
-                }
-            }
-        });
-
-        mEditorFragmentListener.onEditorFragmentInitialized();
-
-        initJsEditor();
+        // -- Format bar configuration
 
         ToggleButton boldButton = (ToggleButton) view.findViewById(R.id.format_bar_button_bold);
         mTagToggleButtonMap.put(getString(R.string.format_bar_tag_bold), boldButton);
@@ -237,7 +240,8 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     @Override
     public boolean onTouch(View view, MotionEvent event) {
         if (mHideActionBarOnSoftKeyboardUp && event.getAction() == MotionEvent.ACTION_UP) {
-            // If the WebView has received a touch event, the keyboard will be displayed and the action bar should hide
+            // If the WebView or EditText has received a touch event, the keyboard will be displayed and the action bar
+            // should hide
             ActionBar actionBar = getActionBar();
             if (actionBar != null && actionBar.isShowing()) {
                 actionBar.hide();
@@ -507,6 +511,17 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             // Insert closing tag
             content.insert(selectionEnd, endTag);
             mSourceViewContent.setSelection(selectionEnd + endTag.length());
+        }
+    }
+
+    /**
+     * Intercept back button pressed while soft keyboard is visible.
+     */
+    @Override
+    public void onImeBack() {
+        ActionBar actionBar = getActionBar();
+        if (mHideActionBarOnSoftKeyboardUp && actionBar != null && !actionBar.isShowing()) {
+            actionBar.show();
         }
     }
 }
