@@ -14,7 +14,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.EditText;
 import android.widget.ToggleButton;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -48,8 +47,8 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
     private EditorWebViewAbstract mWebView;
     private View mSourceView;
-    private EditText mSourceViewTitle;
-    private EditText mSourceViewContent;
+    private SourceViewEditText mSourceViewTitle;
+    private SourceViewEditText mSourceViewContent;
 
     private boolean mHideActionBarOnSoftKeyboardUp;
 
@@ -81,9 +80,9 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
         mWebView = (EditorWebViewAbstract) view.findViewById(R.id.webview);
         mSourceView = view.findViewById(R.id.sourceview);
-        mSourceViewTitle = (EditText) view.findViewById(R.id.sourceview_title);
-        mSourceViewContent = (EditText) view.findViewById(R.id.sourceview_content);
 
+        mSourceViewTitle = (SourceViewEditText) view.findViewById(R.id.sourceview_title);
+        mSourceViewContent = (SourceViewEditText) view.findViewById(R.id.sourceview_content);
         // Toggle format bar on/off as user changes focus between title and content in HTML mode
         mSourceViewTitle.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
