@@ -62,7 +62,8 @@
                 android:hint="@string/post_content"
                 android:inputType="textMultiLine|textCapSentences|textAutoCorrect"
                 android:lineSpacingExtra="4dp"
-                android:imeOptions="flagNoExtractUi"/>
+                android:imeOptions="flagNoExtractUi"
+                android:typeface="monospace"/>
         </LinearLayout>
     </ScrollView>
 
