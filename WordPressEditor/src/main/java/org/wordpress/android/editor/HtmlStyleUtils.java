@@ -2,15 +2,14 @@ package org.wordpress.android.editor;
 
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
+import android.text.Spannable;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class HtmlStyler {
+public class HtmlStyleUtils {
     public static final int HTML_TAG_COLOR = Color.rgb(0, 80, 130);
     public static final int HTML_ATTRIBUTE_COLOR = Color.rgb(158, 158, 158);
 
@@ -55,40 +54,36 @@ public class HtmlStyler {
             "|&there4;|&sim;|&cong;|&asymp;|&ne;|&equiv;|&le;|&ge;|&sub;|&sup;|&nsub;|&sube;|&supe;|&oplus;|&otimes;" +
             "|&perp;|&sdot;|&lceil;|&rceil;|&lfloor;|&rfloor;|&lang;|&rang;|&loz;|&spades;|&clubs;|&hearts;|&diams;)";
 
-    public static final int SPANNABLE_FLAGS = Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
+    public static final int SPANNABLE_FLAGS = Spannable.SPAN_EXCLUSIVE_EXCLUSIVE;
 
-    private SpannableStringBuilder mSpannableStringBuilder;
-
-    public HtmlStyler() {
+    public static void styleHtmlForDisplay(Spannable content) {
+        styleHtmlForDisplay(content, 0, content.length());
     }
 
-    public SpannableStringBuilder styleHtmlForDisplay(CharSequence content) {
-        mSpannableStringBuilder = new SpannableStringBuilder(content);
-        applyRegex(content, REGEX_HTML_TAGS);
-        applyRegex(content, REGEX_HTML_ATTRIBUTES);
-        applyRegex(content, REGEX_HTML_ENTITIES);
-
-        return mSpannableStringBuilder;
+    public static void styleHtmlForDisplay(Spannable content, int start, int end) {
+        applyRegex(content, start, end, REGEX_HTML_TAGS);
+        applyRegex(content, start, end, REGEX_HTML_ATTRIBUTES);
+        applyRegex(content, start, end, REGEX_HTML_ENTITIES);
     }
 
-    private void applyRegex(CharSequence content, String regex) {
+    private static void applyRegex(Spannable content, int start, int end, String regex) {
         Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(content);
+        Matcher matcher = pattern.matcher(content.subSequence(start, end));
 
         while (matcher.find()) {
             switch(regex) {
                 case REGEX_HTML_TAGS:
-                    mSpannableStringBuilder.setSpan(new ForegroundColorSpan(HTML_TAG_COLOR), matcher.start(),
-                            matcher.end(), SPANNABLE_FLAGS);
+                    content.setSpan(new ForegroundColorSpan(HTML_TAG_COLOR), matcher.start() + start,
+                            matcher.end() + start, SPANNABLE_FLAGS);
                     break;
                 case REGEX_HTML_ATTRIBUTES:
-                    mSpannableStringBuilder.setSpan(new ForegroundColorSpan(HTML_ATTRIBUTE_COLOR), matcher.start(),
-                            matcher.end(), SPANNABLE_FLAGS);
+                    content.setSpan(new ForegroundColorSpan(HTML_ATTRIBUTE_COLOR), matcher.start() + start,
+                            matcher.end() + start, SPANNABLE_FLAGS);
                     break;
                 case REGEX_HTML_ENTITIES:
-                    mSpannableStringBuilder.setSpan(new ForegroundColorSpan(HTML_TAG_COLOR), matcher.start(),
-                            matcher.end(), SPANNABLE_FLAGS);
-                    mSpannableStringBuilder.setSpan(new StyleSpan(Typeface.BOLD), matcher.start(), matcher.end(),
+                    content.setSpan(new ForegroundColorSpan(HTML_TAG_COLOR), matcher.start() + start,
+                            matcher.end() + start, SPANNABLE_FLAGS);
+                    content.setSpan(new StyleSpan(Typeface.BOLD), matcher.start() + start, matcher.end() + start,
                             SPANNABLE_FLAGS);
                     break;
             }
