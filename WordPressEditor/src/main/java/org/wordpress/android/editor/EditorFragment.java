@@ -210,7 +210,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 mSourceView.setVisibility(View.VISIBLE);
 
                 mSourceViewTitle.setText(getTitle());
-                mSourceViewContent.setText(getContent());
+                mSourceViewContent.setText(new HtmlStyler().styleHtmlForDisplay(getContent()));
 
                 mSourceViewContent.requestFocus();
                 mSourceViewContent.setSelection(0);
