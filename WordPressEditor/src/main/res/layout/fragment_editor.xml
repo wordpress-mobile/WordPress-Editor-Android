@@ -16,10 +16,11 @@
     <ScrollView
         android:id="@+id/sourceview"
         android:layout_width="fill_parent"
-        android:layout_height="match_parent"
+        android:layout_height="fill_parent"
         android:background="@android:color/white"
         android:orientation="vertical"
         android:layout_above="@id/format_bar"
+        android:fillViewport="true"
         android:visibility="gone">
 
         <LinearLayout
@@ -56,6 +57,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:gravity="top"
                 android:layout_marginLeft="@dimen/sourceview_side_margin"
                 android:layout_marginRight="@dimen/sourceview_side_margin"
                 android:layout_marginTop="@dimen/sourceview_top_margin"
