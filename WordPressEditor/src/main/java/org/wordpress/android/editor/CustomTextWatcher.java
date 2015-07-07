@@ -16,20 +16,20 @@ public class CustomTextWatcher implements TextWatcher {
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        if (s.length() > start+count-1 && start+count-1 > 0) {
+        if (s.length() > start + count - 1 && start + count - 1 > 0) {
             if (after < count) {
                 mStart = start;
-                mModifiedText = s.subSequence(start+after, start + count);
+                mModifiedText = s.subSequence(start + after, start + count);
             }
         }
     }
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-        if (s.length() > start+count-1) {
+        if (s.length() > start + count - 1) {
             if (count > before) {
                 mStart = start;
-                mModifiedText = s.subSequence(start + before, start+count);
+                mModifiedText = s.subSequence(start + before, start + count);
             }
         }
     }
@@ -41,65 +41,61 @@ public class CustomTextWatcher implements TextWatcher {
             return;
         }
 
+        // If the modified text included a tag or entity symbol ("<", ">", "&" or ";"), find its match and restyle
         if (mModifiedText.toString().contains("<")) {
-            int openingTagLoc = mModifiedText.toString().indexOf("<");
-            int closingTagLoc = s.toString().indexOf(">", mStart + openingTagLoc);
-            if (closingTagLoc > 0) {
-                int spanStart = mStart + openingTagLoc;
-                int spanEnd = closingTagLoc + 1;
-                clearSpans(s, spanStart, spanEnd);
-                HtmlStyleUtils.styleHtmlForDisplay(s, spanStart, spanEnd);
-            }
+            restyleForChangedOpeningSymbol(s, "<");
         } else if (mModifiedText.toString().contains(">")) {
-            int closingTagLoc = mModifiedText.toString().indexOf(">");
-            int openingTagLoc = s.toString().lastIndexOf("<", mStart + closingTagLoc);
-            if (openingTagLoc > 0) {
-                int spanStart = openingTagLoc;
-                int spanEnd = mStart + closingTagLoc + 1;
-                clearSpans(s, spanStart, spanEnd);
-                HtmlStyleUtils.styleHtmlForDisplay(s, spanStart, spanEnd);
-            }
+            restyleForChangedClosingSymbol(s, ">");
         } else if (mModifiedText.toString().contains("&")) {
-            int openingTagLoc = mModifiedText.toString().indexOf("&");
-            int closingTagLoc = s.toString().indexOf(";", mStart + openingTagLoc);
-            if (closingTagLoc > 0) {
-                int spanStart = mStart + openingTagLoc;
-                int spanEnd = closingTagLoc + 1;
-                clearSpans(s, spanStart, spanEnd);
-                HtmlStyleUtils.styleHtmlForDisplay(s, spanStart, spanEnd);
-            }
+            restyleForChangedOpeningSymbol(s, "&");
         } else if (mModifiedText.toString().contains(";")) {
-            int closingTagLoc = mModifiedText.toString().indexOf(";");
-            int openingTagLoc = s.toString().lastIndexOf("&", mStart + closingTagLoc);
-            if (openingTagLoc > 0) {
-                int spanStart = openingTagLoc;
-                int spanEnd = mStart + closingTagLoc + 1;
-                clearSpans(s, spanStart, spanEnd);
-                HtmlStyleUtils.styleHtmlForDisplay(s, spanStart, spanEnd);
-            }
+            restyleForChangedClosingSymbol(s, ";");
         } else {
-            int openingTagLoc = s.toString().lastIndexOf("<", mStart);
-            if (openingTagLoc >= 0) {
-                int closingTagLoc = s.toString().indexOf(">", openingTagLoc);
-                if (closingTagLoc >= mStart) {
-                    int spanEnd = closingTagLoc + 1;
-                    clearSpans(s, openingTagLoc, spanEnd);
-                    HtmlStyleUtils.styleHtmlForDisplay(s, openingTagLoc, spanEnd);
-                } else {
-                    openingTagLoc = s.toString().lastIndexOf("&", mStart);
-                    if (openingTagLoc >= 0) {
-                        closingTagLoc = s.toString().indexOf(";", openingTagLoc);
-                        if (closingTagLoc >= mStart) {
-                            int spanEnd = closingTagLoc + 1;
-                            clearSpans(s, openingTagLoc, spanEnd);
-                            HtmlStyleUtils.styleHtmlForDisplay(s, openingTagLoc, spanEnd);
-                        }
-                    }
-                }
+            // If the modified text didn't include any tag or entity symbols, restyle if the modified text is inside
+            // a tag or entity
+            if (!restyleNormalTextIfWithinSymbols(s, "<", ">")) {
+                restyleNormalTextIfWithinSymbols(s, "&", ";");
             }
         }
 
         mModifiedText = null;
+    }
+
+    private void restyleForChangedOpeningSymbol(Editable content, String openingSymbol) {
+        String closingSymbol = getMatchingSymbol(openingSymbol);
+
+        int openingTagLoc = mModifiedText.toString().indexOf(openingSymbol);
+        int closingTagLoc = content.toString().indexOf(closingSymbol, mStart + openingTagLoc);
+        if (closingTagLoc > 0) {
+            updateSpans(content, mStart + openingTagLoc, closingTagLoc + 1);
+        }
+    }
+
+    private void restyleForChangedClosingSymbol(Editable content, String closingSymbol) {
+        String openingSymbol = getMatchingSymbol(closingSymbol);
+
+        int closingTagLoc = mModifiedText.toString().indexOf(closingSymbol);
+        int openingTagLoc = content.toString().lastIndexOf(openingSymbol, mStart + closingTagLoc);
+        if (openingTagLoc > 0) {
+            updateSpans(content, openingTagLoc, mStart + closingTagLoc + 1);
+        }
+    }
+
+    private boolean restyleNormalTextIfWithinSymbols(Editable content, String openingSymbol, String closingSymbol) {
+        int openingTagLoc = content.toString().lastIndexOf(openingSymbol, mStart);
+        if (openingTagLoc >= 0) {
+            int closingTagLoc = content.toString().indexOf(closingSymbol, openingTagLoc);
+            if (closingTagLoc >= mStart) {
+                updateSpans(content, openingTagLoc, closingTagLoc + 1);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void updateSpans(Spannable s, int spanStart, int spanEnd) {
+        clearSpans(s, spanStart, spanEnd);
+        HtmlStyleUtils.styleHtmlForDisplay(s, spanStart, spanEnd);
     }
 
     private void clearSpans(Spannable s, int spanStart, int spanEnd) {
@@ -109,6 +105,21 @@ public class CustomTextWatcher implements TextWatcher {
             if (span instanceof ForegroundColorSpan || span instanceof  StyleSpan) {
                 s.removeSpan(span);
             }
+        }
+    }
+
+    private String getMatchingSymbol(String symbol) {
+        switch(symbol) {
+            case "<":
+                return ">";
+            case ">":
+                return "<";
+            case "&":
+                return ";";
+            case ";":
+                return "&";
+            default:
+                return "";
         }
     }
 }
