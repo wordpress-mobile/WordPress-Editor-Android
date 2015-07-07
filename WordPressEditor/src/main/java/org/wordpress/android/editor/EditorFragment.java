@@ -116,6 +116,8 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         mSourceViewTitle.setOnImeBackListener(this);
         mSourceViewContent.setOnImeBackListener(this);
 
+        mSourceViewContent.addTextChangedListener(new CustomTextWatcher());
+
         // -- Format bar configuration
 
         ToggleButton boldButton = (ToggleButton) view.findViewById(R.id.format_bar_button_bold);
