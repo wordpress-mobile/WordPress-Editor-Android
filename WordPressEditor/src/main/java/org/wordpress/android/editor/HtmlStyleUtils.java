@@ -10,11 +10,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class HtmlStyleUtils {
-    public static final int HTML_TAG_COLOR = Color.rgb(0, 80, 130);
-    public static final int HTML_ATTRIBUTE_COLOR = Color.rgb(158, 158, 158);
+    public static final int TAG_COLOR = Color.rgb(0, 80, 130);
+    public static final int ATTRIBUTE_COLOR = Color.rgb(158, 158, 158);
 
     public static final String REGEX_HTML_TAGS = "(<\\/?[a-z][^<>]*>)";
     public static final String REGEX_HTML_ATTRIBUTES = "(?<==)('|\")(.*?\\1)(?=.*?>)";
+    public static final String REGEX_HTML_COMMENTS = "(<!--.*?-->)";
     public static final String REGEX_HTML_ENTITIES = "(&#34;|&#38;|&#39;|&#60;|&#62;|&#160;|&#161;|&#162;|&#163;" +
             "|&#164;|&#165;|&#166;|&#167;|&#168;|&#169;|&#170;|&#171;|&#172;|&#173;|&#174;|&#175;|&#176;|&#177;" +
             "|&#178;|&#179;|&#180;|&#181;|&#182;|&#183;|&#184;|&#185;|&#186;|&#187;|&#188;|&#189;|&#190;|&#191;" +
@@ -63,6 +64,7 @@ public class HtmlStyleUtils {
     public static void styleHtmlForDisplay(Spannable content, int start, int end) {
         applyRegex(content, start, end, REGEX_HTML_TAGS);
         applyRegex(content, start, end, REGEX_HTML_ATTRIBUTES);
+        applyRegex(content, start, end, REGEX_HTML_COMMENTS);
         applyRegex(content, start, end, REGEX_HTML_ENTITIES);
     }
 
@@ -71,20 +73,22 @@ public class HtmlStyleUtils {
         Matcher matcher = pattern.matcher(content.subSequence(start, end));
 
         while (matcher.find()) {
+            int matchStart = matcher.start() + start;
+            int matchEnd = matcher.end() + start;
             switch(regex) {
                 case REGEX_HTML_TAGS:
-                    content.setSpan(new ForegroundColorSpan(HTML_TAG_COLOR), matcher.start() + start,
-                            matcher.end() + start, SPANNABLE_FLAGS);
+                    content.setSpan(new ForegroundColorSpan(TAG_COLOR), matchStart, matchEnd, SPANNABLE_FLAGS);
                     break;
                 case REGEX_HTML_ATTRIBUTES:
-                    content.setSpan(new ForegroundColorSpan(HTML_ATTRIBUTE_COLOR), matcher.start() + start,
-                            matcher.end() + start, SPANNABLE_FLAGS);
+                    content.setSpan(new ForegroundColorSpan(ATTRIBUTE_COLOR), matchStart, matchEnd, SPANNABLE_FLAGS);
+                    break;
+                case REGEX_HTML_COMMENTS:
+                    content.setSpan(new ForegroundColorSpan(ATTRIBUTE_COLOR), matchStart, matchEnd, SPANNABLE_FLAGS);
+                    content.setSpan(new StyleSpan(Typeface.ITALIC), matchStart, matchEnd, SPANNABLE_FLAGS);
                     break;
                 case REGEX_HTML_ENTITIES:
-                    content.setSpan(new ForegroundColorSpan(HTML_TAG_COLOR), matcher.start() + start,
-                            matcher.end() + start, SPANNABLE_FLAGS);
-                    content.setSpan(new StyleSpan(Typeface.BOLD), matcher.start() + start, matcher.end() + start,
-                            SPANNABLE_FLAGS);
+                    content.setSpan(new ForegroundColorSpan(TAG_COLOR), matchStart, matchEnd, SPANNABLE_FLAGS);
+                    content.setSpan(new StyleSpan(Typeface.BOLD), matchStart, matchEnd, SPANNABLE_FLAGS);
                     break;
             }
         }
