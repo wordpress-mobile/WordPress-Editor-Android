@@ -251,6 +251,17 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         return false;
     }
 
+    /**
+     * Intercept back button press while soft keyboard is visible.
+     */
+    @Override
+    public void onImeBack() {
+        ActionBar actionBar = getActionBar();
+        if (mHideActionBarOnSoftKeyboardUp && actionBar != null && !actionBar.isShowing()) {
+            actionBar.show();
+        }
+    }
+
     @SuppressLint("NewApi")
     private void enableWebDebugging(boolean enable) {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -518,17 +529,6 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             // Insert closing tag
             content.insert(selectionEnd, endTag);
             mSourceViewContent.setSelection(selectionEnd + endTag.length());
-        }
-    }
-
-    /**
-     * Intercept back button pressed while soft keyboard is visible.
-     */
-    @Override
-    public void onImeBack() {
-        ActionBar actionBar = getActionBar();
-        if (mHideActionBarOnSoftKeyboardUp && actionBar != null && !actionBar.isShowing()) {
-            actionBar.show();
         }
     }
 }
