@@ -22,6 +22,8 @@
     <dimen name="format_bar_button_highlighted_underline_width">2dp</dimen>
 
     <dimen name="sourceview_side_margin">15dp</dimen>
+    <dimen name="sourceview_side_margin_large">90dp</dimen>
+    <dimen name="sourceview_side_margin_extra_large">170dp</dimen>
     <dimen name="sourceview_top_margin">15dp</dimen>
     <dimen name="sourceview_title_bottom_margin">15dp</dimen>
 
