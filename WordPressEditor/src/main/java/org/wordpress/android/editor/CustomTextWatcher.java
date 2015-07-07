@@ -5,6 +5,7 @@ import android.text.Spannable;
 import android.text.TextWatcher;
 import android.text.style.CharacterStyle;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 
 import org.wordpress.android.util.AppLog;
@@ -102,7 +103,7 @@ public class CustomTextWatcher implements TextWatcher {
         CharacterStyle[] spans = s.getSpans(spanStart, spanEnd, CharacterStyle.class);
 
         for (CharacterStyle span : spans) {
-            if (span instanceof ForegroundColorSpan || span instanceof  StyleSpan) {
+            if (span instanceof ForegroundColorSpan || span instanceof  StyleSpan || span instanceof RelativeSizeSpan) {
                 s.removeSpan(span);
             }
         }

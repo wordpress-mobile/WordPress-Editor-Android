@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.Spannable;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 
 import java.util.regex.Matcher;
@@ -85,10 +86,12 @@ public class HtmlStyleUtils {
                 case REGEX_HTML_COMMENTS:
                     content.setSpan(new ForegroundColorSpan(ATTRIBUTE_COLOR), matchStart, matchEnd, SPANNABLE_FLAGS);
                     content.setSpan(new StyleSpan(Typeface.ITALIC), matchStart, matchEnd, SPANNABLE_FLAGS);
+                    content.setSpan(new RelativeSizeSpan(0.75f), matchStart, matchEnd, SPANNABLE_FLAGS);
                     break;
                 case REGEX_HTML_ENTITIES:
                     content.setSpan(new ForegroundColorSpan(TAG_COLOR), matchStart, matchEnd, SPANNABLE_FLAGS);
                     content.setSpan(new StyleSpan(Typeface.BOLD), matchStart, matchEnd, SPANNABLE_FLAGS);
+                    content.setSpan(new RelativeSizeSpan(0.75f), matchStart, matchEnd, SPANNABLE_FLAGS);
                     break;
             }
         }
