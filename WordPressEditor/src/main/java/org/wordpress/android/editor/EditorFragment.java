@@ -116,7 +116,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         mSourceViewTitle.setOnImeBackListener(this);
         mSourceViewContent.setOnImeBackListener(this);
 
-        mSourceViewContent.addTextChangedListener(new CustomTextWatcher());
+        mSourceViewContent.addTextChangedListener(new HtmlStyleTextWatcher());
 
         // -- Format bar configuration
 

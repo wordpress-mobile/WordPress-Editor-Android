@@ -11,7 +11,7 @@ import android.text.style.StyleSpan;
 import org.wordpress.android.util.AppLog;
 import org.wordpress.android.util.AppLog.T;
 
-public class CustomTextWatcher implements TextWatcher {
+public class HtmlStyleTextWatcher implements TextWatcher {
     private int mStart;
     private CharSequence mModifiedText;
 
@@ -103,7 +103,7 @@ public class CustomTextWatcher implements TextWatcher {
         CharacterStyle[] spans = s.getSpans(spanStart, spanEnd, CharacterStyle.class);
 
         for (CharacterStyle span : spans) {
-            if (span instanceof ForegroundColorSpan || span instanceof  StyleSpan || span instanceof RelativeSizeSpan) {
+            if (span instanceof ForegroundColorSpan || span instanceof StyleSpan || span instanceof RelativeSizeSpan) {
                 s.removeSpan(span);
             }
         }
