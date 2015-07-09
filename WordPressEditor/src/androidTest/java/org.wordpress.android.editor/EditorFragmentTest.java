@@ -110,7 +110,7 @@ public class EditorFragmentTest extends ActivityInstrumentationTestCase2<MockEdi
 
         final ToggleButton htmlButton = (ToggleButton) view.findViewById(R.id.format_bar_button_html);
 
-        final String content = Utils.getHtmlFromFile(mActivity, "example-content.html");
+        String content = mFragment.getContent().toString();
 
         final SourceViewEditText titleText = (SourceViewEditText) view.findViewById(R.id.sourceview_title);
         final SourceViewEditText contentText = (SourceViewEditText) view.findViewById(R.id.sourceview_content);
