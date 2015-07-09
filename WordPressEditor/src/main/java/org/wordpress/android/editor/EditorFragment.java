@@ -1,6 +1,7 @@
 package org.wordpress.android.editor;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.ToggleButton;
 
@@ -220,6 +222,10 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
                 mSourceViewContent.requestFocus();
                 mSourceViewContent.setSelection(0);
+
+                InputMethodManager imm = ((InputMethodManager) getActivity()
+                        .getSystemService(Context.INPUT_METHOD_SERVICE));
+                imm.showSoftInput(mSourceViewContent, InputMethodManager.SHOW_IMPLICIT);
             } else {
                 mWebView.setVisibility(View.VISIBLE);
                 mSourceView.setVisibility(View.GONE);
