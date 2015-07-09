@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:editor="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -11,6 +12,65 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/format_bar"/>
+
+    <ScrollView
+        android:id="@+id/sourceview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@android:color/white"
+        android:orientation="vertical"
+        android:layout_above="@id/format_bar"
+        android:fillViewport="true"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/post_content_wrapper"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <org.wordpress.android.editor.SourceViewEditText
+                android:id="@+id/sourceview_title"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/sourceview_side_margin"
+                android:layout_marginRight="@dimen/sourceview_side_margin"
+                android:layout_marginTop="@dimen/sourceview_top_margin"
+                android:layout_marginBottom="@dimen/sourceview_title_bottom_margin"
+                android:background="@null"
+                android:textSize="24sp"
+                android:hint="@string/post_title"
+                android:inputType="textCapSentences|textAutoCorrect"
+                android:imeOptions="flagNoExtractUi"
+                editor:fontFile="Merriweather-Bold.ttf"/>
+
+            <View
+                android:id="@+id/sourceview_horizontal_divider"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/format_bar_horizontal_divider_height"
+                android:layout_marginLeft="@dimen/sourceview_side_margin"
+                android:layout_marginRight="@dimen/sourceview_side_margin"
+                style="@style/DividerSourceView"/>
+
+            <org.wordpress.android.editor.SourceViewEditText
+                android:id="@+id/sourceview_content"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="top"
+                android:layout_marginLeft="@dimen/sourceview_side_margin"
+                android:layout_marginRight="@dimen/sourceview_side_margin"
+                android:layout_marginTop="@dimen/sourceview_top_margin"
+                android:background="@null"
+                android:textSize="16sp"
+                android:maxLength="10000000"
+                android:hint="@string/post_content"
+                android:inputType="textMultiLine|textCapSentences|textAutoCorrect"
+                android:lineSpacingExtra="4dp"
+                android:imeOptions="flagNoExtractUi"
+                android:typeface="monospace"/>
+        </LinearLayout>
+    </ScrollView>
 
     <LinearLayout
         android:id="@+id/format_bar"
@@ -59,21 +119,24 @@
                     style="@style/FormatBarButtonTablet"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
-                    android:background="@drawable/format_bar_button_bold_selector"/>
+                    android:background="@drawable/format_bar_button_bold_selector"
+                    android:tag="@string/format_bar_tag_bold"/>
 
                 <ToggleButton
                     android:id="@+id/format_bar_button_italic"
                     style="@style/FormatBarButtonTablet"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
-                    android:background="@drawable/format_bar_button_italic_selector"/>
+                    android:background="@drawable/format_bar_button_italic_selector"
+                    android:tag="@string/format_bar_tag_italic"/>
 
                 <ToggleButton
                     android:id="@+id/format_bar_button_strikethrough"
                     style="@style/FormatBarButtonTablet"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
-                    android:background="@drawable/format_bar_button_strikethrough_selector"/>
+                    android:background="@drawable/format_bar_button_strikethrough_selector"
+                    android:tag="@string/format_bar_tag_strikethrough"/>
             </LinearLayout>
 
             <LinearLayout
@@ -99,21 +162,24 @@
                     style="@style/FormatBarButtonTablet"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
-                    android:background="@drawable/format_bar_button_ul_selector"/>
+                    android:background="@drawable/format_bar_button_ul_selector"
+                    android:tag="@string/format_bar_tag_unorderedList"/>
 
                 <ToggleButton
                     android:id="@+id/format_bar_button_ol"
                     style="@style/FormatBarButtonTablet"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
-                    android:background="@drawable/format_bar_button_ol_selector"/>
+                    android:background="@drawable/format_bar_button_ol_selector"
+                    android:tag="@string/format_bar_tag_orderedList"/>
 
                 <ToggleButton
                     android:id="@+id/format_bar_button_quote"
                     style="@style/FormatBarButtonTablet"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
-                    android:background="@drawable/format_bar_button_quote_selector"/>
+                    android:background="@drawable/format_bar_button_quote_selector"
+                    android:tag="@string/format_bar_tag_blockquote"/>
             </LinearLayout>
 
             <LinearLayout
