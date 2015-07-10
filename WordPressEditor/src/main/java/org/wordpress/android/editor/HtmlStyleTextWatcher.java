@@ -12,14 +12,14 @@ import org.wordpress.android.util.AppLog;
 import org.wordpress.android.util.AppLog.T;
 
 public class HtmlStyleTextWatcher implements TextWatcher {
-    private int mStart;
+    private int mOffset;
     private CharSequence mModifiedText;
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         if (s.length() > start + count - 1 && start + count - 1 >= 0) {
             if (after < count) {
-                mStart = start;
+                mOffset = start;
                 mModifiedText = s.subSequence(start + after, start + count);
             }
         }
@@ -29,7 +29,7 @@ public class HtmlStyleTextWatcher implements TextWatcher {
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         if (s.length() > start + count - 1) {
             if (count > before) {
-                mStart = start;
+                mOffset = start;
                 mModifiedText = s.subSequence(start + before, start + count);
             }
         }
@@ -68,22 +68,22 @@ public class HtmlStyleTextWatcher implements TextWatcher {
         // Apply span from the first added/deleted opening symbol until the closing symbol in the content matching the
         // last added/deleted opening symbol
         // e.g. pasting "<b><" before "/b>" - we want the span to be applied from the first "<" until the end of "/b>"
-        int firstOpeningTagLoc = mModifiedText.toString().indexOf(openingSymbol);
-        int lastOpeningTagLoc = mModifiedText.toString().lastIndexOf(openingSymbol);
+        int firstOpeningTagLoc = mOffset + mModifiedText.toString().indexOf(openingSymbol);
+        int lastOpeningTagLoc = mOffset + mModifiedText.toString().lastIndexOf(openingSymbol);
 
-        int closingTagLoc = content.toString().indexOf(closingSymbol, mStart + lastOpeningTagLoc);
+        int closingTagLoc = content.toString().indexOf(closingSymbol, lastOpeningTagLoc);
         if (closingTagLoc > 0) {
-            updateSpans(content, mStart + firstOpeningTagLoc, closingTagLoc + 1);
+            updateSpans(content, firstOpeningTagLoc, closingTagLoc + 1);
         }
     }
 
     private void restyleForChangedClosingSymbol(Editable content, String closingSymbol) {
         String openingSymbol = getMatchingSymbol(closingSymbol);
 
-        int firstClosingTagInModLoc = mModifiedText.toString().indexOf(closingSymbol);
-        int firstClosingTagAfterModLoc = content.toString().indexOf(closingSymbol, mStart + mModifiedText.length());
+        int firstClosingTagInModLoc = mOffset + mModifiedText.toString().indexOf(closingSymbol);
+        int firstClosingTagAfterModLoc = content.toString().indexOf(closingSymbol, mOffset + mModifiedText.length());
 
-        int openingTagLoc = content.toString().lastIndexOf(openingSymbol, mStart + firstClosingTagInModLoc - 1);
+        int openingTagLoc = content.toString().lastIndexOf(openingSymbol, firstClosingTagInModLoc - 1);
         if (openingTagLoc >= 0) {
             if (firstClosingTagAfterModLoc >= 0 && firstClosingTagAfterModLoc < content.length()) {
                 updateSpans(content, openingTagLoc, firstClosingTagAfterModLoc + 1);
@@ -94,10 +94,10 @@ public class HtmlStyleTextWatcher implements TextWatcher {
     }
 
     private boolean restyleNormalTextIfWithinSymbols(Editable content, String openingSymbol, String closingSymbol) {
-        int openingTagLoc = content.toString().lastIndexOf(openingSymbol, mStart);
+        int openingTagLoc = content.toString().lastIndexOf(openingSymbol, mOffset);
         if (openingTagLoc >= 0) {
             int closingTagLoc = content.toString().indexOf(closingSymbol, openingTagLoc);
-            if (closingTagLoc >= mStart) {
+            if (closingTagLoc >= mOffset) {
                 updateSpans(content, openingTagLoc, closingTagLoc + 1);
                 return true;
             }
