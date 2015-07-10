@@ -78,7 +78,11 @@ public class HtmlStyleTextWatcher implements TextWatcher {
         int closingTagLoc = mModifiedText.toString().indexOf(closingSymbol);
         int openingTagLoc = content.toString().lastIndexOf(openingSymbol, mStart + closingTagLoc);
         if (openingTagLoc > 0) {
-            updateSpans(content, openingTagLoc, mStart + closingTagLoc + 1);
+            if (mStart + closingTagLoc < content.length()) {
+                updateSpans(content, openingTagLoc, mStart + closingTagLoc + 1);
+            } else {
+                updateSpans(content, openingTagLoc, content.length());
+            }
         }
     }
 
