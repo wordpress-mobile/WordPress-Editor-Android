@@ -42,27 +42,34 @@ public class HtmlStyleTextWatcher implements TextWatcher {
             return;
         }
 
+        SpanRange spanRange;
+
         // If the modified text included a tag or entity symbol ("<", ">", "&" or ";"), find its match and restyle
         if (mModifiedText.toString().contains("<")) {
-            restyleForChangedOpeningSymbol(s, "<");
+            spanRange = restyleForChangedOpeningSymbol(s, "<");
         } else if (mModifiedText.toString().contains(">")) {
-            restyleForChangedClosingSymbol(s, ">");
+            spanRange = restyleForChangedClosingSymbol(s, ">");
         } else if (mModifiedText.toString().contains("&")) {
-            restyleForChangedOpeningSymbol(s, "&");
+            spanRange = restyleForChangedOpeningSymbol(s, "&");
         } else if (mModifiedText.toString().contains(";")) {
-            restyleForChangedClosingSymbol(s, ";");
+            spanRange = restyleForChangedClosingSymbol(s, ";");
         } else {
             // If the modified text didn't include any tag or entity symbols, restyle if the modified text is inside
             // a tag or entity
-            if (!restyleNormalTextIfWithinSymbols(s, "<", ">")) {
-                restyleNormalTextIfWithinSymbols(s, "&", ";");
+            spanRange = restyleNormalTextIfWithinSymbols(s, "<", ">");
+            if (spanRange == null) {
+                spanRange = restyleNormalTextIfWithinSymbols(s, "&", ";");
             }
+        }
+
+        if (spanRange != null) {
+            updateSpans(s, spanRange);
         }
 
         mModifiedText = null;
     }
 
-    private void restyleForChangedOpeningSymbol(Editable content, String openingSymbol) {
+    protected SpanRange restyleForChangedOpeningSymbol(Editable content, String openingSymbol) {
         String closingSymbol = getMatchingSymbol(openingSymbol);
 
         // Apply span from the first added/deleted opening symbol until the closing symbol in the content matching the
@@ -73,11 +80,12 @@ public class HtmlStyleTextWatcher implements TextWatcher {
 
         int closingTagLoc = content.toString().indexOf(closingSymbol, lastOpeningTagLoc);
         if (closingTagLoc > 0) {
-            updateSpans(content, firstOpeningTagLoc, closingTagLoc + 1);
+            return new SpanRange(firstOpeningTagLoc, closingTagLoc + 1);
         }
+        return null;
     }
 
-    private void restyleForChangedClosingSymbol(Editable content, String closingSymbol) {
+    protected SpanRange restyleForChangedClosingSymbol(Editable content, String closingSymbol) {
         String openingSymbol = getMatchingSymbol(closingSymbol);
 
         int firstClosingTagInModLoc = mOffset + mModifiedText.toString().indexOf(closingSymbol);
@@ -86,26 +94,29 @@ public class HtmlStyleTextWatcher implements TextWatcher {
         int openingTagLoc = content.toString().lastIndexOf(openingSymbol, firstClosingTagInModLoc - 1);
         if (openingTagLoc >= 0) {
             if (firstClosingTagAfterModLoc >= 0 && firstClosingTagAfterModLoc < content.length()) {
-                updateSpans(content, openingTagLoc, firstClosingTagAfterModLoc + 1);
+                return new SpanRange(openingTagLoc, firstClosingTagAfterModLoc + 1);
             } else {
-                updateSpans(content, openingTagLoc, content.length());
+                return new SpanRange(openingTagLoc, content.length());
             }
         }
+        return null;
     }
 
-    private boolean restyleNormalTextIfWithinSymbols(Editable content, String openingSymbol, String closingSymbol) {
+    protected SpanRange restyleNormalTextIfWithinSymbols(Editable content, String openingSymbol, String closingSymbol) {
         int openingTagLoc = content.toString().lastIndexOf(openingSymbol, mOffset);
         if (openingTagLoc >= 0) {
             int closingTagLoc = content.toString().indexOf(closingSymbol, openingTagLoc);
             if (closingTagLoc >= mOffset) {
-                updateSpans(content, openingTagLoc, closingTagLoc + 1);
-                return true;
+                return new SpanRange(openingTagLoc, closingTagLoc + 1);
             }
         }
-        return false;
+        return null;
     }
 
-    private void updateSpans(Spannable s, int spanStart, int spanEnd) {
+    protected void updateSpans(Spannable s, SpanRange spanRange) {
+        int spanStart = spanRange.getOpeningTagLoc();
+        int spanEnd = spanRange.getClosingTagLoc();
+
         clearSpans(s, spanStart, spanEnd);
         HtmlStyleUtils.styleHtmlForDisplay(s, spanStart, spanEnd);
     }
@@ -132,6 +143,24 @@ public class HtmlStyleTextWatcher implements TextWatcher {
                 return "&";
             default:
                 return "";
+        }
+    }
+
+    protected class SpanRange {
+        private int mOpeningTagLoc;
+        private int mClosingTagLoc;
+
+        public SpanRange(int openingTagLoc, int closingTagLoc) {
+            mOpeningTagLoc = openingTagLoc;
+            mClosingTagLoc = closingTagLoc;
+        }
+
+        public int getOpeningTagLoc() {
+            return mOpeningTagLoc;
+        }
+
+        public int getClosingTagLoc() {
+            return mClosingTagLoc;
         }
     }
 }
