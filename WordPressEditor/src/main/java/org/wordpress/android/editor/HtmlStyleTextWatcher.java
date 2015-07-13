@@ -17,8 +17,10 @@ public class HtmlStyleTextWatcher implements TextWatcher {
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        if (s.length() > start + count - 1 && start + count - 1 >= 0) {
+        int lastCharacterLocation = start + count - 1;
+        if (s.length() > lastCharacterLocation && lastCharacterLocation >= 0) {
             if (after < count) {
+                // Text was deleted
                 mOffset = start;
                 mModifiedText = s.subSequence(start + after, start + count);
             }
@@ -27,8 +29,10 @@ public class HtmlStyleTextWatcher implements TextWatcher {
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-        if (s.length() > start + count - 1) {
+        int lastCharacterLocation = start + count - 1;
+        if (s.length() > lastCharacterLocation) {
             if (count > before) {
+                // Text was added
                 mOffset = start;
                 mModifiedText = s.subSequence(start + before, start + count);
             }
@@ -93,7 +97,7 @@ public class HtmlStyleTextWatcher implements TextWatcher {
 
         int openingTagLoc = content.toString().lastIndexOf(openingSymbol, firstClosingTagInModLoc - 1);
         if (openingTagLoc >= 0) {
-            if (firstClosingTagAfterModLoc >= 0 && firstClosingTagAfterModLoc < content.length()) {
+            if (firstClosingTagAfterModLoc >= 0) {
                 return new SpanRange(openingTagLoc, firstClosingTagAfterModLoc + 1);
             } else {
                 return new SpanRange(openingTagLoc, content.length());
@@ -146,9 +150,9 @@ public class HtmlStyleTextWatcher implements TextWatcher {
         }
     }
 
-    protected class SpanRange {
-        private int mOpeningTagLoc;
-        private int mClosingTagLoc;
+    protected static class SpanRange {
+        private final int mOpeningTagLoc;
+        private final int mClosingTagLoc;
 
         public SpanRange(int openingTagLoc, int closingTagLoc) {
             mOpeningTagLoc = openingTagLoc;
