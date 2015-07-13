@@ -29,7 +29,7 @@ public class HtmlStyleTextWatcherTest {
     }
 
     @Test
-    public void testAddSingleTag() throws InterruptedException {
+    public void testAddTagFromFormatBar() throws InterruptedException {
         // -- Test adding a tag to an empty document
         mCountDownLatch = new CountDownLatch(1);
         mContent = new SpannableStringBuilder("<b>");
@@ -58,7 +58,7 @@ public class HtmlStyleTextWatcherTest {
         mCountDownLatch = new CountDownLatch(1);
         mContent = new SpannableStringBuilder("some text <i>italics</i> <b>");
 
-        mWatcher.onTextChanged(mContent, 25, 0, 3);
+        mWatcher.onTextChanged(mContent, 25, 0, 3); // Added "<b>"
         mWatcher.afterTextChanged(mContent);
 
         mCountDownLatch.await();
@@ -94,7 +94,7 @@ public class HtmlStyleTextWatcherTest {
         mCountDownLatch = new CountDownLatch(1);
         mContent = new SpannableStringBuilder("<b>some <i>text</b>");
 
-        mWatcher.onTextChanged(mContent, 8, 0, 3);
+        mWatcher.onTextChanged(mContent, 8, 0, 3); // Added <i>
         mWatcher.afterTextChanged(mContent);
 
         mCountDownLatch.await();
@@ -106,12 +106,41 @@ public class HtmlStyleTextWatcherTest {
         mCountDownLatch = new CountDownLatch(1);
         mContent = new SpannableStringBuilder("<b>some <i>text</i></b>");
 
-        mWatcher.onTextChanged(mContent, 15, 0, 4);
+        mWatcher.onTextChanged(mContent, 15, 0, 4); // Added "</i>"
         mWatcher.afterTextChanged(mContent);
 
         mCountDownLatch.await();
         assertEquals(15, mSpanRange.getOpeningTagLoc());
         assertEquals(19, mSpanRange.getClosingTagLoc());
+    }
+
+    @Test
+    public void testAddingListTags() throws InterruptedException {
+        // -- Test adding a list tag to an empty document
+        mCountDownLatch = new CountDownLatch(1);
+        mContent = new SpannableStringBuilder("<ul>\n\t<li>");
+
+        mWatcher.onTextChanged(mContent, 0, 0, 10);
+        mWatcher.afterTextChanged(mContent);
+
+        mCountDownLatch.await();
+        assertEquals(0, mSpanRange.getOpeningTagLoc());
+        assertEquals(10, mSpanRange.getClosingTagLoc());
+
+
+        // -- Test adding a closing list tag
+        mCountDownLatch = new CountDownLatch(1);
+        mContent = new SpannableStringBuilder("<ul>\n" + //5
+                "\t<li>list item</li>\n" + //20
+                "\t<li>another list item</li>\n" + //22
+                "</ul>");
+
+        mWatcher.onTextChanged(mContent, 47, 0, 11); // Added "</li>\n</ul>"
+        mWatcher.afterTextChanged(mContent);
+
+        mCountDownLatch.await();
+        assertEquals(47, mSpanRange.getOpeningTagLoc());
+        assertEquals(58, mSpanRange.getClosingTagLoc());
     }
 
     @Test
@@ -129,27 +158,151 @@ public class HtmlStyleTextWatcherTest {
     }
 
     @Test
-    public void testInsertOpeningTag() throws InterruptedException {
-        // -- Test placing an opening tag at the start of the document
-        mCountDownLatch = new CountDownLatch(1);
-        mContent = new SpannableStringBuilder("<");
+    public void testTypingInOpeningTag() throws InterruptedException {
+        // Test with several different cases of pre-existing text
+        String[] previousTextCases = new String[]{"", "plain text", "<i>",
+                "<blockquote>some existing content</blockquote> "};
+        for (String initialText : previousTextCases) {
+            int offset = initialText.length();
 
-        mWatcher.onTextChanged(mContent, 0, 0, 1);
-        mWatcher.afterTextChanged(mContent);
+            // -- Test typing in an opening tag symbol
+            mCountDownLatch = new CountDownLatch(1);
+            mContent = new SpannableStringBuilder(initialText + "<");
 
-        boolean updateSpansWasCalled = mCountDownLatch.await(500, TimeUnit.MILLISECONDS);
-        assertEquals(false, updateSpansWasCalled);
+            mWatcher.onTextChanged(mContent, offset, 0, 1);
+            mWatcher.afterTextChanged(mContent);
+
+            // No formatting should be applied/removed
+            boolean updateSpansWasCalled = mCountDownLatch.await(500, TimeUnit.MILLISECONDS);
+            assertEquals(false, updateSpansWasCalled);
 
 
-        // -- Test adding an opening tag after another tag
-        mCountDownLatch = new CountDownLatch(1);
-        mContent = new SpannableStringBuilder("<b>text</b><");
+            // -- Test typing in the tag name
+            mCountDownLatch = new CountDownLatch(1);
+            mContent = new SpannableStringBuilder(initialText + "<b");
 
-        mWatcher.onTextChanged(mContent, 11, 0, 1);
-        mWatcher.afterTextChanged(mContent);
+            mWatcher.onTextChanged(mContent, offset + 1, 0, 1);
+            mWatcher.afterTextChanged(mContent);
 
-        updateSpansWasCalled = mCountDownLatch.await(500, TimeUnit.MILLISECONDS);
-        assertEquals(false, updateSpansWasCalled);
+            // No formatting should be applied/removed
+            updateSpansWasCalled = mCountDownLatch.await(500, TimeUnit.MILLISECONDS);
+            assertEquals(false, updateSpansWasCalled);
+
+
+            // -- Test typing in a closing tag symbol
+            mCountDownLatch = new CountDownLatch(1);
+            mContent = new SpannableStringBuilder(initialText + "<b>");
+
+            mWatcher.onTextChanged(mContent, offset + 2, 0, 1);
+            mWatcher.afterTextChanged(mContent);
+
+            mCountDownLatch.await();
+            assertEquals(offset, mSpanRange.getOpeningTagLoc());
+            assertEquals(offset + 3, mSpanRange.getClosingTagLoc());
+        }
+    }
+
+    @Test
+    public void testTypingInClosingTag() throws InterruptedException {
+        // Test with several different cases of pre-existing text
+        String[] previousTextCases = new String[]{"<b>stuff", "plain text <b>stuff", "<i><b>stuff",
+                "<blockquote>some existing content</blockquote> <b>stuff"};
+
+        for (String initialText : previousTextCases) {
+            int offset = initialText.length();
+
+            // -- Test typing in an opening tag symbol
+            mCountDownLatch = new CountDownLatch(1);
+            mContent = new SpannableStringBuilder(initialText + "<");
+
+            mWatcher.onTextChanged(mContent, offset, 0, 1);
+            mWatcher.afterTextChanged(mContent);
+
+            // No formatting should be applied/removed
+            boolean updateSpansWasCalled = mCountDownLatch.await(500, TimeUnit.MILLISECONDS);
+            assertEquals(false, updateSpansWasCalled);
+
+
+            // -- Test typing in the closing tag slash
+            mCountDownLatch = new CountDownLatch(1);
+            mContent = new SpannableStringBuilder(initialText + "</");
+
+            mWatcher.onTextChanged(mContent, offset + 1, 0, 1);
+            mWatcher.afterTextChanged(mContent);
+
+            // No formatting should be applied/removed
+            updateSpansWasCalled = mCountDownLatch.await(500, TimeUnit.MILLISECONDS);
+            assertEquals(false, updateSpansWasCalled);
+
+            // -- Test typing in the tag name
+            mCountDownLatch = new CountDownLatch(1);
+            mContent = new SpannableStringBuilder(initialText + "</b");
+
+            mWatcher.onTextChanged(mContent, offset + 2, 0, 1);
+            mWatcher.afterTextChanged(mContent);
+
+            // No formatting should be applied/removed
+            updateSpansWasCalled = mCountDownLatch.await(500, TimeUnit.MILLISECONDS);
+            assertEquals(false, updateSpansWasCalled);
+
+
+            // -- Test typing in a closing tag symbol
+            mCountDownLatch = new CountDownLatch(1);
+            mContent = new SpannableStringBuilder(initialText + "</b>");
+
+            mWatcher.onTextChanged(mContent, offset + 3, 0, 1);
+            mWatcher.afterTextChanged(mContent);
+
+            mCountDownLatch.await();
+            assertEquals(offset, mSpanRange.getOpeningTagLoc());
+            assertEquals(offset + 4, mSpanRange.getClosingTagLoc());
+
+        }
+    }
+
+    @Test
+    public void testTypingInEntity() throws InterruptedException {
+        // Test with several different cases of pre-existing text
+        String[] previousTextCases = new String[]{"", "plain text", "&rho;",
+                "<blockquote>some existing content &dagger;</blockquote> "};
+        for (String initialText : previousTextCases) {
+            int offset = initialText.length();
+
+            // -- Test typing in the entity's opening '&'
+            mCountDownLatch = new CountDownLatch(1);
+            mContent = new SpannableStringBuilder(initialText + "&");
+
+            mWatcher.onTextChanged(mContent, offset, 0, 1);
+            mWatcher.afterTextChanged(mContent);
+
+            // No formatting should be applied/removed
+            boolean updateSpansWasCalled = mCountDownLatch.await(500, TimeUnit.MILLISECONDS);
+            assertEquals(false, updateSpansWasCalled);
+
+
+            // -- Test typing in the entity's main text
+            mCountDownLatch = new CountDownLatch(1);
+            mContent = new SpannableStringBuilder(initialText + "&amp");
+
+            mWatcher.onTextChanged(mContent, offset + 3, 0, 1);
+            mWatcher.afterTextChanged(mContent);
+
+            // No formatting should be applied/removed
+            updateSpansWasCalled = mCountDownLatch.await(500, TimeUnit.MILLISECONDS);
+            assertEquals(false, updateSpansWasCalled);
+
+
+            // -- Test typing in the entity's closing ';'
+            mCountDownLatch = new CountDownLatch(1);
+            mContent = new SpannableStringBuilder(initialText + "&amp;");
+
+            mWatcher.onTextChanged(mContent, offset + 4, 0, 1);
+            mWatcher.afterTextChanged(mContent);
+
+            mCountDownLatch.await();
+            assertEquals(offset, mSpanRange.getOpeningTagLoc());
+            assertEquals(offset + 5, mSpanRange.getClosingTagLoc());
+        }
     }
 
     private class HtmlStyleTextWatcherForTests extends HtmlStyleTextWatcher {
