@@ -121,18 +121,8 @@ public class HtmlStyleTextWatcher implements TextWatcher {
         int spanStart = spanRange.getOpeningTagLoc();
         int spanEnd = spanRange.getClosingTagLoc();
 
-        clearSpans(s, spanStart, spanEnd);
+        HtmlStyleUtils.clearSpans(s, spanStart, spanEnd);
         HtmlStyleUtils.styleHtmlForDisplay(s, spanStart, spanEnd);
-    }
-
-    private void clearSpans(Spannable s, int spanStart, int spanEnd) {
-        CharacterStyle[] spans = s.getSpans(spanStart, spanEnd, CharacterStyle.class);
-
-        for (CharacterStyle span : spans) {
-            if (span instanceof ForegroundColorSpan || span instanceof StyleSpan || span instanceof RelativeSizeSpan) {
-                s.removeSpan(span);
-            }
-        }
     }
 
     private String getMatchingSymbol(String symbol) {

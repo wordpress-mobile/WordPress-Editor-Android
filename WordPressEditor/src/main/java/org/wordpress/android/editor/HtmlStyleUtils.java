@@ -3,6 +3,7 @@ package org.wordpress.android.editor;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.Spannable;
+import android.text.style.CharacterStyle;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
@@ -93,6 +94,16 @@ public class HtmlStyleUtils {
                     content.setSpan(new StyleSpan(Typeface.BOLD), matchStart, matchEnd, SPANNABLE_FLAGS);
                     content.setSpan(new RelativeSizeSpan(0.75f), matchStart, matchEnd, SPANNABLE_FLAGS);
                     break;
+            }
+        }
+    }
+
+    public static void clearSpans(Spannable s, int spanStart, int spanEnd) {
+        CharacterStyle[] spans = s.getSpans(spanStart, spanEnd, CharacterStyle.class);
+
+        for (CharacterStyle span : spans) {
+            if (span instanceof ForegroundColorSpan || span instanceof StyleSpan || span instanceof RelativeSizeSpan) {
+                s.removeSpan(span);
             }
         }
     }
