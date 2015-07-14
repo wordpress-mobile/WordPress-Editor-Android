@@ -3,10 +3,6 @@ package org.wordpress.android.editor;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.TextWatcher;
-import android.text.style.CharacterStyle;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.RelativeSizeSpan;
-import android.text.style.StyleSpan;
 
 import org.wordpress.android.util.AppLog;
 import org.wordpress.android.util.AppLog.T;
