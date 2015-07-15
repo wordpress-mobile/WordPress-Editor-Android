@@ -8,15 +8,27 @@ import org.wordpress.android.util.AppLog;
 import org.wordpress.android.util.AppLog.T;
 
 public class HtmlStyleTextWatcher implements TextWatcher {
+    private enum Operation {
+        INSERT, DELETE, REPLACE, NONE
+    }
+
     private int mOffset;
     private CharSequence mModifiedText;
+    private Operation mLastOperation;
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         int lastCharacterLocation = start + count - 1;
         if (s.length() > lastCharacterLocation && lastCharacterLocation >= 0) {
             if (after < count) {
-                // Text was deleted
+                if (after > 0) {
+                    // Text was deleted and replaced by some other text
+                    mLastOperation = Operation.REPLACE;
+                } else {
+                    // Text was deleted only
+                    mLastOperation = Operation.DELETE;
+                }
+
                 mOffset = start;
                 mModifiedText = s.subSequence(start + after, start + count);
             }
@@ -27,10 +39,17 @@ public class HtmlStyleTextWatcher implements TextWatcher {
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         int lastCharacterLocation = start + count - 1;
         if (s.length() > lastCharacterLocation) {
-            if (count > before) {
-                // Text was added
-                mOffset = start;
-                mModifiedText = s.subSequence(start + before, start + count);
+            if (count > 0) {
+                if (before > 0) {
+                    // Text was added, replacing some existing text
+                    mLastOperation = Operation.REPLACE;
+                    mModifiedText = s.subSequence(start, start + count);
+                } else {
+                    // Text was added only
+                    mLastOperation = Operation.INSERT;
+                    mOffset = start;
+                    mModifiedText = s.subSequence(start + before, start + count);
+                }
             }
         }
     }
@@ -38,7 +57,6 @@ public class HtmlStyleTextWatcher implements TextWatcher {
     @Override
     public void afterTextChanged(Editable s) {
         if (mModifiedText == null) {
-            AppLog.d(T.EDITOR, "mModifiedText was null");
             return;
         }
 
@@ -67,18 +85,30 @@ public class HtmlStyleTextWatcher implements TextWatcher {
         }
 
         mModifiedText = null;
+        mLastOperation = Operation.NONE;
     }
 
     protected SpanRange restyleForChangedOpeningSymbol(Editable content, String openingSymbol) {
+        // For simplicity, re-parse the document if text was replaced
+        if (mLastOperation == Operation.REPLACE) {
+            return new SpanRange(0, content.length());
+        }
+
         String closingSymbol = getMatchingSymbol(openingSymbol);
 
-        // Apply span from the first added/deleted opening symbol until the closing symbol in the content matching the
-        // last added/deleted opening symbol
-        // e.g. pasting "<b><" before "/b>" - we want the span to be applied from the first "<" until the end of "/b>"
         int firstOpeningTagLoc = mOffset + mModifiedText.toString().indexOf(openingSymbol);
-        int lastOpeningTagLoc = mOffset + mModifiedText.toString().lastIndexOf(openingSymbol);
+        int closingTagLoc;
+        if (mLastOperation == Operation.INSERT) {
+            // Apply span from the first added opening symbol until the closing symbol in the content matching the
+            // last added opening symbol
+            // e.g. pasting "<b><" before "/b>" - we want the span to be applied to all of "<b></b>"
+            int lastOpeningTagLoc = mOffset + mModifiedText.toString().lastIndexOf(openingSymbol);
+            closingTagLoc = content.toString().indexOf(closingSymbol, lastOpeningTagLoc);
+        } else {
+            // Apply span until the first closing tag that appears after the deleted text
+            closingTagLoc = content.toString().indexOf(closingSymbol, mOffset);
+        }
 
-        int closingTagLoc = content.toString().indexOf(closingSymbol, lastOpeningTagLoc);
         if (closingTagLoc > 0) {
             return new SpanRange(firstOpeningTagLoc, closingTagLoc + 1);
         }
@@ -86,6 +116,11 @@ public class HtmlStyleTextWatcher implements TextWatcher {
     }
 
     protected SpanRange restyleForChangedClosingSymbol(Editable content, String closingSymbol) {
+        // For simplicity, re-parse the document if text was replaced
+        if (mLastOperation == Operation.REPLACE) {
+            return new SpanRange(0, content.length());
+        }
+
         String openingSymbol = getMatchingSymbol(closingSymbol);
 
         int firstClosingTagInModLoc = mOffset + mModifiedText.toString().indexOf(closingSymbol);
@@ -116,6 +151,11 @@ public class HtmlStyleTextWatcher implements TextWatcher {
     protected void updateSpans(Spannable s, SpanRange spanRange) {
         int spanStart = spanRange.getOpeningTagLoc();
         int spanEnd = spanRange.getClosingTagLoc();
+
+        if (spanStart > s.length() || spanEnd > s.length()) {
+            AppLog.d(T.EDITOR, "The specified span range was beyond the Spannable's length");
+            return;
+        }
 
         HtmlStyleUtils.clearSpans(s, spanStart, spanEnd);
         HtmlStyleUtils.styleHtmlForDisplay(s, spanStart, spanEnd);
