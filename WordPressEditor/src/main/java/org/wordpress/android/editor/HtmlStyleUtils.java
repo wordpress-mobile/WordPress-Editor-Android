@@ -62,20 +62,37 @@ public class HtmlStyleUtils {
 
     public static final int SPANNABLE_FLAGS = Spannable.SPAN_EXCLUSIVE_EXCLUSIVE;
 
+    /**
+     * Apply styling rules to {@code content}.
+     */
     public static void styleHtmlForDisplay(@NonNull Spannable content) {
         styleHtmlForDisplay(content, 0, content.length());
     }
 
+    /**
+     * Apply styling rules to {@code content} inside the range from {@code start} to {@code end}.
+     *
+     * @param content the Spannable to apply style rules to
+     * @param start the index in {@code content} to start styling from
+     * @param end the index in {@code content} to style until
+     */
     public static void styleHtmlForDisplay(@NonNull Spannable content, int start, int end) {
-        applyRegex(content, start, end, REGEX_HTML_TAGS);
-        applyRegex(content, start, end, REGEX_HTML_ATTRIBUTES);
-        applyRegex(content, start, end, REGEX_HTML_COMMENTS);
-        applyRegex(content, start, end, REGEX_HTML_ENTITIES);
+        applySpansByRegex(content, start, end, REGEX_HTML_TAGS);
+        applySpansByRegex(content, start, end, REGEX_HTML_ATTRIBUTES);
+        applySpansByRegex(content, start, end, REGEX_HTML_COMMENTS);
+        applySpansByRegex(content, start, end, REGEX_HTML_ENTITIES);
     }
 
-    private static void applyRegex(Spannable content, int start, int end, String regex) {
+    /**
+     * Applies styles to {@code content} from {@code start} to {@code end}, based on rule {@code regex}.
+     * @param content the Spannable to apply style rules to
+     * @param start the index in {@code content} to start styling from
+     * @param end the index in {@code content} to style until
+     * @param regex the pattern to match for styling
+     */
+    private static void applySpansByRegex(Spannable content, int start, int end, String regex) {
         if (content == null || start < 0 || end < 0 || start > content.length() || end > content.length()) {
-            AppLog.d(AppLog.T.EDITOR, "applyRegex() received invalid input");
+            AppLog.d(AppLog.T.EDITOR, "applySpansByRegex() received invalid input");
             return;
         }
 
@@ -106,12 +123,19 @@ public class HtmlStyleUtils {
         }
     }
 
-    public static void clearSpans(Spannable s, int spanStart, int spanEnd) {
-        CharacterStyle[] spans = s.getSpans(spanStart, spanEnd, CharacterStyle.class);
+    /**
+     * Clears all relevant spans in {@code content} from {@code start} to {@code end}. Relevant spans are the subclasses
+     * of {@link CharacterStyle} applied by {@link HtmlStyleUtils#applySpansByRegex(Spannable, int, int, String)}.
+     * @param content the Spannable to clear styles from
+     * @param spanStart the index in {@code content} to start clearing styles from
+     * @param spanEnd the index in {@code content} to clear styles until
+     */
+    public static void clearSpans(Spannable content, int spanStart, int spanEnd) {
+        CharacterStyle[] spans = content.getSpans(spanStart, spanEnd, CharacterStyle.class);
 
         for (CharacterStyle span : spans) {
             if (span instanceof ForegroundColorSpan || span instanceof StyleSpan || span instanceof RelativeSizeSpan) {
-                s.removeSpan(span);
+                content.removeSpan(span);
             }
         }
     }

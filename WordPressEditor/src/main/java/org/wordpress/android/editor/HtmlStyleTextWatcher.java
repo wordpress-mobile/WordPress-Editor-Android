@@ -72,19 +72,19 @@ public class HtmlStyleTextWatcher implements TextWatcher {
 
         // If the modified text included a tag or entity symbol ("<", ">", "&" or ";"), find its match and restyle
         if (mModifiedText.toString().contains("<")) {
-            spanRange = restyleForChangedOpeningSymbol(s, "<");
+            spanRange = getRespanRangeForChangedOpeningSymbol(s, "<");
         } else if (mModifiedText.toString().contains(">")) {
-            spanRange = restyleForChangedClosingSymbol(s, ">");
+            spanRange = getRespanRangeForChangedClosingSymbol(s, ">");
         } else if (mModifiedText.toString().contains("&")) {
-            spanRange = restyleForChangedOpeningSymbol(s, "&");
+            spanRange = getRespanRangeForChangedOpeningSymbol(s, "&");
         } else if (mModifiedText.toString().contains(";")) {
-            spanRange = restyleForChangedClosingSymbol(s, ";");
+            spanRange = getRespanRangeForChangedClosingSymbol(s, ";");
         } else {
             // If the modified text didn't include any tag or entity symbols, restyle if the modified text is inside
             // a tag or entity
-            spanRange = restyleNormalTextIfWithinSymbols(s, "<", ">");
+            spanRange = getRespanRangeForNormalText(s, "<");
             if (spanRange == null) {
-                spanRange = restyleNormalTextIfWithinSymbols(s, "&", ";");
+                spanRange = getRespanRangeForNormalText(s, "&");
             }
         }
 
@@ -96,7 +96,14 @@ public class HtmlStyleTextWatcher implements TextWatcher {
         mLastOperation = Operation.NONE;
     }
 
-    protected SpanRange restyleForChangedOpeningSymbol(Editable content, String openingSymbol) {
+    /**
+     * For changes made which contain at least one opening symbol (e.g. '<' or '&'), whether added or deleted, returns
+     * the range of text which should have its style reapplied.
+     * @param content the content after modification
+     * @param openingSymbol the opening symbol recognized (e.g. '<' or '&')
+     * @return the range of characters to re-apply spans to
+     */
+    protected SpanRange getRespanRangeForChangedOpeningSymbol(Editable content, String openingSymbol) {
         // For simplicity, re-parse the document if text was replaced
         if (mLastOperation == Operation.REPLACE) {
             return new SpanRange(0, content.length());
@@ -123,7 +130,14 @@ public class HtmlStyleTextWatcher implements TextWatcher {
         return null;
     }
 
-    protected SpanRange restyleForChangedClosingSymbol(Editable content, String closingSymbol) {
+    /**
+     * For changes made which contain at least one closing symbol (e.g. '>' or ';') and no opening symbols, whether
+     * added or deleted, returns the range of text which should have its style reapplied.
+     * @param content the content after modification
+     * @param closingSymbol the closing symbol recognized (e.g. '>' or ';')
+     * @return the range of characters to re-apply spans to
+     */
+    protected SpanRange getRespanRangeForChangedClosingSymbol(Editable content, String closingSymbol) {
         // For simplicity, re-parse the document if text was replaced
         if (mLastOperation == Operation.REPLACE) {
             return new SpanRange(0, content.length());
@@ -145,7 +159,16 @@ public class HtmlStyleTextWatcher implements TextWatcher {
         return null;
     }
 
-    protected SpanRange restyleNormalTextIfWithinSymbols(Editable content, String openingSymbol, String closingSymbol) {
+    /**
+     * For changes made which contain no opening or closing symbols, checks whether the changed text is inside a tag,
+     * and if so returns the range of text which should have its style reapplied.
+     * @param content the content after modification
+     * @param openingSymbol the opening symbol of the tag to check for (e.g. '<' or '&')
+     * @return the range of characters to re-apply spans to
+     */
+    protected SpanRange getRespanRangeForNormalText(Editable content, String openingSymbol) {
+        String closingSymbol = getMatchingSymbol(openingSymbol);
+
         int openingTagLoc = content.toString().lastIndexOf(openingSymbol, mOffset);
         if (openingTagLoc >= 0) {
             int closingTagLoc = content.toString().indexOf(closingSymbol, openingTagLoc);
@@ -156,19 +179,28 @@ public class HtmlStyleTextWatcher implements TextWatcher {
         return null;
     }
 
-    protected void updateSpans(Spannable s, SpanRange spanRange) {
+    /**
+     * Clears and re-applies spans to {@code content} within range {@code spanRange} according to rules in
+     * {@link HtmlStyleUtils}.
+     * @param content the content to re-style
+     * @param spanRange the range within {@code content} to be re-styled
+     */
+    protected void updateSpans(Spannable content, SpanRange spanRange) {
         int spanStart = spanRange.getOpeningTagLoc();
         int spanEnd = spanRange.getClosingTagLoc();
 
-        if (spanStart > s.length() || spanEnd > s.length()) {
+        if (spanStart > content.length() || spanEnd > content.length()) {
             AppLog.d(T.EDITOR, "The specified span range was beyond the Spannable's length");
             return;
         }
 
-        HtmlStyleUtils.clearSpans(s, spanStart, spanEnd);
-        HtmlStyleUtils.styleHtmlForDisplay(s, spanStart, spanEnd);
+        HtmlStyleUtils.clearSpans(content, spanStart, spanEnd);
+        HtmlStyleUtils.styleHtmlForDisplay(content, spanStart, spanEnd);
     }
 
+    /**
+     * Returns the closing/opening symbol corresponding to the given opening/closing symbol.
+     */
     private String getMatchingSymbol(String symbol) {
         switch(symbol) {
             case "<":
@@ -184,6 +216,9 @@ public class HtmlStyleTextWatcher implements TextWatcher {
         }
     }
 
+    /**
+     * Stores a pair of integers describing a range of values.
+     */
     protected static class SpanRange {
         private final int mOpeningTagLoc;
         private final int mClosingTagLoc;
