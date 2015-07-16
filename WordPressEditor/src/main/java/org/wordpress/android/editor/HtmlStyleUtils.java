@@ -2,11 +2,14 @@ package org.wordpress.android.editor;
 
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.support.annotation.NonNull;
 import android.text.Spannable;
 import android.text.style.CharacterStyle;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
+
+import org.wordpress.android.util.AppLog;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -59,11 +62,11 @@ public class HtmlStyleUtils {
 
     public static final int SPANNABLE_FLAGS = Spannable.SPAN_EXCLUSIVE_EXCLUSIVE;
 
-    public static void styleHtmlForDisplay(Spannable content) {
+    public static void styleHtmlForDisplay(@NonNull Spannable content) {
         styleHtmlForDisplay(content, 0, content.length());
     }
 
-    public static void styleHtmlForDisplay(Spannable content, int start, int end) {
+    public static void styleHtmlForDisplay(@NonNull Spannable content, int start, int end) {
         applyRegex(content, start, end, REGEX_HTML_TAGS);
         applyRegex(content, start, end, REGEX_HTML_ATTRIBUTES);
         applyRegex(content, start, end, REGEX_HTML_COMMENTS);
@@ -71,6 +74,11 @@ public class HtmlStyleUtils {
     }
 
     private static void applyRegex(Spannable content, int start, int end, String regex) {
+        if (content == null || start < 0 || end < 0 || start > content.length() || end > content.length()) {
+            AppLog.d(AppLog.T.EDITOR, "applyRegex() received invalid input");
+            return;
+        }
+
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(content.subSequence(start, end));
 
