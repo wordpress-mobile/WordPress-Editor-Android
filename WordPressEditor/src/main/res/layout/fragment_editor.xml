@@ -65,7 +65,7 @@
                 android:textSize="16sp"
                 android:maxLength="10000000"
                 android:textColorHint="@color/placeholder_text"
-                android:inputType="textMultiLine|textCapSentences|textAutoCorrect"
+                android:inputType="textMultiLine|textCapSentences|textNoSuggestions"
                 android:lineSpacingExtra="4dp"
                 android:imeOptions="flagNoExtractUi"
                 android:typeface="monospace"/>

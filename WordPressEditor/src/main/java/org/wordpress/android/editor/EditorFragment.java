@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.text.SpannableString;
 import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -120,6 +121,8 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         mSourceViewTitle.setOnImeBackListener(this);
         mSourceViewContent.setOnImeBackListener(this);
 
+        mSourceViewContent.addTextChangedListener(new HtmlStyleTextWatcher());
+
         mSourceViewTitle.setHint(mTitlePlaceholder);
 
         // -- Format bar configuration
@@ -217,7 +220,10 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 mSourceView.setVisibility(View.VISIBLE);
 
                 mSourceViewTitle.setText(getTitle());
-                mSourceViewContent.setText(getContent());
+
+                SpannableString spannableContent = new SpannableString(getContent());
+                HtmlStyleUtils.styleHtmlForDisplay(spannableContent);
+                mSourceViewContent.setText(spannableContent);
 
                 mSourceViewContent.requestFocus();
                 mSourceViewContent.setSelection(0);
