@@ -39,7 +39,7 @@
                 android:layout_marginBottom="@dimen/sourceview_title_bottom_margin"
                 android:background="@null"
                 android:textSize="24sp"
-                android:hint="@string/post_title"
+                android:textColorHint="@color/placeholder_text"
                 android:inputType="textCapSentences|textAutoCorrect"
                 android:imeOptions="flagNoExtractUi"
                 editor:fontFile="Merriweather-Bold.ttf"/>
@@ -64,7 +64,7 @@
                 android:background="@null"
                 android:textSize="16sp"
                 android:maxLength="10000000"
-                android:hint="@string/post_content"
+                android:textColorHint="@color/placeholder_text"
                 android:inputType="textMultiLine|textCapSentences|textNoSuggestions"
                 android:lineSpacingExtra="4dp"
                 android:imeOptions="flagNoExtractUi"
