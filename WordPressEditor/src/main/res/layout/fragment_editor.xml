@@ -78,7 +78,7 @@
         android:layout_height="@dimen/format_bar_height"
         android:layout_gravity="bottom"
         android:layout_alignParentBottom="true"
-        android:background="@android:color/white"
+        android:background="@color/format_bar_background"
         android:orientation="vertical">
 
         <View
