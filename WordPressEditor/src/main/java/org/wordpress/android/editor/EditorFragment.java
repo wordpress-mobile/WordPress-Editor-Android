@@ -469,7 +469,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     }
 
     private void updateVisualEditorFields() {
-        mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_title').setHTML('" +
+        mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_title').setPlainText('" +
                 Utils.escapeHtml(mTitle) + "');");
         mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_content').setHTML('" +
                 Utils.escapeHtml(mContentHtml) + "');");

@@ -2054,7 +2054,7 @@ ZSSField.prototype.emptyFieldIfNoContents = function() {
     var nbsp = '\xa0';
     var text = this.wrappedObject.text().replace(nbsp, '');
 
-    if (text.length == 0) {
+    if (text.length == 0 || text == '\u000A') {
 
         var hasChildImages = (this.wrappedObject.find('img').length > 0);
         var hasUnorderedList = (this.wrappedObject.find('ul').length > 0);
