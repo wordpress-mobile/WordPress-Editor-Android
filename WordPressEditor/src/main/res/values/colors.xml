@@ -10,7 +10,6 @@
     <color name="format_bar_button_normal_color">@color/wp_gray</color>
     <color name="format_bar_button_highlighted_color">@color/wp_blue</color>
 
-    <color name="placeholder_text">@color/wp_gray</color>
-
     <color name="sourceview_separator">@color/wp_gray_lighten_30</color>
+    <color name="sourceview_placeholder_text">@color/wp_gray</color>
 </resources>
