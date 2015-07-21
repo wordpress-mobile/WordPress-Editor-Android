@@ -1,6 +1,5 @@
 language: android
 jdk: oraclejdk7
-sudo: false
 
 android:
   components:
