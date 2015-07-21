@@ -145,6 +145,10 @@ public class EditorFragmentTest extends ActivityInstrumentationTestCase2<MockEdi
                 titleText.setText("new title");
                 contentText.setText("new <b>content</b>");
 
+                // Check that getTitle() and getContent() return latest version even in HTML mode
+                assertEquals("new title", mFragment.getTitle());
+                assertEquals("new <b>content</b>", mFragment.getContent());
+
                 htmlButton.performClick(); // Turn off HTML mode
 
                 uiThreadLatch2.countDown();

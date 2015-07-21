@@ -230,14 +230,14 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             updateFormatBarEnabledState(true);
 
             if (((ToggleButton) v).isChecked()) {
-                mWebView.setVisibility(View.GONE);
-                mSourceView.setVisibility(View.VISIBLE);
-
                 mSourceViewTitle.setText(getTitle());
 
                 SpannableString spannableContent = new SpannableString(getContent());
                 HtmlStyleUtils.styleHtmlForDisplay(spannableContent);
                 mSourceViewContent.setText(spannableContent);
+
+                mWebView.setVisibility(View.GONE);
+                mSourceView.setVisibility(View.VISIBLE);
 
                 mSourceViewContent.requestFocus();
                 mSourceViewContent.setSelection(0);
@@ -321,6 +321,11 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             return "";
         }
 
+        if (mSourceView.getVisibility() == View.VISIBLE) {
+            mTitle = mSourceViewTitle.getText().toString();
+            return StringUtils.notNullStr(mTitle);
+        }
+
         if (Looper.myLooper() == Looper.getMainLooper()) {
             AppLog.d(T.EDITOR, "getTitle() called from UI thread");
         }
@@ -353,6 +358,11 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     public CharSequence getContent() {
         if (!isAdded()) {
             return "";
+        }
+
+        if (mSourceView.getVisibility() == View.VISIBLE) {
+            mContentHtml = mSourceViewContent.getText().toString();
+            return StringUtils.notNullStr(mContentHtml);
         }
 
         if (Looper.myLooper() == Looper.getMainLooper()) {
