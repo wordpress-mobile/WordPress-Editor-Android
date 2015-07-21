@@ -53,6 +53,9 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     private SourceViewEditText mSourceViewTitle;
     private SourceViewEditText mSourceViewContent;
 
+    private String mTitlePlaceholder = "";
+    private String mContentPlaceholder = "";
+
     private boolean mHideActionBarOnSoftKeyboardUp;
 
     private CountDownLatch mGetTitleCountDownLatch;
@@ -94,6 +97,20 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         mWebView.setOnTouchListener(this);
         mWebView.setOnImeBackListener(this);
 
+        // Ensure that the content field is always filling the remaining screen space
+        mWebView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom,
+                                       int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                mWebView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mWebView.execJavaScriptFromString("ZSSEditor.refreshVisibleViewportSize();");
+                    }
+                });
+            }
+        });
+
         mEditorFragmentListener.onEditorFragmentInitialized();
 
         initJsEditor();
@@ -119,6 +136,8 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         mSourceViewContent.setOnImeBackListener(this);
 
         mSourceViewContent.addTextChangedListener(new HtmlStyleTextWatcher());
+
+        mSourceViewTitle.setHint(mTitlePlaceholder);
 
         // -- Format bar configuration
 
@@ -211,14 +230,14 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             updateFormatBarEnabledState(true);
 
             if (((ToggleButton) v).isChecked()) {
-                mWebView.setVisibility(View.GONE);
-                mSourceView.setVisibility(View.VISIBLE);
-
                 mSourceViewTitle.setText(getTitle());
 
                 SpannableString spannableContent = new SpannableString(getContent());
                 HtmlStyleUtils.styleHtmlForDisplay(spannableContent);
                 mSourceViewContent.setText(spannableContent);
+
+                mWebView.setVisibility(View.GONE);
+                mSourceView.setVisibility(View.VISIBLE);
 
                 mSourceViewContent.requestFocus();
                 mSourceViewContent.setSelection(0);
@@ -302,6 +321,11 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             return "";
         }
 
+        if (mSourceView.getVisibility() == View.VISIBLE) {
+            mTitle = mSourceViewTitle.getText().toString();
+            return StringUtils.notNullStr(mTitle);
+        }
+
         if (Looper.myLooper() == Looper.getMainLooper()) {
             AppLog.d(T.EDITOR, "getTitle() called from UI thread");
         }
@@ -334,6 +358,11 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     public CharSequence getContent() {
         if (!isAdded()) {
             return "";
+        }
+
+        if (mSourceView.getVisibility() == View.VISIBLE) {
+            mContentHtml = mSourceViewContent.getText().toString();
+            return StringUtils.notNullStr(mContentHtml);
         }
 
         if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -375,10 +404,26 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         return null;
     }
 
+    @Override
+    public void setTitlePlaceholder(CharSequence placeholderText) {
+        mTitlePlaceholder = placeholderText.toString();
+    }
+
+    @Override
+    public void setContentPlaceholder(CharSequence placeholderText) {
+        mContentPlaceholder = placeholderText.toString();
+    }
+
     public void onDomLoaded() {
         mWebView.post(new Runnable() {
             public void run() {
                 mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_content').setMultiline('true');");
+
+                // Set title and content placeholder text
+                mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_title').setPlaceholderText('" +
+                        mTitlePlaceholder + "');");
+                mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_content').setPlaceholderText('" +
+                        mContentPlaceholder + "');");
 
                 // Load title and content into ZSSEditor
                 updateVisualEditorFields();
@@ -448,7 +493,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     }
 
     private void updateVisualEditorFields() {
-        mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_title').setHTML('" +
+        mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_title').setPlainText('" +
                 Utils.escapeHtml(mTitle) + "');");
         mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_content').setHTML('" +
                 Utils.escapeHtml(mContentHtml) + "');");

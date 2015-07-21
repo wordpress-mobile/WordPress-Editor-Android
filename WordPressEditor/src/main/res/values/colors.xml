@@ -13,4 +13,5 @@
 
     <color name="format_bar_divider">@color/wp_gray_lighten_10</color>
     <color name="sourceview_separator">@color/wp_gray_lighten_10</color>
+    <color name="sourceview_placeholder_text">@color/wp_gray</color>
 </resources>

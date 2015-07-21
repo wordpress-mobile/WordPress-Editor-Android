@@ -73,10 +73,10 @@ html, body {
 }
 
 body {
-    padding-left:5px;
-    padding-right:5px;
-    padding-top: 0px;
-    padding-bottom: 0px;
+    padding-left:15px;
+    padding-right:15px;
+    padding-top: 15px;
+    padding-bottom: 5px;
     overflow-y: auto;
     min-height: 100vh;
     word-wrap: break-word;
@@ -280,13 +280,13 @@ progress.wp_media_indicator.failed::-webkit-progress-value {
 
 
 div.field[contenteditable] {
-    padding: 15px 10px 5px 10px;
     box-sizing: border-box;
     font-size: 16px;
 }
 
 div.field[placeholderText][contenteditable=true]:empty:before {
     content: attr(placeholderText);
+    color: #87a6bc;
     transition: 0.2s ease opacity;
 }
 
@@ -296,8 +296,8 @@ div.field[placeholderText][contenteditable=true]:empty:focus:before {
 
 #separatorDiv {
     -webkit-user-select: none;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-top: 5px;
+    padding-bottom: 15px;
 }
 
 #zss_field_title, #zss_field_title p {
