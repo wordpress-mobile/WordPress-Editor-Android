@@ -53,6 +53,9 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     private SourceViewEditText mSourceViewTitle;
     private SourceViewEditText mSourceViewContent;
 
+    private String mTitlePlaceholder = "";
+    private String mContentPlaceholder = "";
+
     private boolean mHideActionBarOnSoftKeyboardUp;
 
     private CountDownLatch mGetTitleCountDownLatch;
@@ -133,6 +136,8 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         mSourceViewContent.setOnImeBackListener(this);
 
         mSourceViewContent.addTextChangedListener(new HtmlStyleTextWatcher());
+
+        mSourceViewTitle.setHint(mTitlePlaceholder);
 
         // -- Format bar configuration
 
@@ -389,10 +394,26 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         return null;
     }
 
+    @Override
+    public void setTitlePlaceholder(CharSequence placeholderText) {
+        mTitlePlaceholder = placeholderText.toString();
+    }
+
+    @Override
+    public void setContentPlaceholder(CharSequence placeholderText) {
+        mContentPlaceholder = placeholderText.toString();
+    }
+
     public void onDomLoaded() {
         mWebView.post(new Runnable() {
             public void run() {
                 mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_content').setMultiline('true');");
+
+                // Set title and content placeholder text
+                mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_title').setPlaceholderText('" +
+                        mTitlePlaceholder + "');");
+                mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_content').setPlaceholderText('" +
+                        mContentPlaceholder + "');");
 
                 // Load title and content into ZSSEditor
                 updateVisualEditorFields();
@@ -462,7 +483,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     }
 
     private void updateVisualEditorFields() {
-        mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_title').setHTML('" +
+        mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_title').setPlainText('" +
                 Utils.escapeHtml(mTitle) + "');");
         mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_content').setHTML('" +
                 Utils.escapeHtml(mContentHtml) + "');");
