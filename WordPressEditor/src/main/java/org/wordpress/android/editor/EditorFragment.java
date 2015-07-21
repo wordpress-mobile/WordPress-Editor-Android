@@ -200,11 +200,18 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         super.onConfigurationChanged(newConfig);
 
         // Toggle action bar auto-hiding for the new orientation
+        ActionBar actionBar = getActionBar();
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
                 && !getResources().getBoolean(R.bool.is_large_tablet_landscape)) {
             mHideActionBarOnSoftKeyboardUp = true;
+            if (actionBar != null) {
+                actionBar.hide();
+            }
         } else {
             mHideActionBarOnSoftKeyboardUp = false;
+            if (actionBar != null) {
+                actionBar.show();
+            }
         }
     }
 
