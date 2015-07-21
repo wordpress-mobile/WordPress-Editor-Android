@@ -97,6 +97,20 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         mWebView.setOnTouchListener(this);
         mWebView.setOnImeBackListener(this);
 
+        // Ensure that the content field is always filling the remaining screen space
+        mWebView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom,
+                                       int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                mWebView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mWebView.execJavaScriptFromString("ZSSEditor.refreshVisibleViewportSize();");
+                    }
+                });
+            }
+        });
+
         mEditorFragmentListener.onEditorFragmentInitialized();
 
         initJsEditor();
