@@ -203,10 +203,10 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
                 && !getResources().getBoolean(R.bool.is_large_tablet_landscape)) {
             mHideActionBarOnSoftKeyboardUp = true;
-            this.hideActionBarIfNeeded();
+            hideActionBarIfNeeded();
         } else {
             mHideActionBarOnSoftKeyboardUp = false;
-            this.showActionBarIfNeeded();
+            showActionBarIfNeeded();
         }
     }
 
@@ -275,7 +275,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         if (event.getAction() == MotionEvent.ACTION_UP) {
             // If the WebView or EditText has received a touch event, the keyboard will be displayed and the action bar
             // should hide
-            this.hideActionBarIfNeeded();
+            hideActionBarIfNeeded();
         }
         return false;
     }
@@ -285,7 +285,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
      */
     @Override
     public void onImeBack() {
-        this.showActionBarIfNeeded();
+        showActionBarIfNeeded();
     }
 
     @SuppressLint("NewApi")
@@ -498,7 +498,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
         ActionBar actionBar = getActionBar();
         if (getActionBar() != null
-                && !this.isHardwareKeyboardPresent()
+                && !isHardwareKeyboardPresent()
                 && mHideActionBarOnSoftKeyboardUp
                 && actionBar.isShowing()) {
             getActionBar().hide();
