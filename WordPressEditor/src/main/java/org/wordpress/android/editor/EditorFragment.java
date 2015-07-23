@@ -203,8 +203,10 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
                 && !getResources().getBoolean(R.bool.is_large_tablet_landscape)) {
             mHideActionBarOnSoftKeyboardUp = true;
+            hideActionBarIfNeeded();
         } else {
             mHideActionBarOnSoftKeyboardUp = false;
+            showActionBarIfNeeded();
         }
     }
 
@@ -270,14 +272,10 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
     @Override
     public boolean onTouch(View view, MotionEvent event) {
-        if (mHideActionBarOnSoftKeyboardUp && event.getAction() == MotionEvent.ACTION_UP) {
+        if (event.getAction() == MotionEvent.ACTION_UP) {
             // If the WebView or EditText has received a touch event, the keyboard will be displayed and the action bar
             // should hide
-            ActionBar actionBar = getActionBar();
-            if (actionBar != null && actionBar.isShowing()) {
-                actionBar.hide();
-                return false;
-            }
+            hideActionBarIfNeeded();
         }
         return false;
     }
@@ -287,10 +285,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
      */
     @Override
     public void onImeBack() {
-        ActionBar actionBar = getActionBar();
-        if (mHideActionBarOnSoftKeyboardUp && actionBar != null && !actionBar.isShowing()) {
-            actionBar.show();
-        }
+        showActionBarIfNeeded();
     }
 
     @SuppressLint("NewApi")
@@ -427,10 +422,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
                 // Load title and content into ZSSEditor
                 updateVisualEditorFields();
-
-                if (mHideActionBarOnSoftKeyboardUp && getActionBar() != null) {
-                    getActionBar().hide();
-                }
+                hideActionBarIfNeeded();
 
                 // Reset all format bar buttons (in case they remained active through activity re-creation)
                 ToggleButton htmlButton = (ToggleButton) getActivity().findViewById(R.id.format_bar_button_html);
@@ -497,6 +489,43 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 Utils.escapeHtml(mTitle) + "');");
         mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_content').setHTML('" +
                 Utils.escapeHtml(mContentHtml) + "');");
+    }
+
+    /**
+     * Hide the action bar if needed.
+     */
+    private void hideActionBarIfNeeded() {
+
+        ActionBar actionBar = getActionBar();
+        if (getActionBar() != null
+                && !isHardwareKeyboardPresent()
+                && mHideActionBarOnSoftKeyboardUp
+                && actionBar.isShowing()) {
+            getActionBar().hide();
+        }
+    }
+
+    /**
+     * Show the action bar if needed.
+     */
+    private void showActionBarIfNeeded() {
+
+        ActionBar actionBar = getActionBar();
+        if (getActionBar() != null && !actionBar.isShowing()) {
+            getActionBar().show();
+        }
+    }
+
+    /**
+     * Returns true if a hardware keyboard is detected, otherwise false.
+     */
+    private boolean isHardwareKeyboardPresent() {
+        Configuration config = getResources().getConfiguration();
+        boolean returnValue = false;
+        if (config.keyboard != Configuration.KEYBOARD_NOKEYS) {
+            returnValue = true;
+        }
+        return returnValue;
     }
 
     void updateFormatBarEnabledState(boolean enabled) {
