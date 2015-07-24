@@ -75,10 +75,10 @@
     <LinearLayout
         android:id="@+id/format_bar"
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/format_bar_height"
+        android:layout_height="@dimen/format_bar_height_tablet"
         android:layout_gravity="bottom"
         android:layout_alignParentBottom="true"
-        android:background="@android:color/white"
+        android:background="@color/format_bar_background"
         android:orientation="vertical">
 
         <View
@@ -90,7 +90,7 @@
         <LinearLayout
             android:id="@+id/format_bar_buttons"
             android:layout_width="fill_parent"
-            android:layout_height="@dimen/format_bar_height"
+            android:layout_height="@dimen/format_bar_height_tablet"
             android:layout_gravity="bottom"
             android:gravity="center"
             android:orientation="horizontal"

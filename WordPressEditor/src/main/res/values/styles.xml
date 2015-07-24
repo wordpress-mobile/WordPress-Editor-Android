@@ -28,13 +28,11 @@
     </style>
 
     <style name="Divider">
-        <item name="android:background">@color/wp_gray</item>
-        <item name="android:alpha">0.5</item>
+        <item name="android:background">@color/format_bar_divider</item>
     </style>
 
-    <style name="DividerSourceView" parent="Divider">
+    <style name="DividerSourceView">
         <item name="android:background">@color/sourceview_separator</item>
-        <item name="android:alpha">1</item>
     </style>
 
     <style name="FormatBarTabletGroup">
