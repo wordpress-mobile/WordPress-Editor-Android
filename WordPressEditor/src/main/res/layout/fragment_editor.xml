@@ -111,14 +111,14 @@
 
                     <ToggleButton
                         android:id="@+id/format_bar_button_media"
-                        style="@style/FormatBarScrollViewButton"
+                        style="@style/FormatBarButton"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
                         android:background="@drawable/format_bar_button_media_selector"/>
 
                     <ToggleButton
                         android:id="@+id/format_bar_button_bold"
-                        style="@style/FormatBarScrollViewButton"
+                        style="@style/FormatBarButton"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
                         android:background="@drawable/format_bar_button_bold_selector"
@@ -126,7 +126,7 @@
 
                     <ToggleButton
                         android:id="@+id/format_bar_button_italic"
-                        style="@style/FormatBarScrollViewButton"
+                        style="@style/FormatBarButton"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
                         android:background="@drawable/format_bar_button_italic_selector"
@@ -134,7 +134,7 @@
 
                     <ToggleButton
                         android:id="@+id/format_bar_button_quote"
-                        style="@style/FormatBarScrollViewButton"
+                        style="@style/FormatBarButton"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
                         android:background="@drawable/format_bar_button_quote_selector"
@@ -142,7 +142,7 @@
 
                     <ToggleButton
                         android:id="@+id/format_bar_button_ul"
-                        style="@style/FormatBarScrollViewButton"
+                        style="@style/FormatBarButton"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
                         android:background="@drawable/format_bar_button_ul_selector"
@@ -150,7 +150,7 @@
 
                     <ToggleButton
                         android:id="@+id/format_bar_button_ol"
-                        style="@style/FormatBarScrollViewButton"
+                        style="@style/FormatBarButton"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
                         android:background="@drawable/format_bar_button_ol_selector"
@@ -158,7 +158,7 @@
 
                     <ToggleButton
                         android:id="@+id/format_bar_button_link"
-                        style="@style/FormatBarScrollViewButton"
+                        style="@style/FormatBarButton"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
                         android:background="@drawable/format_bar_button_link_selector"/>
