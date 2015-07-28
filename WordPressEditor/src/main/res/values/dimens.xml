@@ -4,7 +4,6 @@
     <dimen name="format_bar_height_tablet">49dp</dimen>
     <dimen name="format_bar_left_margin">5dp</dimen>
     <dimen name="format_bar_right_margin">2dp</dimen>
-    <dimen name="format_bar_button_right_margin">5dp</dimen>
     <dimen name="format_bar_html_button_left_margin">3dp</dimen>
     <dimen name="format_bar_scroll_right_margin">-7dp</dimen>
 
@@ -19,6 +18,8 @@
     <dimen name="format_bar_button_group_tablet_extra_large">35dp</dimen>
 
     <dimen name="format_bar_horizontal_divider_height">1dp</dimen>
+    <dimen name="format_bar_vertical_divider_width">0.6dp</dimen>
+    <dimen name="format_bar_vertical_divider_height">28dp</dimen>
 
     <dimen name="sourceview_side_margin">15dp</dimen>
     <dimen name="sourceview_side_margin_large">90dp</dimen>
