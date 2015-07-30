@@ -138,6 +138,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         mSourceViewContent.addTextChangedListener(new HtmlStyleTextWatcher());
 
         mSourceViewTitle.setHint(mTitlePlaceholder);
+        mSourceViewContent.setHint("<p>" + mContentPlaceholder + "</p>");
 
         // -- Format bar configuration
 
