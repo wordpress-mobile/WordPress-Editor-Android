@@ -10,6 +10,7 @@
     <string name="format_bar_tag_unorderedList" translatable="false">unorderedList</string>
     <string name="format_bar_tag_orderedList" translatable="false">orderedList</string>
     <string name="format_bar_tag_strikethrough" translatable="false">strikeThrough</string>
+    <string name="format_bar_tag_link" translatable="false">link</string>
 
     <!-- link view -->
     <string name="link_enter_url">URL</string>

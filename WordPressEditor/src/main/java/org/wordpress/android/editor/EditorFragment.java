@@ -440,7 +440,13 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             public void run() {
                 for (Map.Entry<String, Boolean> entry : changeMap.entrySet()) {
                     // Handle toggling format bar style buttons
-                    ToggleButton button = mTagToggleButtonMap.get(entry.getKey());
+                    ToggleButton button;
+                    if (entry.getKey().matches("link:(.*)")) {
+                        button = mTagToggleButtonMap.get("link");
+                    } else {
+                        button = mTagToggleButtonMap.get(entry.getKey());
+                    }
+
                     if (button != null) {
                         button.setChecked(entry.getValue());
                     }
