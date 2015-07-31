@@ -35,4 +35,9 @@
         <item name="android:layout_marginLeft">@dimen/format_bar_button_group_tablet</item>
         <item name="android:layout_marginRight">@dimen/format_bar_button_group_tablet</item>
     </style>
+
+    <style name="ModalDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowNoTitle">false</item>
+        <item name="windowActionBar">false</item>
+    </style>
 </resources>
