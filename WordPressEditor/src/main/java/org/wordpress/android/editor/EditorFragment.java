@@ -270,6 +270,16 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         } else if (id == R.id.format_bar_button_link) {
             ((ToggleButton) v).setChecked(false);
             Intent linkIntent = new Intent(getActivity(), EditLinkActivity.class);
+            // Retrieve the currently selected text
+            mGetSelectedTextCountDownLatch = new CountDownLatch(1);
+            mWebView.execJavaScriptFromString("ZSSEditor.execFunctionForResult('getSelectedText');");
+            try {
+                if (mGetSelectedTextCountDownLatch.await(1, TimeUnit.SECONDS)) {
+                    linkIntent.putExtra("selectedText", mJavaScriptResult);
+                }
+            } catch (InterruptedException e) {
+                AppLog.d(T.EDITOR, "Failed to obtain selected text from ZSSEditor.");
+            }
             startActivityForResult(linkIntent, ACTIVITY_REQUEST_CODE_CREATE_LINK);
         } else {
             if (v instanceof ToggleButton) {
