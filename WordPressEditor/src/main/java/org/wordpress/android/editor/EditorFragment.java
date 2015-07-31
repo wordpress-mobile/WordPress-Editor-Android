@@ -2,6 +2,7 @@ package org.wordpress.android.editor;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,6 +35,8 @@ import java.util.concurrent.TimeUnit;
 
 public class EditorFragment extends EditorFragmentAbstract implements View.OnClickListener, View.OnTouchListener,
         OnJsEditorStateChangedListener, OnImeBackListener {
+    private static final int ACTIVITY_REQUEST_CODE_CREATE_LINK = 1;
+
     private static final String ARG_PARAM_TITLE = "param_title";
     private static final String ARG_PARAM_CONTENT = "param_content";
 
@@ -262,8 +265,8 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             // TODO: Handle inserting media
             ((ToggleButton) v).setChecked(false);
         } else if (id == R.id.format_bar_button_link) {
-            // TODO: Handle inserting a link
-            ((ToggleButton) v).setChecked(false);
+            Intent linkIntent = new Intent(getActivity(), EditLinkActivity.class);
+            startActivityForResult(linkIntent, ACTIVITY_REQUEST_CODE_CREATE_LINK);
         } else {
             if (v instanceof ToggleButton) {
                 onFormattingButtonClicked((ToggleButton) v);
@@ -287,6 +290,23 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     @Override
     public void onImeBack() {
         showActionBarIfNeeded();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == ACTIVITY_REQUEST_CODE_CREATE_LINK && data != null) {
+            Bundle extras = data.getExtras();
+            if (extras == null) {
+                return;
+            }
+
+            String linkUrl = extras.getString("linkURL");
+            String linkText = extras.getString("linkText");
+
+            mWebView.execJavaScriptFromString("ZSSEditor.insertLink('" + linkUrl + "', '" + linkText + "');");
+        }
     }
 
     @SuppressLint("NewApi")
