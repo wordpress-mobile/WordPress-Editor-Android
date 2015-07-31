@@ -61,8 +61,11 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
     private boolean mHideActionBarOnSoftKeyboardUp;
 
+    private String mJavaScriptResult = "";
+
     private CountDownLatch mGetTitleCountDownLatch;
     private CountDownLatch mGetContentCountDownLatch;
+    private CountDownLatch mGetSelectedTextCountDownLatch;
 
     private final Map<String, ToggleButton> mTagToggleButtonMap = new HashMap<>();
 
@@ -495,19 +498,33 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     }
 
     public void onGetHtmlResponse(Map<String, String> inputArgs) {
-        String fieldId = inputArgs.get("id");
-        String fieldContents = inputArgs.get("contents");
-        if (!fieldId.isEmpty()) {
-            switch (fieldId) {
-                case "zss_field_title":
-                    mTitle = fieldContents;
-                    mGetTitleCountDownLatch.countDown();
-                    break;
-                case "zss_field_content":
-                    mContentHtml = fieldContents;
-                    mGetContentCountDownLatch.countDown();
-                    break;
-            }
+        String functionId = inputArgs.get("function");
+
+        if (functionId.isEmpty()) {
+            return;
+        }
+
+        switch (functionId) {
+            case "getHTMLForCallback":
+                String fieldId = inputArgs.get("id");
+                String fieldContents = inputArgs.get("contents");
+                if (!fieldId.isEmpty()) {
+                    switch (fieldId) {
+                        case "zss_field_title":
+                            mTitle = fieldContents;
+                            mGetTitleCountDownLatch.countDown();
+                            break;
+                        case "zss_field_content":
+                            mContentHtml = fieldContents;
+                            mGetContentCountDownLatch.countDown();
+                            break;
+                    }
+                }
+                break;
+            case "getSelectedText":
+                mJavaScriptResult = inputArgs.get("result");
+                mGetSelectedTextCountDownLatch.countDown();
+                break;
         }
     }
 
