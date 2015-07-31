@@ -79,7 +79,7 @@
     <LinearLayout
         android:id="@+id/format_bar"
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/format_bar_height"
+        android:layout_height="@dimen/legacy_format_bar_height"
         android:layout_gravity="bottom"
         android:background="@color/legacy_format_bar_background"
         android:orientation="horizontal"
@@ -134,14 +134,14 @@
                     android:id="@+id/link"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
-                    android:minWidth="@dimen/format_bar_height"
+                    android:minWidth="@dimen/legacy_format_bar_height"
                     android:background="@drawable/legacy_format_bar_button_link_selector" />
 
                 <Button
                     android:id="@+id/more"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
-                    android:minWidth="@dimen/format_bar_height"
+                    android:minWidth="@dimen/legacy_format_bar_height"
                     android:background="@drawable/legacy_format_bar_button_more_selector" />
             </LinearLayout>
         </HorizontalScrollView>
@@ -150,7 +150,7 @@
             android:id="@+id/addPictureButton"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:minWidth="@dimen/format_bar_height"
+            android:minWidth="@dimen/legacy_format_bar_height"
             android:background="@drawable/legacy_format_bar_button_media_selector" />
     </LinearLayout>
 
