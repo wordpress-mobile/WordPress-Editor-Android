@@ -268,6 +268,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             // TODO: Handle inserting media
             ((ToggleButton) v).setChecked(false);
         } else if (id == R.id.format_bar_button_link) {
+            ((ToggleButton) v).setChecked(false);
             Intent linkIntent = new Intent(getActivity(), EditLinkActivity.class);
             startActivityForResult(linkIntent, ACTIVITY_REQUEST_CODE_CREATE_LINK);
         } else {

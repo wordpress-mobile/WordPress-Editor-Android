@@ -618,23 +618,7 @@ ZSSEditor.setBackgroundColor = function(color) {
 // Needs addClass method
 
 ZSSEditor.insertLink = function(url, title) {
-
-    ZSSEditor.restoreRange();
-
-    var sel = document.getSelection();
-	if (sel.rangeCount) {
-
-		var el = document.createElement("a");
-		el.setAttribute("href", url);
-
-		var range = sel.getRangeAt(0).cloneRange();
-		range.surroundContents(el);
-		el.innerHTML = title;
-		sel.removeAllRanges();
-		sel.addRange(range);
-	}
-
-	ZSSEditor.sendEnabledStyles();
+    this.insertHTML('<a href="' + url + '">' + title + "</a>");
 };
 
 ZSSEditor.updateLink = function(url, title) {
