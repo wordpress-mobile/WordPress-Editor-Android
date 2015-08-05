@@ -56,6 +56,9 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     private SourceViewEditText mSourceViewTitle;
     private SourceViewEditText mSourceViewContent;
 
+    private int mSelectionStart;
+    private int mSelectionEnd;
+
     private String mTitlePlaceholder = "";
     private String mContentPlaceholder = "";
 
@@ -269,17 +272,30 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             ((ToggleButton) v).setChecked(false);
         } else if (id == R.id.format_bar_button_link) {
             ((ToggleButton) v).setChecked(false);
+
             Intent linkIntent = new Intent(getActivity(), EditLinkActivity.class);
-            // Retrieve the currently selected text
-            mGetSelectedTextCountDownLatch = new CountDownLatch(1);
-            mWebView.execJavaScriptFromString("ZSSEditor.execFunctionForResult('getSelectedText');");
-            try {
-                if (mGetSelectedTextCountDownLatch.await(1, TimeUnit.SECONDS)) {
-                    linkIntent.putExtra("selectedText", mJavaScriptResult);
+
+            // Add selected text to intent
+            if (mSourceView.getVisibility() == View.VISIBLE) {
+                // HTML mode
+                mSelectionStart = mSourceViewContent.getSelectionStart();
+                mSelectionEnd = mSourceViewContent.getSelectionEnd();
+
+                String selectedText = mSourceViewContent.getText().toString().substring(mSelectionStart, mSelectionEnd);
+                linkIntent.putExtra("selectedText", selectedText);
+            } else {
+                // Visual mode
+                mGetSelectedTextCountDownLatch = new CountDownLatch(1);
+                mWebView.execJavaScriptFromString("ZSSEditor.execFunctionForResult('getSelectedText');");
+                try {
+                    if (mGetSelectedTextCountDownLatch.await(1, TimeUnit.SECONDS)) {
+                        linkIntent.putExtra("selectedText", mJavaScriptResult);
+                    }
+                } catch (InterruptedException e) {
+                    AppLog.d(T.EDITOR, "Failed to obtain selected text from JS editor.");
                 }
-            } catch (InterruptedException e) {
-                AppLog.d(T.EDITOR, "Failed to obtain selected text from ZSSEditor.");
             }
+
             startActivityForResult(linkIntent, ACTIVITY_REQUEST_CODE_CREATE_LINK);
         } else {
             if (v instanceof ToggleButton) {
@@ -319,7 +335,29 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             String linkUrl = extras.getString("linkURL");
             String linkText = extras.getString("linkText");
 
-            mWebView.execJavaScriptFromString("ZSSEditor.insertLink('" + linkUrl + "', '" + linkText + "');");
+            if (mSourceView.getVisibility() == View.VISIBLE) {
+                Editable content = mSourceViewContent.getText();
+                if (content == null) {
+                    return;
+                }
+
+                if (mSelectionStart < mSelectionEnd) {
+                    content.delete(mSelectionStart, mSelectionEnd);
+                }
+
+                if (linkText == null) {
+                    linkText = linkUrl;
+                }
+                String urlHtml = "<a href=\"" + linkUrl + "\">" + linkText + "</a>";
+
+                content.insert(mSelectionStart, urlHtml);
+                mSourceViewContent.setSelection(mSelectionStart + urlHtml.length());
+            } else {
+                if (linkText == null) {
+                    linkText = linkUrl;
+                }
+                mWebView.execJavaScriptFromString("ZSSEditor.insertLink('" + linkUrl + "', '" + linkText + "');");
+            }
         }
     }
 
