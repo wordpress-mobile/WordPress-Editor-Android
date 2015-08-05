@@ -56,6 +56,7 @@ import com.android.volley.toolbox.ImageLoader;
 
 import org.wordpress.android.analytics.AnalyticsTracker;
 import org.wordpress.android.analytics.AnalyticsTracker.Stat;
+import org.wordpress.android.editor.legacy.EditLinkActivity;
 import org.wordpress.android.editor.legacy.WPEditImageSpan;
 import org.wordpress.android.util.AppLog;
 import org.wordpress.android.util.AppLog.T;

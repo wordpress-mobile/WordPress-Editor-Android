@@ -1,4 +1,4 @@
-package org.wordpress.android.editor;
+package org.wordpress.android.editor.legacy;
 
 import android.app.Activity;
 import android.content.Intent;
