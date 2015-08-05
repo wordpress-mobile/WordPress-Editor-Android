@@ -27,6 +27,9 @@
     <dimen name="sourceview_top_margin">15dp</dimen>
     <dimen name="sourceview_title_bottom_margin">15dp</dimen>
 
+    <dimen name="link_dialog_margin_inner">4dp</dimen>
+    <dimen name="link_dialog_margin_outer">16dp</dimen>
+
     <dimen name="post_editor_content_side_margin">20dp</dimen>
 
     <dimen name="legacy_format_bar_height">40dp</dimen>

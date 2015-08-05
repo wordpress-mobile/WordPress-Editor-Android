@@ -35,8 +35,6 @@ import java.util.concurrent.TimeUnit;
 
 public class EditorFragment extends EditorFragmentAbstract implements View.OnClickListener, View.OnTouchListener,
         OnJsEditorStateChangedListener, OnImeBackListener {
-    private static final int ACTIVITY_REQUEST_CODE_CREATE_LINK = 1;
-
     private static final String ARG_PARAM_TITLE = "param_title";
     private static final String ARG_PARAM_CONTENT = "param_content";
 
@@ -273,30 +271,34 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         } else if (id == R.id.format_bar_button_link) {
             ((ToggleButton) v).setChecked(false);
 
-            Intent linkIntent = new Intent(getActivity(), EditLinkActivity.class);
+            LinkDialogFragment linkDialogFragment = new LinkDialogFragment();
+            linkDialogFragment.setTargetFragment(this, LinkDialogFragment.LINK_DIALOG_REQUEST_CODE);
 
-            // Add selected text to intent
+            Bundle dialogBundle = new Bundle();
+
+            // Pass selected text to dialog
             if (mSourceView.getVisibility() == View.VISIBLE) {
                 // HTML mode
                 mSelectionStart = mSourceViewContent.getSelectionStart();
                 mSelectionEnd = mSourceViewContent.getSelectionEnd();
 
                 String selectedText = mSourceViewContent.getText().toString().substring(mSelectionStart, mSelectionEnd);
-                linkIntent.putExtra("selectedText", selectedText);
+                dialogBundle.putString("linkText", selectedText);
             } else {
                 // Visual mode
                 mGetSelectedTextCountDownLatch = new CountDownLatch(1);
                 mWebView.execJavaScriptFromString("ZSSEditor.execFunctionForResult('getSelectedText');");
                 try {
                     if (mGetSelectedTextCountDownLatch.await(1, TimeUnit.SECONDS)) {
-                        linkIntent.putExtra("selectedText", mJavaScriptResult);
+                        dialogBundle.putString("linkText", mJavaScriptResult);
                     }
                 } catch (InterruptedException e) {
                     AppLog.d(T.EDITOR, "Failed to obtain selected text from JS editor.");
                 }
             }
 
-            startActivityForResult(linkIntent, ACTIVITY_REQUEST_CODE_CREATE_LINK);
+            linkDialogFragment.setArguments(dialogBundle);
+            linkDialogFragment.show(getFragmentManager(), "LinkDialogFragment");
         } else {
             if (v instanceof ToggleButton) {
                 onFormattingButtonClicked((ToggleButton) v);
@@ -326,7 +328,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == ACTIVITY_REQUEST_CODE_CREATE_LINK && data != null) {
+        if (requestCode == LinkDialogFragment.LINK_DIALOG_REQUEST_CODE && data != null) {
             Bundle extras = data.getExtras();
             if (extras == null) {
                 return;
@@ -334,6 +336,10 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
             String linkUrl = extras.getString("linkURL");
             String linkText = extras.getString("linkText");
+
+            if (linkText == null || linkText.equals("")) {
+                linkText = linkUrl;
+            }
 
             if (mSourceView.getVisibility() == View.VISIBLE) {
                 Editable content = mSourceViewContent.getText();
@@ -345,17 +351,11 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                     content.delete(mSelectionStart, mSelectionEnd);
                 }
 
-                if (linkText == null) {
-                    linkText = linkUrl;
-                }
                 String urlHtml = "<a href=\"" + linkUrl + "\">" + linkText + "</a>";
 
                 content.insert(mSelectionStart, urlHtml);
                 mSourceViewContent.setSelection(mSelectionStart + urlHtml.length());
             } else {
-                if (linkText == null) {
-                    linkText = linkUrl;
-                }
                 mWebView.execJavaScriptFromString("ZSSEditor.insertLink('" + linkUrl + "', '" + linkText + "');");
             }
         }
