@@ -201,6 +201,22 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                     htmlButton.setChecked(true);
                 }
             }
+
+            // Reload HTML mode margins
+            View sourceViewTitle = getView().findViewById(R.id.sourceview_title);
+            View sourceViewContent = getView().findViewById(R.id.sourceview_content);
+
+            if (sourceViewTitle != null && sourceViewContent != null) {
+                int sideMargin = (int) getActivity().getResources().getDimension(R.dimen.sourceview_side_margin);
+
+                ViewGroup.MarginLayoutParams titleParams =
+                        (ViewGroup.MarginLayoutParams) sourceViewTitle.getLayoutParams();
+                ViewGroup.MarginLayoutParams contentParams =
+                        (ViewGroup.MarginLayoutParams) sourceViewContent.getLayoutParams();
+
+                titleParams.setMargins(sideMargin, titleParams.topMargin, sideMargin, titleParams.bottomMargin);
+                contentParams.setMargins(sideMargin, contentParams.topMargin, sideMargin, contentParams.bottomMargin);
+            }
         }
 
         // Toggle action bar auto-hiding for the new orientation
