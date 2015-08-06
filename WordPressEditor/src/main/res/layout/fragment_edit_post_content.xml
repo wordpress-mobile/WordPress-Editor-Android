@@ -97,35 +97,35 @@
 
                 <ToggleButton
                     android:id="@+id/bold"
-                    style="@style/ToggleButton"
+                    style="@style/LegacyToggleButton"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
                     android:background="@drawable/legacy_format_bar_button_bold_selector" />
 
                 <ToggleButton
                     android:id="@+id/em"
-                    style="@style/ToggleButton"
+                    style="@style/LegacyToggleButton"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
                     android:background="@drawable/legacy_format_bar_button_italic_selector" />
 
                 <ToggleButton
                     android:id="@+id/underline"
-                    style="@style/ToggleButton"
+                    style="@style/LegacyToggleButton"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
                     android:background="@drawable/legacy_format_bar_button_underline_selector" />
 
                 <ToggleButton
                     android:id="@+id/strike"
-                    style="@style/ToggleButton"
+                    style="@style/LegacyToggleButton"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
                     android:background="@drawable/legacy_format_bar_button_strike_selector" />
 
                 <ToggleButton
                     android:id="@+id/bquote"
-                    style="@style/ToggleButton"
+                    style="@style/LegacyToggleButton"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
                     android:background="@drawable/legacy_format_bar_button_quote_selector" />
