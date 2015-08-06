@@ -27,6 +27,7 @@ import org.wordpress.android.util.StringUtils;
 import org.wordpress.android.util.helpers.MediaFile;
 import org.wordpress.android.util.helpers.MediaGallery;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -173,6 +174,14 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             View formatBar = getView().findViewById(R.id.format_bar);
 
             if (formatBar != null) {
+                // Remember the currently active format bar buttons so they can be re-activated after the reload
+                ArrayList<String> activeTags = new ArrayList<>();
+                for (Map.Entry<String, ToggleButton> entry : mTagToggleButtonMap.entrySet()) {
+                    if (entry.getValue().isChecked()) {
+                        activeTags.add(entry.getKey());
+                    }
+                }
+
                 ViewGroup parent = (ViewGroup) formatBar.getParent();
                 parent.removeView(formatBar);
 
@@ -181,6 +190,16 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 parent.addView(formatBar);
 
                 setupFormatBarButtonMap(formatBar);
+
+                // Restore the active format bar buttons
+                for (String tag : activeTags) {
+                    mTagToggleButtonMap.get(tag).setChecked(true);
+                }
+
+                if (mSourceView.getVisibility() == View.VISIBLE) {
+                    ToggleButton htmlButton = (ToggleButton) formatBar.findViewById(R.id.format_bar_button_html);
+                    htmlButton.setChecked(true);
+                }
             }
         }
 
