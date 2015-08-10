@@ -181,6 +181,12 @@ ZSSEditor.getFocusedField = function() {
     return this.editableFields[currentFieldId];
 };
 
+ZSSEditor.execFunctionForResult = function(methodName) {
+    var functionArgument = "function=" + methodName;
+    var resultArgument = "result=" + window["ZSSEditor"][methodName].apply();
+    ZSSEditor.callback('callback-response-string', functionArgument +  defaultCallbackSeparator + resultArgument);
+}
+
 // MARK: - Logging
 
 ZSSEditor.log = function(msg) {
@@ -612,23 +618,7 @@ ZSSEditor.setBackgroundColor = function(color) {
 // Needs addClass method
 
 ZSSEditor.insertLink = function(url, title) {
-
-    ZSSEditor.restoreRange();
-
-    var sel = document.getSelection();
-	if (sel.rangeCount) {
-
-		var el = document.createElement("a");
-		el.setAttribute("href", url);
-
-		var range = sel.getRangeAt(0).cloneRange();
-		range.surroundContents(el);
-		el.innerHTML = title;
-		sel.removeAllRanges();
-		sel.addRange(range);
-	}
-
-	ZSSEditor.sendEnabledStyles();
+    this.insertHTML('<a href="' + url + '">' + title + "</a>");
 };
 
 ZSSEditor.updateLink = function(url, title) {
@@ -2348,9 +2338,11 @@ ZSSField.prototype.getHTML = function() {
 };
 
 ZSSField.prototype.getHTMLForCallback = function() {
+    var functionArgument = "function=getHTMLForCallback";
     var idArgument = "id=" + this.getNodeId();
     var contentsArgument = "contents=" + this.getHTML();
-    var joinedArguments = idArgument + defaultCallbackSeparator + contentsArgument;
+    var joinedArguments = functionArgument + defaultCallbackSeparator + idArgument + defaultCallbackSeparator +
+        contentsArgument;
     ZSSEditor.callback('callback-response-string', joinedArguments);
 };
 

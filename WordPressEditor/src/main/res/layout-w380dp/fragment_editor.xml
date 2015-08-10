@@ -155,7 +155,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
-                android:background="@drawable/format_bar_button_link_selector"/>
+                android:background="@drawable/format_bar_button_link_selector"
+                android:tag="@string/format_bar_tag_link"/>
 
             <View
                 android:id="@+id/format_bar_vertical_divider"
