@@ -44,9 +44,19 @@ public class JsCallbackReceiver {
                 break;
             case CALLBACK_SELECTION_STYLE:
                 // Compare the new styles to the previous ones, and notify the JsCallbackListener of the changeset
-                Set<String> newStyleSet = Utils.splitDelimitedString(params, JS_CALLBACK_DELIMITER);
-                mListener.onSelectionStyleChanged(Utils.getChangeMapFromSets(mPreviousStyleSet,
-                        newStyleSet));
+                Set<String> rawStyleSet = Utils.splitDelimitedString(params, JS_CALLBACK_DELIMITER);
+
+                // Strip link details from active style set
+                Set<String> newStyleSet = new HashSet<>();
+                for (String element : rawStyleSet) {
+                    if (element.matches("link:(.*)")) {
+                        newStyleSet.add("link");
+                    } else if (!element.matches("link-title:(.*)")) {
+                        newStyleSet.add(element);
+                    }
+                }
+
+                mListener.onSelectionStyleChanged(Utils.getChangeMapFromSets(mPreviousStyleSet, newStyleSet));
                 mPreviousStyleSet = newStyleSet;
                 break;
             case CALLBACK_SELECTION_CHANGED:

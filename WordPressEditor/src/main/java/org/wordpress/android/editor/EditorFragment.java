@@ -2,6 +2,7 @@ package org.wordpress.android.editor;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -54,13 +55,19 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     private SourceViewEditText mSourceViewTitle;
     private SourceViewEditText mSourceViewContent;
 
+    private int mSelectionStart;
+    private int mSelectionEnd;
+
     private String mTitlePlaceholder = "";
     private String mContentPlaceholder = "";
 
     private boolean mHideActionBarOnSoftKeyboardUp;
 
+    private String mJavaScriptResult = "";
+
     private CountDownLatch mGetTitleCountDownLatch;
     private CountDownLatch mGetContentCountDownLatch;
+    private CountDownLatch mGetSelectedTextCountDownLatch;
 
     private final Map<String, ToggleButton> mTagToggleButtonMap = new HashMap<>();
 
@@ -317,8 +324,36 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             // TODO: Handle inserting media
             ((ToggleButton) v).setChecked(false);
         } else if (id == R.id.format_bar_button_link) {
-            // TODO: Handle inserting a link
             ((ToggleButton) v).setChecked(false);
+
+            LinkDialogFragment linkDialogFragment = new LinkDialogFragment();
+            linkDialogFragment.setTargetFragment(this, LinkDialogFragment.LINK_DIALOG_REQUEST_CODE);
+
+            Bundle dialogBundle = new Bundle();
+
+            // Pass selected text to dialog
+            if (mSourceView.getVisibility() == View.VISIBLE) {
+                // HTML mode
+                mSelectionStart = mSourceViewContent.getSelectionStart();
+                mSelectionEnd = mSourceViewContent.getSelectionEnd();
+
+                String selectedText = mSourceViewContent.getText().toString().substring(mSelectionStart, mSelectionEnd);
+                dialogBundle.putString("linkText", selectedText);
+            } else {
+                // Visual mode
+                mGetSelectedTextCountDownLatch = new CountDownLatch(1);
+                mWebView.execJavaScriptFromString("ZSSEditor.execFunctionForResult('getSelectedText');");
+                try {
+                    if (mGetSelectedTextCountDownLatch.await(1, TimeUnit.SECONDS)) {
+                        dialogBundle.putString("linkText", mJavaScriptResult);
+                    }
+                } catch (InterruptedException e) {
+                    AppLog.d(T.EDITOR, "Failed to obtain selected text from JS editor.");
+                }
+            }
+
+            linkDialogFragment.setArguments(dialogBundle);
+            linkDialogFragment.show(getFragmentManager(), "LinkDialogFragment");
         } else {
             if (v instanceof ToggleButton) {
                 onFormattingButtonClicked((ToggleButton) v);
@@ -342,6 +377,43 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     @Override
     public void onImeBack() {
         showActionBarIfNeeded();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == LinkDialogFragment.LINK_DIALOG_REQUEST_CODE && data != null) {
+            Bundle extras = data.getExtras();
+            if (extras == null) {
+                return;
+            }
+
+            String linkUrl = extras.getString("linkURL");
+            String linkText = extras.getString("linkText");
+
+            if (linkText == null || linkText.equals("")) {
+                linkText = linkUrl;
+            }
+
+            if (mSourceView.getVisibility() == View.VISIBLE) {
+                Editable content = mSourceViewContent.getText();
+                if (content == null) {
+                    return;
+                }
+
+                if (mSelectionStart < mSelectionEnd) {
+                    content.delete(mSelectionStart, mSelectionEnd);
+                }
+
+                String urlHtml = "<a href=\"" + linkUrl + "\">" + linkText + "</a>";
+
+                content.insert(mSelectionStart, urlHtml);
+                mSourceViewContent.setSelection(mSelectionStart + urlHtml.length());
+            } else {
+                mWebView.execJavaScriptFromString("ZSSEditor.insertLink('" + linkUrl + "', '" + linkText + "');");
+            }
+        }
     }
 
     @SuppressLint("NewApi")
@@ -524,19 +596,33 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     }
 
     public void onGetHtmlResponse(Map<String, String> inputArgs) {
-        String fieldId = inputArgs.get("id");
-        String fieldContents = inputArgs.get("contents");
-        if (!fieldId.isEmpty()) {
-            switch (fieldId) {
-                case "zss_field_title":
-                    mTitle = fieldContents;
-                    mGetTitleCountDownLatch.countDown();
-                    break;
-                case "zss_field_content":
-                    mContentHtml = fieldContents;
-                    mGetContentCountDownLatch.countDown();
-                    break;
-            }
+        String functionId = inputArgs.get("function");
+
+        if (functionId.isEmpty()) {
+            return;
+        }
+
+        switch (functionId) {
+            case "getHTMLForCallback":
+                String fieldId = inputArgs.get("id");
+                String fieldContents = inputArgs.get("contents");
+                if (!fieldId.isEmpty()) {
+                    switch (fieldId) {
+                        case "zss_field_title":
+                            mTitle = fieldContents;
+                            mGetTitleCountDownLatch.countDown();
+                            break;
+                        case "zss_field_content":
+                            mContentHtml = fieldContents;
+                            mGetContentCountDownLatch.countDown();
+                            break;
+                    }
+                }
+                break;
+            case "getSelectedText":
+                mJavaScriptResult = inputArgs.get("result");
+                mGetSelectedTextCountDownLatch.countDown();
+                break;
         }
     }
 

@@ -89,7 +89,8 @@
                     style="@style/FormatBarButton"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
-                    android:background="@drawable/format_bar_button_link_selector"/>
+                    android:background="@drawable/format_bar_button_link_selector"
+                    android:tag="@string/format_bar_tag_link"/>
             </LinearLayout>
         </HorizontalScrollView>
 
