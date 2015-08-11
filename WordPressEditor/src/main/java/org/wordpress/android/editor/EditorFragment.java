@@ -356,7 +356,8 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 content.insert(mSelectionStart, urlHtml);
                 mSourceViewContent.setSelection(mSelectionStart + urlHtml.length());
             } else {
-                mWebView.execJavaScriptFromString("ZSSEditor.insertLink('" + linkUrl + "', '" + linkText + "');");
+                mWebView.execJavaScriptFromString("ZSSEditor.insertLink('" + Utils.escapeHtml(linkUrl) + "', '" +
+                        Utils.escapeHtml(linkText) + "');");
             }
         }
     }
