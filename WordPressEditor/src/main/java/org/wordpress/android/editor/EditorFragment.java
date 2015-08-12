@@ -541,6 +541,9 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         });
     }
 
+    public void onLinkTapped(String url, String title) {
+    }
+
     public void onGetHtmlResponse(Map<String, String> inputArgs) {
         String functionId = inputArgs.get("function");
 

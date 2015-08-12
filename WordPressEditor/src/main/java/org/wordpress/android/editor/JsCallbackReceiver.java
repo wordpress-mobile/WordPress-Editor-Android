@@ -7,6 +7,7 @@ import org.wordpress.android.util.AppLog;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class JsCallbackReceiver {
@@ -93,8 +94,27 @@ public class JsCallbackReceiver {
                 AppLog.d(AppLog.T.EDITOR, "Image tapped, " + params);
                 break;
             case CALLBACK_LINK_TAP:
-                // TODO: Notifies that a link was tapped
+                // Extract and HTML-decode the link data from the callback params
                 AppLog.d(AppLog.T.EDITOR, "Link tapped, " + params);
+
+                List<String> linkIds = new ArrayList<>();
+                linkIds.add("url");
+                linkIds.add("title");
+
+                Set<String> linkDataSet = Utils.splitValuePairDelimitedString(params, JS_CALLBACK_DELIMITER, linkIds);
+                Map<String, String> linkDataMap = Utils.buildMapFromKeyValuePairs(linkDataSet);
+
+                String url = linkDataMap.get("url");
+                if (url != null) {
+                    url = Utils.decodeHtml(url);
+                }
+
+                String title = linkDataMap.get("title");
+                if (title != null) {
+                    title = Utils.decodeHtml(title);
+                }
+
+                mListener.onLinkTapped(url, title);
                 break;
             case CALLBACK_LOG:
                 // Strip 'msg=' from beginning of string

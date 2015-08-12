@@ -9,6 +9,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,6 +52,17 @@ public class Utils {
             html = html.replace("'", "\\'");
             html = html.replace("\r", "\\r");
             html = html.replace("\n", "\\n");
+        }
+        return html;
+    }
+
+    public static String decodeHtml(String html) {
+        if (html != null) {
+            try {
+                html = URLDecoder.decode(html, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                AppLog.e(AppLog.T.EDITOR, "Unsupported encoding exception while decoding HTML.");
+            }
         }
         return html;
     }
