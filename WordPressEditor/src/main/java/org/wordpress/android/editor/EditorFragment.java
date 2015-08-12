@@ -28,6 +28,7 @@ import org.wordpress.android.util.StringUtils;
 import org.wordpress.android.util.helpers.MediaFile;
 import org.wordpress.android.util.helpers.MediaGallery;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -149,6 +150,94 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
         // -- Format bar configuration
 
+        setupFormatBarButtonMap(view);
+
+        return view;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
+    private ActionBar getActionBar() {
+        if (!isAdded()) {
+            return null;
+        }
+
+        if (getActivity() instanceof AppCompatActivity) {
+            return ((AppCompatActivity) getActivity()).getSupportActionBar();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (getView() != null) {
+            // Reload the format bar to make sure the correct one for the new screen width is being used
+            View formatBar = getView().findViewById(R.id.format_bar);
+
+            if (formatBar != null) {
+                // Remember the currently active format bar buttons so they can be re-activated after the reload
+                ArrayList<String> activeTags = new ArrayList<>();
+                for (Map.Entry<String, ToggleButton> entry : mTagToggleButtonMap.entrySet()) {
+                    if (entry.getValue().isChecked()) {
+                        activeTags.add(entry.getKey());
+                    }
+                }
+
+                ViewGroup parent = (ViewGroup) formatBar.getParent();
+                parent.removeView(formatBar);
+
+                formatBar = getActivity().getLayoutInflater().inflate(R.layout.format_bar, parent, false);
+                formatBar.setId(R.id.format_bar);
+                parent.addView(formatBar);
+
+                setupFormatBarButtonMap(formatBar);
+
+                // Restore the active format bar buttons
+                for (String tag : activeTags) {
+                    mTagToggleButtonMap.get(tag).setChecked(true);
+                }
+
+                if (mSourceView.getVisibility() == View.VISIBLE) {
+                    ToggleButton htmlButton = (ToggleButton) formatBar.findViewById(R.id.format_bar_button_html);
+                    htmlButton.setChecked(true);
+                }
+            }
+
+            // Reload HTML mode margins
+            View sourceViewTitle = getView().findViewById(R.id.sourceview_title);
+            View sourceViewContent = getView().findViewById(R.id.sourceview_content);
+
+            if (sourceViewTitle != null && sourceViewContent != null) {
+                int sideMargin = (int) getActivity().getResources().getDimension(R.dimen.sourceview_side_margin);
+
+                ViewGroup.MarginLayoutParams titleParams =
+                        (ViewGroup.MarginLayoutParams) sourceViewTitle.getLayoutParams();
+                ViewGroup.MarginLayoutParams contentParams =
+                        (ViewGroup.MarginLayoutParams) sourceViewContent.getLayoutParams();
+
+                titleParams.setMargins(sideMargin, titleParams.topMargin, sideMargin, titleParams.bottomMargin);
+                contentParams.setMargins(sideMargin, contentParams.topMargin, sideMargin, contentParams.bottomMargin);
+            }
+        }
+
+        // Toggle action bar auto-hiding for the new orientation
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
+                && !getResources().getBoolean(R.bool.is_large_tablet_landscape)) {
+            mHideActionBarOnSoftKeyboardUp = true;
+            hideActionBarIfNeeded();
+        } else {
+            mHideActionBarOnSoftKeyboardUp = false;
+            showActionBarIfNeeded();
+        }
+    }
+
+    private void setupFormatBarButtonMap(View view) {
         ToggleButton boldButton = (ToggleButton) view.findViewById(R.id.format_bar_button_bold);
         mTagToggleButtonMap.put(getString(R.string.format_bar_tag_bold), boldButton);
 
@@ -181,40 +270,6 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
         for (ToggleButton button : mTagToggleButtonMap.values()) {
             button.setOnClickListener(this);
-        }
-
-        return view;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
-    private ActionBar getActionBar() {
-        if (!isAdded()) {
-            return null;
-        }
-
-        if (getActivity() instanceof AppCompatActivity) {
-            return ((AppCompatActivity) getActivity()).getSupportActionBar();
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        // Toggle action bar auto-hiding for the new orientation
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
-                && !getResources().getBoolean(R.bool.is_large_tablet_landscape)) {
-            mHideActionBarOnSoftKeyboardUp = true;
-            hideActionBarIfNeeded();
-        } else {
-            mHideActionBarOnSoftKeyboardUp = false;
-            showActionBarIfNeeded();
         }
     }
 
