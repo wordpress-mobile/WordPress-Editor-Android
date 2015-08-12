@@ -269,6 +269,12 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             // TODO: Handle inserting media
             ((ToggleButton) v).setChecked(false);
         } else if (id == R.id.format_bar_button_link) {
+            if (!((ToggleButton) v).isChecked()) {
+                // The link button was checked when it was pressed; remove the current link
+                mWebView.execJavaScriptFromString("ZSSEditor.unlink();");
+                return;
+            }
+
             ((ToggleButton) v).setChecked(false);
 
             LinkDialogFragment linkDialogFragment = new LinkDialogFragment();
