@@ -12,7 +12,8 @@ import android.widget.EditText;
 
 public class LinkDialogFragment extends DialogFragment {
 
-    public static final int LINK_DIALOG_REQUEST_CODE = 1;
+    public static final int LINK_DIALOG_REQUEST_CODE_ADD = 1;
+    public static final int LINK_DIALOG_REQUEST_CODE_UPDATE = 2;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -31,7 +32,7 @@ public class LinkDialogFragment extends DialogFragment {
                         Intent intent = new Intent();
                         intent.putExtra("linkURL", urlEditText.getText().toString());
                         intent.putExtra("linkText", linkEditText.getText().toString());
-                        getTargetFragment().onActivityResult(getTargetRequestCode(), LINK_DIALOG_REQUEST_CODE, intent);
+                        getTargetFragment().onActivityResult(getTargetRequestCode(), getTargetRequestCode(), intent);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -40,12 +41,17 @@ public class LinkDialogFragment extends DialogFragment {
                     }
                 });
 
-        // Prepare initial state of EditTexts
-        urlEditText.setSelection(7);
 
+        // Prepare initial state of EditTexts
         Bundle bundle = getArguments();
         if (bundle != null) {
             linkEditText.setText(bundle.getString("linkText"));
+
+            String url = bundle.getString("linkURL");
+            if (url != null) {
+                urlEditText.setText(url);
+            }
+            urlEditText.setSelection(urlEditText.length());
         }
 
         return builder.create();

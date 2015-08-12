@@ -272,7 +272,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             ((ToggleButton) v).setChecked(false);
 
             LinkDialogFragment linkDialogFragment = new LinkDialogFragment();
-            linkDialogFragment.setTargetFragment(this, LinkDialogFragment.LINK_DIALOG_REQUEST_CODE);
+            linkDialogFragment.setTargetFragment(this, LinkDialogFragment.LINK_DIALOG_REQUEST_CODE_ADD);
 
             Bundle dialogBundle = new Bundle();
 
@@ -328,7 +328,13 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == LinkDialogFragment.LINK_DIALOG_REQUEST_CODE && data != null) {
+        if ((requestCode == LinkDialogFragment.LINK_DIALOG_REQUEST_CODE_ADD ||
+                requestCode == LinkDialogFragment.LINK_DIALOG_REQUEST_CODE_UPDATE)) {
+
+            if (data == null) {
+                return;
+            }
+
             Bundle extras = data.getExtras();
             if (extras == null) {
                 return;
@@ -356,7 +362,13 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 content.insert(mSelectionStart, urlHtml);
                 mSourceViewContent.setSelection(mSelectionStart + urlHtml.length());
             } else {
-                mWebView.execJavaScriptFromString("ZSSEditor.insertLink('" + Utils.escapeHtml(linkUrl) + "', '" +
+                String jsMethod;
+                if (requestCode == LinkDialogFragment.LINK_DIALOG_REQUEST_CODE_ADD) {
+                    jsMethod = "ZSSEditor.insertLink";
+                } else {
+                    jsMethod = "ZSSEditor.updateLink";
+                }
+                mWebView.execJavaScriptFromString(jsMethod + "('" + Utils.escapeHtml(linkUrl) + "', '" +
                         Utils.escapeHtml(linkText) + "');");
             }
         }
@@ -542,6 +554,16 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     }
 
     public void onLinkTapped(String url, String title) {
+        LinkDialogFragment linkDialogFragment = new LinkDialogFragment();
+        linkDialogFragment.setTargetFragment(this, LinkDialogFragment.LINK_DIALOG_REQUEST_CODE_UPDATE);
+
+        Bundle dialogBundle = new Bundle();
+
+        dialogBundle.putString("linkURL", url);
+        dialogBundle.putString("linkText", title);
+
+        linkDialogFragment.setArguments(dialogBundle);
+        linkDialogFragment.show(getFragmentManager(), "LinkDialogFragment");
     }
 
     public void onGetHtmlResponse(Map<String, String> inputArgs) {
