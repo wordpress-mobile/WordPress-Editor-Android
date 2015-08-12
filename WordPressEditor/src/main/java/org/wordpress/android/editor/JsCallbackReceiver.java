@@ -4,7 +4,9 @@ import android.webkit.JavascriptInterface;
 
 import org.wordpress.android.util.AppLog;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class JsCallbackReceiver {
@@ -100,8 +102,26 @@ public class JsCallbackReceiver {
                 break;
             case CALLBACK_RESPONSE_STRING:
                 AppLog.d(AppLog.T.EDITOR, callbackId + ": " + params);
-                Set<String> responseKeyValueSet = Utils.splitDelimitedString(params, JS_CALLBACK_DELIMITER);
-                mListener.onGetHtmlResponse(Utils.buildMapFromKeyValuePairs(responseKeyValueSet));
+                Set<String> responseDataSet;
+                if (params.startsWith("function=")) {
+                    String functionName = params.substring("function=".length(), params.indexOf(JS_CALLBACK_DELIMITER));
+
+                    List<String> responseIds = new ArrayList<>();
+                    switch (functionName) {
+                        case "getHTMLForCallback":
+                            responseIds.add("id");
+                            responseIds.add("contents");
+                            break;
+                        case "getSelectedText":
+                            responseIds.add("result");
+                            break;
+                    }
+
+                    responseDataSet = Utils.splitValuePairDelimitedString(params, JS_CALLBACK_DELIMITER, responseIds);
+                } else {
+                    responseDataSet = Utils.splitDelimitedString(params, JS_CALLBACK_DELIMITER);
+                }
+                mListener.onGetHtmlResponse(Utils.buildMapFromKeyValuePairs(responseDataSet));
                 break;
             default:
                 AppLog.d(AppLog.T.EDITOR, "Unhandled callback: " + callbackId + ":" + params);

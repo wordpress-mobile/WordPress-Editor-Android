@@ -9,8 +9,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -66,6 +68,26 @@ public class Utils {
         }
 
         return splitString;
+    }
+
+    /**
+     * Splits a delimited string of value pairs (of the form identifier=value) into a set of strings.
+     * @param string the delimited string to split
+     * @param delimiter the string delimiter
+     * @param identifiers the identifiers to match for in the string
+     */
+    public static Set<String> splitValuePairDelimitedString(String string, String delimiter, List<String> identifiers) {
+        String identifierSegment = "";
+        for (String identifier : identifiers) {
+            if (identifierSegment.length() != 0) {
+                identifierSegment += "|";
+            }
+            identifierSegment += identifier;
+        }
+
+        String regex = delimiter + "(?=(" + identifierSegment + ")=)";
+
+        return new HashSet<>(Arrays.asList(string.split(regex)));
     }
 
     /**
