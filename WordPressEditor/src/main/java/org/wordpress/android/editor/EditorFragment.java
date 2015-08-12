@@ -331,6 +331,11 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         if ((requestCode == LinkDialogFragment.LINK_DIALOG_REQUEST_CODE_ADD ||
                 requestCode == LinkDialogFragment.LINK_DIALOG_REQUEST_CODE_UPDATE)) {
 
+            if (resultCode == LinkDialogFragment.LINK_DIALOG_REQUEST_CODE_DELETE) {
+                mWebView.execJavaScriptFromString("ZSSEditor.unlink();");
+                return;
+            }
+
             if (data == null) {
                 return;
             }
