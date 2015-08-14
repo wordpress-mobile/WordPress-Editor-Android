@@ -563,31 +563,9 @@ ZSSEditor.setOrderedList = function() {
     document.execCommand('insertOrderedList', false, null);
 
     // If the insertOrderedList is no longer enabled after running execCommand,
-    // we can assume the user is turning it off. Find the node, insert a new paragraph
-    // as a sibling to the list node, then scrub any <br> tags created as part of the
-    // insertParagraph command.
+    // we can assume the user is turning it off.
     if (!ZSSEditor.isCommandEnabled('insertOrderedList')) {
-        // Get the current selection
-        var sel = window.getSelection();
-        if (sel && sel.rangeCount > 0) {
-            var range = sel.getRangeAt(0);
-            var node = range.startContainer;
-            if (node.hasChildNodes() && range.startOffset > 0) {
-                node = node.childNodes[range.startOffset - 1];
-            }
-
-            // Walk backwards through the DOM until we find an ol
-            while (node) {
-                if (node.nodeType == 1 && node.tagName.toUpperCase() == NodeName.OL) {
-                    // Make a new P node as a sibling to the parent node
-                    document.execCommand('insertParagraph', false);
-                    // Remove any superfluous <br> tags that are created
-                    ZSSEditor.scrubBRFromNode(node.parentNode);
-                    break;
-                }
-                node = ZSSEditor.previousNode(node);
-            }
-        }
+        ZSSEditor.completeListEditing();
     }
     ZSSEditor.sendEnabledStyles();
 };
@@ -596,30 +574,9 @@ ZSSEditor.setUnorderedList = function() {
 	document.execCommand('insertUnorderedList', false, null);
 
     // If the insertUnorderedList is no longer enabled after running execCommand,
-    // we can assume the user is turning it off. Find the node, insert a new paragraph
-    // as a sibling to the list node, then scrub any <br> tags created as part of the
-    // insertParagraph command.
+    // we can assume the user is turning it off.
     if (!ZSSEditor.isCommandEnabled('insertUnorderedList')) {
-        var sel = window.getSelection();
-        if (sel && sel.rangeCount > 0) {
-            var range = sel.getRangeAt(0);
-            var node = range.startContainer;
-            if (node.hasChildNodes() && range.startOffset > 0) {
-                node = node.childNodes[range.startOffset - 1];
-            }
-
-            // Walk backwards through the DOM until we find an ul
-            while (node) {
-                if (node.nodeType == 1 && node.tagName.toUpperCase() == NodeName.UL) {
-                    // Make a new P node as a sibling to the parent node
-                    document.execCommand('insertParagraph', false);
-                    // Remove any superfluous <br> tags that are created
-                    ZSSEditor.scrubBRFromNode(node.parentNode);
-                    break;
-                }
-                node = ZSSEditor.previousNode(node);
-            }
-        }
+        ZSSEditor.completeListEditing();
     }
 	ZSSEditor.sendEnabledStyles();
 };
@@ -1747,13 +1704,45 @@ ZSSEditor.previousNode = function(node) {
 };
 
 /**
+ *  @brief      Ends the editing of a list (either UL or OL).
+ *
+ *  @details    This function finds the list node, inserts a new paragraph as a sibling to the list node
+ *              then scrubs any <br> tags created as part of the insertParagraph command.
+ */
+ZSSEditor.completeListEditing = function() {
+    // Get the current selection
+    var sel = window.getSelection();
+    if (sel && sel.rangeCount > 0) {
+        var range = sel.getRangeAt(0);
+        var node = range.startContainer;
+        if (node.hasChildNodes() && range.startOffset > 0) {
+            node = node.childNodes[range.startOffset - 1];
+        }
+
+        // Walk backwards through the DOM until we find an ul or ol
+        while (node) {
+            if (node.nodeType == 1 &&
+                    (node.tagName.toUpperCase() == NodeName.UL
+                        || node.tagName.toUpperCase() == NodeName.OL)) {
+                // Make a new P node as a sibling to the parent node
+                document.execCommand('insertParagraph', false);
+                // Remove any superfluous <br> tags that are created
+                ZSSEditor.scrubBRFromNode(node.parentNode);
+                break;
+            }
+            node = ZSSEditor.previousNode(node);
+        }
+    }
+}
+
+/**
  *  @brief      Given the specified node, remove all instances of <br> from it and it's children.
  *
  *  @param      node       The node to scrub
  */
 ZSSEditor.scrubBRFromNode = function(node) {
     if (!node) {
-        return null;
+        return;
     }
     $(node).contents().filter(NodeName.BR).remove();
 };
@@ -2175,6 +2164,25 @@ ZSSField.prototype.handleKeyDownEvent = function(e) {
         e.preventDefault();
     } else if (this.isMultiline()) {
         this.wrapCaretInParagraphIfNecessary();
+
+        // If enter was pressed to end a UL or OL, let's check to see if it
+        // was used to end the input of a list and handle it accordingly if so
+        if (wasEnterPressed) {
+            sel = window.getSelection();
+            node = $(sel.anchorNode);
+            children = $(sel.anchorNode.childNodes);
+
+            if (sel.isCollapsed && node.is(NodeName.LI) && (!children.length ||
+                    (children.length == 1 && children.first().is(NodeName.BR)))) {
+                e.preventDefault();
+                var parentNode = rangy.getSelection().anchorNode.parentNode;
+                if (parentNode && parentNode.nodeName === NodeName.OL) {
+                    ZSSEditor.setOrderedList();
+                } else if (parentNode && parentNode.nodeName === NodeName.UL) {
+                    ZSSEditor.setUnorderedList();
+                }
+            }
+        }
     }
 };
 
