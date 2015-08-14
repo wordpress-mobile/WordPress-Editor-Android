@@ -2165,8 +2165,7 @@ ZSSField.prototype.handleKeyDownEvent = function(e) {
     } else if (this.isMultiline()) {
         this.wrapCaretInParagraphIfNecessary();
 
-        // If enter was pressed to end a UL or OL, let's check to see if it
-        // was used to end the input of a list and handle it accordingly if so
+        // If enter was pressed to end a UL or OL, let's double check and handle it accordingly if so
         if (wasEnterPressed) {
             sel = window.getSelection();
             node = $(sel.anchorNode);
