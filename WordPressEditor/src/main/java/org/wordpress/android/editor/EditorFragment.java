@@ -262,6 +262,8 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         ToggleButton mediaButton = (ToggleButton) view.findViewById(R.id.format_bar_button_media);
         mTagToggleButtonMap.put(TAG_FORMAT_BAR_BUTTON_MEDIA, mediaButton);
 
+        registerForContextMenu(mediaButton);
+
         ToggleButton linkButton = (ToggleButton) view.findViewById(R.id.format_bar_button_link);
         mTagToggleButtonMap.put(TAG_FORMAT_BAR_BUTTON_LINK, linkButton);
 
@@ -323,6 +325,11 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         } else if (id == R.id.format_bar_button_media) {
             // TODO: Handle inserting media
             ((ToggleButton) v).setChecked(false);
+
+            mEditorFragmentListener.onAddMediaClicked();
+            if (isAdded()) {
+                getActivity().openContextMenu(mTagToggleButtonMap.get(TAG_FORMAT_BAR_BUTTON_MEDIA));
+            }
         } else if (id == R.id.format_bar_button_link) {
             if (!((ToggleButton) v).isChecked()) {
                 // The link button was checked when it was pressed; remove the current link
