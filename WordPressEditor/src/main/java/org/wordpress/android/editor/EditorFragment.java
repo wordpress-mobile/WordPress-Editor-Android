@@ -17,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.URLUtil;
 import android.webkit.WebView;
 import android.widget.ToggleButton;
 
@@ -545,7 +546,13 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
     @Override
     public void appendMediaFile(MediaFile mediaFile, String imageUrl, ImageLoader imageLoader) {
-        // TODO
+        if (URLUtil.isNetworkUrl(imageUrl)) {
+            mWebView.execJavaScriptFromString("ZSSEditor.insertImage('" + imageUrl + "');");
+        } else {
+            String mediaId = mediaFile.getMediaId();
+            mWebView.execJavaScriptFromString("ZSSEditor.insertLocalImage(" + mediaId + ", '" + imageUrl + "');");
+            mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnImage(" + mediaId + ", " + 0 + ");");
+        }
     }
 
     @Override
