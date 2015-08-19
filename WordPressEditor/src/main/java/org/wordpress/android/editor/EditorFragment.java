@@ -36,7 +36,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 public class EditorFragment extends EditorFragmentAbstract implements View.OnClickListener, View.OnTouchListener,
-        OnJsEditorStateChangedListener, OnImeBackListener {
+        OnJsEditorStateChangedListener, OnImeBackListener, EditorMediaUploadListener {
     private static final String ARG_PARAM_TITLE = "param_title";
     private static final String ARG_PARAM_CONTENT = "param_content";
 
@@ -573,6 +573,21 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     @Override
     public void setContentPlaceholder(CharSequence placeholderText) {
         mContentPlaceholder = placeholderText.toString();
+    }
+
+    @Override
+    public void onMediaUploadSucceeded(String localId, String remoteUrl) {
+        mWebView.execJavaScriptFromString("ZSSEditor.replaceLocalImageWithRemoteImage(" + localId +  ", '" + remoteUrl + "');");
+    }
+
+    @Override
+    public void onMediaUploadProgress(String localId, int progress) {
+        mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnImage(" + localId + ", " + progress + ");");
+    }
+
+    @Override
+    public void onMediaUploadFailed(String localId) {
+        mWebView.execJavaScriptFromString("ZSSEditor.markImageUploadFailed(" + localId +  ");");
     }
 
     public void onDomLoaded() {
