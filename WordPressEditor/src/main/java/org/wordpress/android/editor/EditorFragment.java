@@ -591,11 +591,12 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     }
 
     @Override
-    public void onMediaUploadProgress(final String localId, final int progress) {
+    public void onMediaUploadProgress(final String localId, final float progress) {
         mWebView.post(new Runnable() {
             @Override
             public void run() {
-                mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnImage(" + localId + ", " + progress + ");");
+                String progressString = String.format("%.1f", progress);
+                mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnImage(" + localId + ", " + progressString + ");");
             }
         });
     }
