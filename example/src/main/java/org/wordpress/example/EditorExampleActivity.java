@@ -1,11 +1,14 @@
 package org.wordpress.android.editor.example;
 
 import android.app.Fragment;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import org.wordpress.android.editor.EditorFragmentAbstract;
 import org.wordpress.android.editor.EditorFragmentAbstract.EditorFragmentListener;
+import org.wordpress.android.editor.EditorMediaUploadListener;
 import org.wordpress.android.util.ToastUtils;
 import org.wordpress.android.util.helpers.MediaFile;
 
@@ -18,6 +21,8 @@ public class EditorExampleActivity extends AppCompatActivity implements EditorFr
     public static final String CONTENT_PLACEHOLDER_PARAM = "CONTENT_PLACEHOLDER_PARAM";
     public static final int USE_NEW_EDITOR = 1;
     public static final int USE_LEGACY_EDITOR = 2;
+
+    public static final int ADD_MEDIA_ACTIVITY_REQUEST_CODE = 1111;
 
     private EditorFragmentAbstract mEditorFragment;
 
@@ -42,13 +47,37 @@ public class EditorExampleActivity extends AppCompatActivity implements EditorFr
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (data != null && requestCode == ADD_MEDIA_ACTIVITY_REQUEST_CODE) {
+            final Uri imageUri = data.getData();
+
+            MediaFile mediaFile = new MediaFile();
+            final String mediaId = String.valueOf(System.currentTimeMillis());
+            mediaFile.setMediaId(mediaId);
+
+            mEditorFragment.appendMediaFile(mediaFile, imageUri.toString(), null);
+
+            if (mEditorFragment instanceof EditorMediaUploadListener) {
+                simulateFileUpload(mediaId, imageUri.toString());
+            }
+        }
+    }
+
+    @Override
     public void onSettingsClicked() {
         // TODO
     }
 
     @Override
     public void onAddMediaClicked() {
-        // TODO
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent = Intent.createChooser(intent, "Pick photo");
+
+        startActivityForResult(intent, ADD_MEDIA_ACTIVITY_REQUEST_CODE);
     }
 
     @Override
@@ -71,5 +100,29 @@ public class EditorExampleActivity extends AppCompatActivity implements EditorFr
     @Override
     public void saveMediaFile(MediaFile mediaFile) {
         // TODO
+    }
+
+    private void simulateFileUpload(final String mediaId, final String mediaUrl) {
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    float count = (float) 0.1;
+                    while (count < 1.1) {
+                        sleep(500);
+
+                        ((EditorMediaUploadListener) mEditorFragment).onMediaUploadProgress(mediaId, count);
+
+                        count += 0.1;
+                    }
+
+                    ((EditorMediaUploadListener) mEditorFragment).onMediaUploadSucceeded(mediaId, mediaUrl);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        thread.start();
     }
 }
