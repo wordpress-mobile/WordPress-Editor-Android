@@ -545,14 +545,19 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     }
 
     @Override
-    public void appendMediaFile(MediaFile mediaFile, String imageUrl, ImageLoader imageLoader) {
-        if (URLUtil.isNetworkUrl(imageUrl)) {
-            mWebView.execJavaScriptFromString("ZSSEditor.insertImage('" + imageUrl + "');");
-        } else {
-            String mediaId = mediaFile.getMediaId();
-            mWebView.execJavaScriptFromString("ZSSEditor.insertLocalImage(" + mediaId + ", '" + imageUrl + "');");
-            mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnImage(" + mediaId + ", " + 0 + ");");
-        }
+    public void appendMediaFile(final MediaFile mediaFile, final String imageUrl, ImageLoader imageLoader) {
+        mWebView.post(new Runnable() {
+            @Override
+            public void run() {
+                if (URLUtil.isNetworkUrl(imageUrl)) {
+                    mWebView.execJavaScriptFromString("ZSSEditor.insertImage('" + imageUrl + "');");
+                } else {
+                    String mediaId = mediaFile.getMediaId();
+                    mWebView.execJavaScriptFromString("ZSSEditor.insertLocalImage(" + mediaId + ", '" + imageUrl + "');");
+                    mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnImage(" + mediaId + ", " + 0 + ");");
+                }
+            }
+        });
     }
 
     @Override
@@ -576,18 +581,33 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     }
 
     @Override
-    public void onMediaUploadSucceeded(String localId, String remoteUrl) {
-        mWebView.execJavaScriptFromString("ZSSEditor.replaceLocalImageWithRemoteImage(" + localId +  ", '" + remoteUrl + "');");
+    public void onMediaUploadSucceeded(final String localId, final String remoteUrl) {
+        mWebView.post(new Runnable() {
+            @Override
+            public void run() {
+                mWebView.execJavaScriptFromString("ZSSEditor.replaceLocalImageWithRemoteImage(" + localId +  ", '" + remoteUrl + "');");
+            }
+        });
     }
 
     @Override
-    public void onMediaUploadProgress(String localId, int progress) {
-        mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnImage(" + localId + ", " + progress + ");");
+    public void onMediaUploadProgress(final String localId, final int progress) {
+        mWebView.post(new Runnable() {
+            @Override
+            public void run() {
+                mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnImage(" + localId + ", " + progress + ");");
+            }
+        });
     }
 
     @Override
-    public void onMediaUploadFailed(String localId) {
-        mWebView.execJavaScriptFromString("ZSSEditor.markImageUploadFailed(" + localId +  ");");
+    public void onMediaUploadFailed(final String localId) {
+        mWebView.post(new Runnable() {
+            @Override
+            public void run() {
+                mWebView.execJavaScriptFromString("ZSSEditor.markImageUploadFailed(" + localId +  ");");
+            }
+        });
     }
 
     public void onDomLoaded() {
