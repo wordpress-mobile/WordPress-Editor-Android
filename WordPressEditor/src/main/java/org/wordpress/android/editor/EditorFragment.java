@@ -552,9 +552,9 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 if (URLUtil.isNetworkUrl(imageUrl)) {
                     mWebView.execJavaScriptFromString("ZSSEditor.insertImage('" + imageUrl + "');");
                 } else {
-                    String mediaId = mediaFile.getMediaId();
-                    mWebView.execJavaScriptFromString("ZSSEditor.insertLocalImage(" + mediaId + ", '" + imageUrl + "');");
-                    mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnImage(" + mediaId + ", " + 0 + ");");
+                    String id = mediaFile.getMediaId();
+                    mWebView.execJavaScriptFromString("ZSSEditor.insertLocalImage(" + id + ", '" + imageUrl + "');");
+                    mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnImage(" + id + ", " + 0 + ");");
                 }
             }
         });
@@ -581,32 +581,33 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     }
 
     @Override
-    public void onMediaUploadSucceeded(final String localId, final String remoteUrl) {
+    public void onMediaUploadSucceeded(final String id, final String remoteUrl) {
         mWebView.post(new Runnable() {
             @Override
             public void run() {
-                mWebView.execJavaScriptFromString("ZSSEditor.replaceLocalImageWithRemoteImage(" + localId +  ", '" + remoteUrl + "');");
+                mWebView.execJavaScriptFromString("ZSSEditor.replaceLocalImageWithRemoteImage(" + id +  ", '" +
+                        remoteUrl + "');");
             }
         });
     }
 
     @Override
-    public void onMediaUploadProgress(final String localId, final float progress) {
+    public void onMediaUploadProgress(final String id, final float progress) {
         mWebView.post(new Runnable() {
             @Override
             public void run() {
                 String progressString = String.format("%.1f", progress);
-                mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnImage(" + localId + ", " + progressString + ");");
+                mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnImage(" + id + ", " + progressString + ");");
             }
         });
     }
 
     @Override
-    public void onMediaUploadFailed(final String localId) {
+    public void onMediaUploadFailed(final String id) {
         mWebView.post(new Runnable() {
             @Override
             public void run() {
-                mWebView.execJavaScriptFromString("ZSSEditor.markImageUploadFailed(" + localId +  ");");
+                mWebView.execJavaScriptFromString("ZSSEditor.markImageUploadFailed(" + id + ");");
             }
         });
     }
@@ -656,7 +657,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             @Override
             public void run() {
                 if (!focusedFieldId.isEmpty()) {
-                    switch(focusedFieldId) {
+                    switch (focusedFieldId) {
                         case "zss_field_title":
                             updateFormatBarEnabledState(false);
                             break;
