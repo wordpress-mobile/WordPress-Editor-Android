@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.ContextMenu;
+import android.view.MenuItem;
+import android.view.View;
 
 import org.wordpress.android.editor.EditorFragmentAbstract;
 import org.wordpress.android.editor.EditorFragmentAbstract.EditorFragmentListener;
@@ -23,6 +26,10 @@ public class EditorExampleActivity extends AppCompatActivity implements EditorFr
     public static final int USE_LEGACY_EDITOR = 2;
 
     public static final int ADD_MEDIA_ACTIVITY_REQUEST_CODE = 1111;
+    public static final int ADD_MEDIA_FAIL_ACTIVITY_REQUEST_CODE = 1112;
+
+    private static final int SELECT_PHOTO_MENU_POSITION = 0;
+    private static final int SELECT_PHOTO_FAIL_MENU_POSITION = 1;
 
     private EditorFragmentAbstract mEditorFragment;
 
@@ -47,21 +54,63 @@ public class EditorExampleActivity extends AppCompatActivity implements EditorFr
     }
 
     @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        menu.add(0, SELECT_PHOTO_MENU_POSITION, 0, getString(R.string.select_photo));
+        menu.add(0, SELECT_PHOTO_FAIL_MENU_POSITION, 0, getString(R.string.select_photo_fail));
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+
+        switch (item.getItemId()) {
+            case SELECT_PHOTO_MENU_POSITION:
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                intent = Intent.createChooser(intent, getString(R.string.select_photo));
+
+                startActivityForResult(intent, ADD_MEDIA_ACTIVITY_REQUEST_CODE);
+                return true;
+            case SELECT_PHOTO_FAIL_MENU_POSITION:
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                intent = Intent.createChooser(intent, getString(R.string.select_photo_fail));
+
+                startActivityForResult(intent, ADD_MEDIA_FAIL_ACTIVITY_REQUEST_CODE);
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (data != null && requestCode == ADD_MEDIA_ACTIVITY_REQUEST_CODE) {
-            final Uri imageUri = data.getData();
+        if (data == null) {
+            return;
+        }
 
-            MediaFile mediaFile = new MediaFile();
-            final String mediaId = String.valueOf(System.currentTimeMillis());
-            mediaFile.setMediaId(mediaId);
+        Uri imageUri = data.getData();
 
-            mEditorFragment.appendMediaFile(mediaFile, imageUri.toString(), null);
+        MediaFile mediaFile = new MediaFile();
+        String mediaId = String.valueOf(System.currentTimeMillis());
+        mediaFile.setMediaId(mediaId);
 
-            if (mEditorFragment instanceof EditorMediaUploadListener) {
-                simulateFileUpload(mediaId, imageUri.toString());
-            }
+        switch (requestCode) {
+            case ADD_MEDIA_ACTIVITY_REQUEST_CODE:
+                mEditorFragment.appendMediaFile(mediaFile, imageUri.toString(), null);
+
+                if (mEditorFragment instanceof EditorMediaUploadListener) {
+                    simulateFileUpload(mediaId, imageUri.toString());
+                }
+                break;
+            case ADD_MEDIA_FAIL_ACTIVITY_REQUEST_CODE:
+                mEditorFragment.appendMediaFile(mediaFile, imageUri.toString(), null);
+
+                if (mEditorFragment instanceof EditorMediaUploadListener) {
+                    simulateFileUploadFail(mediaId, imageUri.toString());
+                }
         }
     }
 
@@ -72,12 +121,7 @@ public class EditorExampleActivity extends AppCompatActivity implements EditorFr
 
     @Override
     public void onAddMediaClicked() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        intent = Intent.createChooser(intent, "Pick photo");
-
-        startActivityForResult(intent, ADD_MEDIA_ACTIVITY_REQUEST_CODE);
+        // TODO
     }
 
     @Override
@@ -117,6 +161,30 @@ public class EditorExampleActivity extends AppCompatActivity implements EditorFr
                     }
 
                     ((EditorMediaUploadListener) mEditorFragment).onMediaUploadSucceeded(mediaId, mediaUrl);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        thread.start();
+    }
+
+    private void simulateFileUploadFail(final String mediaId, final String mediaUrl) {
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    float count = (float) 0.1;
+                    while (count < 0.6) {
+                        sleep(500);
+
+                        ((EditorMediaUploadListener) mEditorFragment).onMediaUploadProgress(mediaId, count);
+
+                        count += 0.1;
+                    }
+
+                    ((EditorMediaUploadListener) mEditorFragment).onMediaUploadFailed(mediaId);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
