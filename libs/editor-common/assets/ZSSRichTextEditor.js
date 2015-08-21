@@ -802,7 +802,16 @@ ZSSEditor.updateImage = function(url, alt) {
 };
 
 ZSSEditor.insertImage = function(url, alt) {
-    var html = '<img src="'+url+'" alt="'+alt+'" />';
+    var space = '<br>';
+    var paragraphOpenTag = '<' + this.defaultParagraphSeparator + '>';
+    var paragraphCloseTag = '</' + this.defaultParagraphSeparator + '>';
+
+    var html = '<img src="' + url + '" alt="' + alt + '" />';
+
+    if (this.getFocusedField().getHTML().length == 0) {
+        html = paragraphOpenTag + html;
+    }
+    html = html + paragraphCloseTag + paragraphOpenTag + space;
 
     this.insertHTML(html);
     this.sendEnabledStyles();
