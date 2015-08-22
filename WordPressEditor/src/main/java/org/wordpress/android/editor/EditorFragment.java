@@ -670,6 +670,12 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         });
     }
 
+    public void onMediaTapped(final String id, String url, String meta) {
+        // TODO: Check if the id is a current upload (prompt cancel option), a retried upload (call onMediaRetryClicked)
+        // or a remote file (show image options)
+
+    }
+
     public void onLinkTapped(String url, String title) {
         LinkDialogFragment linkDialogFragment = new LinkDialogFragment();
         linkDialogFragment.setTargetFragment(this, LinkDialogFragment.LINK_DIALOG_REQUEST_CODE_UPDATE);

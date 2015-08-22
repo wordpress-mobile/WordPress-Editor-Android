@@ -90,8 +90,29 @@ public class JsCallbackReceiver {
                 AppLog.d(AppLog.T.EDITOR, "Image replaced, " + params);
                 break;
             case CALLBACK_IMAGE_TAP:
-                // TODO: Notifies that an image was tapped
                 AppLog.d(AppLog.T.EDITOR, "Image tapped, " + params);
+
+                List<String> mediaIds = new ArrayList<>();
+                mediaIds.add("id");
+                mediaIds.add("url");
+                mediaIds.add("meta");
+
+                Set<String> mediaDataSet = Utils.splitValuePairDelimitedString(params, JS_CALLBACK_DELIMITER, mediaIds);
+                Map<String, String> mediaDataMap = Utils.buildMapFromKeyValuePairs(mediaDataSet);
+
+                String mediaId = mediaDataMap.get("id");
+
+                String mediaUrl = mediaDataMap.get("url");
+                if (mediaUrl != null) {
+                    mediaUrl = Utils.decodeHtml(mediaUrl);
+                }
+
+                String mediaMeta = mediaDataMap.get("meta");
+                if (mediaMeta != null) {
+                    mediaMeta = Utils.decodeHtml(mediaMeta);
+                }
+
+                mListener.onMediaTapped(mediaId, mediaUrl, mediaMeta);
                 break;
             case CALLBACK_LINK_TAP:
                 // Extract and HTML-decode the link data from the callback params
