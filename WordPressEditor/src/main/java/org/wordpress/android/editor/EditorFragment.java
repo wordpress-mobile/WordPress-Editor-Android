@@ -28,6 +28,7 @@ import com.android.volley.toolbox.ImageLoader;
 import org.wordpress.android.util.AppLog;
 import org.wordpress.android.util.AppLog.T;
 import org.wordpress.android.util.StringUtils;
+import org.wordpress.android.util.ToastUtils;
 import org.wordpress.android.util.helpers.MediaFile;
 import org.wordpress.android.util.helpers.MediaGallery;
 
@@ -326,12 +327,15 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_content').focus();");
             }
         } else if (id == R.id.format_bar_button_media) {
-            // TODO: Handle inserting media
             ((ToggleButton) v).setChecked(false);
 
-            mEditorFragmentListener.onAddMediaClicked();
-            if (isAdded()) {
-                getActivity().openContextMenu(mTagToggleButtonMap.get(TAG_FORMAT_BAR_BUTTON_MEDIA));
+            if (mSourceView.getVisibility() == View.VISIBLE) {
+                ToastUtils.showToast(getActivity(), R.string.alert_insert_image_html_mode, ToastUtils.Duration.LONG);
+            } else {
+                mEditorFragmentListener.onAddMediaClicked();
+                if (isAdded()) {
+                    getActivity().openContextMenu(mTagToggleButtonMap.get(TAG_FORMAT_BAR_BUTTON_MEDIA));
+                }
             }
         } else if (id == R.id.format_bar_button_link) {
             if (!((ToggleButton) v).isChecked()) {
