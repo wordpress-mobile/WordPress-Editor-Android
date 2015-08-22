@@ -670,10 +670,19 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         });
     }
 
-    public void onMediaTapped(final String id, String url, String meta) {
-        // TODO: Check if the id is a current upload (prompt cancel option), a retried upload (call onMediaRetryClicked)
-        // or a remote file (show image options)
+    public void onMediaTapped(final String id, String url, String meta, String uploadStatus) {
 
+        switch (uploadStatus) {
+            case "uploading":
+                // TODO: Prompt option to cancel upload
+                break;
+            case "failed":
+                // TODO: Retry media upload
+                break;
+            default:
+                // TODO: Show media options screen
+                break;
+        }
     }
 
     public void onLinkTapped(String url, String title) {

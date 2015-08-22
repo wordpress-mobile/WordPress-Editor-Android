@@ -2,7 +2,10 @@ package org.wordpress.android.editor;
 
 import android.webkit.JavascriptInterface;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.wordpress.android.util.AppLog;
+import org.wordpress.android.util.JSONUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -112,7 +115,22 @@ public class JsCallbackReceiver {
                     mediaMeta = Utils.decodeHtml(mediaMeta);
                 }
 
-                mListener.onMediaTapped(mediaId, mediaUrl, mediaMeta);
+                String uploadStatus = "";
+                try {
+                    String classes = JSONUtils.getString(new JSONObject(mediaMeta), "classes");
+                    Set<String> classesSet = Utils.splitDelimitedString(classes, ", ");
+
+                    if (classesSet.contains("uploading")) {
+                        uploadStatus = "uploading";
+                    } else if (classesSet.contains("failed")) {
+                        uploadStatus = "failed";
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    AppLog.d(AppLog.T.EDITOR, "Media meta data from callback-image-tap was not JSON-formatted");
+                }
+
+                mListener.onMediaTapped(mediaId, mediaUrl, mediaMeta, uploadStatus);
                 break;
             case CALLBACK_LINK_TAP:
                 // Extract and HTML-decode the link data from the callback params
