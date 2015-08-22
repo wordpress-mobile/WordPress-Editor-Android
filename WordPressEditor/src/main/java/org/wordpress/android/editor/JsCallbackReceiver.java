@@ -95,6 +95,8 @@ public class JsCallbackReceiver {
             case CALLBACK_IMAGE_TAP:
                 AppLog.d(AppLog.T.EDITOR, "Image tapped, " + params);
 
+                String uploadStatus = "";
+
                 List<String> mediaIds = new ArrayList<>();
                 mediaIds.add("id");
                 mediaIds.add("url");
@@ -113,21 +115,20 @@ public class JsCallbackReceiver {
                 String mediaMeta = mediaDataMap.get("meta");
                 if (mediaMeta != null) {
                     mediaMeta = Utils.decodeHtml(mediaMeta);
-                }
 
-                String uploadStatus = "";
-                try {
-                    String classes = JSONUtils.getString(new JSONObject(mediaMeta), "classes");
-                    Set<String> classesSet = Utils.splitDelimitedString(classes, ", ");
+                    try {
+                        String classes = JSONUtils.getString(new JSONObject(mediaMeta), "classes");
+                        Set<String> classesSet = Utils.splitDelimitedString(classes, ", ");
 
-                    if (classesSet.contains("uploading")) {
-                        uploadStatus = "uploading";
-                    } else if (classesSet.contains("failed")) {
-                        uploadStatus = "failed";
+                        if (classesSet.contains("uploading")) {
+                            uploadStatus = "uploading";
+                        } else if (classesSet.contains("failed")) {
+                            uploadStatus = "failed";
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        AppLog.d(AppLog.T.EDITOR, "Media meta data from callback-image-tap was not JSON-formatted");
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    AppLog.d(AppLog.T.EDITOR, "Media meta data from callback-image-tap was not JSON-formatted");
                 }
 
                 mListener.onMediaTapped(mediaId, mediaUrl, mediaMeta, uploadStatus);
