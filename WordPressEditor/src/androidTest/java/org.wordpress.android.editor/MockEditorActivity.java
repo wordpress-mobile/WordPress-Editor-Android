@@ -47,6 +47,11 @@ public class MockEditorActivity extends AppCompatActivity implements EditorFragm
     }
 
     @Override
+    public void onMediaRetryClicked(String mediaId) {
+
+    }
+
+    @Override
     public void saveMediaFile(MediaFile mediaFile) {
 
     }
