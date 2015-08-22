@@ -547,15 +547,15 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     }
 
     @Override
-    public void appendMediaFile(final MediaFile mediaFile, final String imageUrl, ImageLoader imageLoader) {
+    public void appendMediaFile(final MediaFile mediaFile, final String mediaUrl, ImageLoader imageLoader) {
         mWebView.post(new Runnable() {
             @Override
             public void run() {
-                if (URLUtil.isNetworkUrl(imageUrl)) {
-                    mWebView.execJavaScriptFromString("ZSSEditor.insertImage('" + imageUrl + "');");
+                if (URLUtil.isNetworkUrl(mediaUrl)) {
+                    mWebView.execJavaScriptFromString("ZSSEditor.insertImage('" + mediaUrl + "');");
                 } else {
                     String id = mediaFile.getMediaId();
-                    mWebView.execJavaScriptFromString("ZSSEditor.insertLocalImage(" + id + ", '" + imageUrl + "');");
+                    mWebView.execJavaScriptFromString("ZSSEditor.insertLocalImage(" + id + ", '" + mediaUrl + "');");
                     mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnImage(" + id + ", " + 0 + ");");
                 }
             }
@@ -583,33 +583,34 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     }
 
     @Override
-    public void onMediaUploadSucceeded(final String id, final String remoteUrl) {
+    public void onMediaUploadSucceeded(final String mediaId, final String remoteUrl) {
         mWebView.post(new Runnable() {
             @Override
             public void run() {
-                mWebView.execJavaScriptFromString("ZSSEditor.replaceLocalImageWithRemoteImage(" + id +  ", '" +
+                mWebView.execJavaScriptFromString("ZSSEditor.replaceLocalImageWithRemoteImage(" + mediaId + ", '" +
                         remoteUrl + "');");
             }
         });
     }
 
     @Override
-    public void onMediaUploadProgress(final String id, final float progress) {
+    public void onMediaUploadProgress(final String mediaId, final float progress) {
         mWebView.post(new Runnable() {
             @Override
             public void run() {
                 String progressString = String.format("%.1f", progress);
-                mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnImage(" + id + ", " + progressString + ");");
+                mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnImage(" + mediaId + ", " +
+                        progressString + ");");
             }
         });
     }
 
     @Override
-    public void onMediaUploadFailed(final String id) {
+    public void onMediaUploadFailed(final String mediaId) {
         mWebView.post(new Runnable() {
             @Override
             public void run() {
-                mWebView.execJavaScriptFromString("ZSSEditor.markImageUploadFailed(" + id + ");");
+                mWebView.execJavaScriptFromString("ZSSEditor.markImageUploadFailed(" + mediaId + ");");
             }
         });
     }
