@@ -34,7 +34,9 @@ import org.wordpress.android.util.helpers.MediaGallery;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -66,6 +68,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     private String mContentPlaceholder = "";
 
     private boolean mHideActionBarOnSoftKeyboardUp;
+    private Set<String> mUploadingMediaIds;
 
     private String mJavaScriptResult = "";
 
@@ -101,6 +104,8 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 && !getResources().getBoolean(R.bool.is_large_tablet_landscape)) {
             mHideActionBarOnSoftKeyboardUp = true;
         }
+
+        mUploadingMediaIds = new HashSet<>();
 
         // -- WebView configuration
 
@@ -297,6 +302,16 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.format_bar_button_html) {
+            // Don't switch to HTML mode if currently uploading media
+            if (!mUploadingMediaIds.isEmpty()) {
+                ((ToggleButton) v).setChecked(false);
+
+                if (isAdded()) {
+                    ToastUtils.showToast(getActivity(), R.string.alert_html_toggle_uploading, ToastUtils.Duration.LONG);
+                }
+                return;
+            }
+
             clearFormatBarButtons();
             updateFormatBarEnabledState(true);
 
@@ -561,6 +576,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                     String id = mediaFile.getMediaId();
                     mWebView.execJavaScriptFromString("ZSSEditor.insertLocalImage(" + id + ", '" + mediaUrl + "');");
                     mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnImage(" + id + ", " + 0 + ");");
+                    mUploadingMediaIds.add(id);
                 }
             }
         });
@@ -593,6 +609,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             public void run() {
                 mWebView.execJavaScriptFromString("ZSSEditor.replaceLocalImageWithRemoteImage(" + mediaId + ", '" +
                         remoteUrl + "');");
+                mUploadingMediaIds.remove(mediaId);
             }
         });
     }
@@ -615,6 +632,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             @Override
             public void run() {
                 mWebView.execJavaScriptFromString("ZSSEditor.markImageUploadFailed(" + mediaId + ");");
+                mUploadingMediaIds.remove(mediaId);
             }
         });
     }
@@ -691,6 +709,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                             @Override
                             public void run() {
                                 mWebView.execJavaScriptFromString("ZSSEditor.removeImage(" + mediaId + ");");
+                                mUploadingMediaIds.remove(mediaId);
                             }
                         });
                         dialog.dismiss();
@@ -715,6 +734,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                     public void run() {
                         mWebView.execJavaScriptFromString("ZSSEditor.unmarkImageUploadFailed(" + mediaId + ");");
                         mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnImage(" + mediaId + ", " + 0 + ");");
+                        mUploadingMediaIds.add(mediaId);
                     }
                 });
                 break;
