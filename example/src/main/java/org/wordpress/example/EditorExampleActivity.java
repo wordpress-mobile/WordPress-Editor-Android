@@ -139,6 +139,11 @@ public class EditorExampleActivity extends AppCompatActivity implements EditorFr
     }
 
     @Override
+    public void onMediaUploadCancelClicked(String mediaId) {
+
+    }
+
+    @Override
     public void onEditorFragmentInitialized() {
         // arbitrary setup
         mEditorFragment.setFeaturedImageSupported(true);

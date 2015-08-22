@@ -2,12 +2,14 @@ package org.wordpress.android.editor;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.SpannableString;
@@ -670,20 +672,44 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         });
     }
 
-    public void onMediaTapped(final String id, String url, String meta, String uploadStatus) {
+    public void onMediaTapped(final String mediaId, String url, String meta, String uploadStatus) {
         switch (uploadStatus) {
             case "uploading":
-                // TODO: Prompt option to cancel upload
+                // Display 'cancel upload' dialog
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle(getString(R.string.stop_upload_dialog_title));
+                builder.setPositiveButton(R.string.stop_upload_button, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        mEditorFragmentListener.onMediaUploadCancelClicked(mediaId);
+
+                        mWebView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mWebView.execJavaScriptFromString("ZSSEditor.removeImage(" + mediaId + ");");
+                            }
+                        });
+                        dialog.dismiss();
+                    }
+                });
+
+                builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
                 break;
             case "failed":
                 // Retry media upload
-                mEditorFragmentListener.onMediaRetryClicked(id);
+                mEditorFragmentListener.onMediaRetryClicked(mediaId);
 
                 mWebView.post(new Runnable() {
                     @Override
                     public void run() {
-                        mWebView.execJavaScriptFromString("ZSSEditor.unmarkImageUploadFailed(" + id + ");");
-                        mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnImage(" + id + ", " + 0 + ");");
+                        mWebView.execJavaScriptFromString("ZSSEditor.unmarkImageUploadFailed(" + mediaId + ");");
+                        mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnImage(" + mediaId + ", " + 0 + ");");
                     }
                 });
                 break;

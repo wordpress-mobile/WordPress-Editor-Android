@@ -100,6 +100,7 @@ public abstract class EditorFragmentAbstract extends Fragment {
         void onSettingsClicked();
         void onAddMediaClicked();
         void onMediaRetryClicked(String mediaId);
+        void onMediaUploadCancelClicked(String mediaId);
         // TODO: remove saveMediaFile, it's currently needed for the legacy editor - we should have something like
         // "EditorFragmentAbstract.getFeaturedImage()" returning the remote id
         void saveMediaFile(MediaFile mediaFile);
