@@ -671,13 +671,21 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     }
 
     public void onMediaTapped(final String id, String url, String meta, String uploadStatus) {
-
         switch (uploadStatus) {
             case "uploading":
                 // TODO: Prompt option to cancel upload
                 break;
             case "failed":
-                // TODO: Retry media upload
+                // Retry media upload
+                mEditorFragmentListener.onMediaRetryClicked(id);
+
+                mWebView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mWebView.execJavaScriptFromString("ZSSEditor.unmarkImageUploadFailed(" + id + ");");
+                        mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnImage(" + id + ", " + 0 + ");");
+                    }
+                });
                 break;
             default:
                 // TODO: Show media options screen

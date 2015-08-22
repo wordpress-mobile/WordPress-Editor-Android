@@ -15,6 +15,9 @@ import org.wordpress.android.editor.EditorMediaUploadListener;
 import org.wordpress.android.util.ToastUtils;
 import org.wordpress.android.util.helpers.MediaFile;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class EditorExampleActivity extends AppCompatActivity implements EditorFragmentListener {
     public static final String EDITOR_PARAM = "EDITOR_PARAM";
     public static final String TITLE_PARAM = "TITLE_PARAM";
@@ -33,6 +36,8 @@ public class EditorExampleActivity extends AppCompatActivity implements EditorFr
 
     private EditorFragmentAbstract mEditorFragment;
 
+    private Map<String, String> mFailedUploads;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +48,8 @@ public class EditorExampleActivity extends AppCompatActivity implements EditorFr
             ToastUtils.showToast(this, R.string.starting_legacy_editor);
             setContentView(R.layout.activity_legacy_editor);
         }
+
+        mFailedUploads = new HashMap<>();
     }
 
     @Override
@@ -126,6 +133,9 @@ public class EditorExampleActivity extends AppCompatActivity implements EditorFr
 
     @Override
     public void onMediaRetryClicked(String mediaId) {
+        if (mFailedUploads.containsKey(mediaId)) {
+            simulateFileUpload(mediaId, mFailedUploads.get(mediaId));
+        }
     }
 
     @Override
@@ -165,6 +175,10 @@ public class EditorExampleActivity extends AppCompatActivity implements EditorFr
                     }
 
                     ((EditorMediaUploadListener) mEditorFragment).onMediaUploadSucceeded(mediaId, mediaUrl);
+
+                    if (mFailedUploads.containsKey(mediaId)) {
+                        mFailedUploads.remove(mediaId);
+                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -189,6 +203,8 @@ public class EditorExampleActivity extends AppCompatActivity implements EditorFr
                     }
 
                     ((EditorMediaUploadListener) mEditorFragment).onMediaUploadFailed(mediaId);
+
+                    mFailedUploads.put(mediaId, mediaUrl);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
