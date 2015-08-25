@@ -61,7 +61,8 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     private String mTitlePlaceholder = "";
     private String mContentPlaceholder = "";
 
-    private boolean mHideActionBarOnSoftKeyboardUp;
+    private boolean mIsKeyboardOpen = false;
+    private boolean mHideActionBarOnSoftKeyboardUp = false;
 
     private String mJavaScriptResult = "";
 
@@ -153,6 +154,12 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         setupFormatBarButtonMap(view);
 
         return view;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mIsKeyboardOpen = false;
     }
 
     @Override
@@ -372,6 +379,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         if (event.getAction() == MotionEvent.ACTION_UP) {
             // If the WebView or EditText has received a touch event, the keyboard will be displayed and the action bar
             // should hide
+            mIsKeyboardOpen = true;
             hideActionBarIfNeeded();
         }
         return false;
@@ -382,6 +390,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
      */
     @Override
     public void onImeBack() {
+        mIsKeyboardOpen = false;
         showActionBarIfNeeded();
     }
 
@@ -679,6 +688,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         if (getActionBar() != null
                 && !isHardwareKeyboardPresent()
                 && mHideActionBarOnSoftKeyboardUp
+                && mIsKeyboardOpen
                 && actionBar.isShowing()) {
             getActionBar().hide();
         }
