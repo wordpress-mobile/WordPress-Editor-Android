@@ -62,6 +62,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     private String mContentPlaceholder = "";
 
     private boolean mIsKeyboardOpen = false;
+    private boolean mEditorWasPaused = false;
     private boolean mHideActionBarOnSoftKeyboardUp = false;
 
     private String mJavaScriptResult = "";
@@ -159,7 +160,23 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     @Override
     public void onPause() {
         super.onPause();
+        mEditorWasPaused = true;
         mIsKeyboardOpen = false;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // If the editor was previously paused and the current orientation is landscape,
+        // hide the actionbar because the keyboard is going to appear (even if it was hidden
+        // prior to being paused).
+        if (mEditorWasPaused
+                && (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+                && !getResources().getBoolean(R.bool.is_large_tablet_landscape)) {
+            mIsKeyboardOpen = true;
+            mHideActionBarOnSoftKeyboardUp = true;
+            hideActionBarIfNeeded();
+        }
     }
 
     @Override
