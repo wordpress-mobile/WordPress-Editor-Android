@@ -8,7 +8,7 @@
     <dimen name="format_bar_scroll_right_margin">-7dp</dimen>
 
     <dimen name="format_bar_button_margin_tablet">@dimen/format_bar_button_margin_tablet_small</dimen>
-    <dimen name="format_bar_button_margin_tablet_small">2dp</dimen>
+    <dimen name="format_bar_button_margin_tablet_small">0dp</dimen>
     <dimen name="format_bar_button_margin_tablet_large">7dp</dimen>
     <dimen name="format_bar_button_margin_tablet_extra_large">12dp</dimen>
 
