@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/link_dialog_margin_outer"
+        android:paddingRight="@dimen/link_dialog_margin_outer"
+        android:paddingTop="@dimen/link_dialog_margin_outer">
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/title"
+            android:textColor="@color/image_options_label"
+            android:textStyle="bold"/>
+
+        <EditText
+            android:id="@+id/image_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapSentences"
+            android:singleLine="true"/>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/image_caption"
+            android:textColor="@color/image_options_label"
+            android:textStyle="bold"/>
+
+        <EditText
+            android:id="@+id/image_caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapSentences"
+            android:singleLine="true"/>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/image_alt_text"
+            android:textColor="@color/image_options_label"
+            android:textStyle="bold"/>
+
+        <EditText
+            android:id="@+id/image_alt_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapSentences"
+            android:singleLine="true"/>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/image_alignment"
+            android:textColor="@color/image_options_label"
+            android:textStyle="bold"/>
+
+        <Spinner
+            android:id="@+id/alignment_spinner"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/alignment_array"
+            android:prompt="@string/image_alignment"/>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/image_link_to"
+            android:textColor="@color/image_options_label"
+            android:textStyle="bold"/>
+
+        <EditText
+            android:id="@+id/image_link_to"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textNoSuggestions"
+            android:singleLine="true"/>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/image_size"
+            android:textColor="@color/image_options_label"
+            android:textStyle="bold"/>
+
+        <Spinner
+            android:id="@+id/size_spinner"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/image_size_array"
+            android:prompt="@string/image_size"/>
+
+        <CheckBox
+            android:id="@+id/featuredImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:text="@string/featured"
+            android:visibility="visible"/>
+
+        <CheckBox
+            android:id="@+id/featuredInPost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:text="@string/featured_in_post"
+            android:visibility="visible"/>
+    </LinearLayout>
+</ScrollView>

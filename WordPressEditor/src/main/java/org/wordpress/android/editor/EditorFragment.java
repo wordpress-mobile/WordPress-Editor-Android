@@ -722,7 +722,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         });
     }
 
-    public void onMediaTapped(final String mediaId, String url, String meta, String uploadStatus) {
+    public void onMediaTapped(final String mediaId, String url, final String meta, String uploadStatus) {
         switch (uploadStatus) {
             case "uploading":
                 // Display 'cancel upload' dialog
@@ -766,7 +766,17 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 });
                 break;
             default:
-                // TODO: Show media options screen
+                // Show media options fragment
+                ImageSettingsDialogFragment imageSettingsDialogFragment = new ImageSettingsDialogFragment();
+                imageSettingsDialogFragment.setTargetFragment(this,
+                        ImageSettingsDialogFragment.IMAGE_SETTINGS_DIALOG_REQUEST_CODE);
+
+                Bundle dialogBundle = new Bundle();
+
+                dialogBundle.putString("imageMeta", meta);
+
+                imageSettingsDialogFragment.setArguments(dialogBundle);
+                imageSettingsDialogFragment.show(getFragmentManager(), "ImageSettingsDialogFragment");
                 break;
         }
     }

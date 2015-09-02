@@ -37,11 +37,23 @@
     <string name="horizontal_alignment">Horizontal alignment</string>
     <string name="caption">Caption (optional)</string>
 
+    <string name="image_caption">Caption</string>
+    <string name="image_alt_text">Alt text</string>
+    <string name="image_link_to">Link to</string>
+    <string name="image_size">Size</string>
+
     <string-array name="alignment_array">
         <item>None</item>
         <item>Left</item>
         <item>Center</item>
         <item>Right</item>
+    </string-array>
+
+    <string-array name="image_size_array">
+        <item>Thumbnail</item>
+        <item>Medium</item>
+        <item>Large</item>
+        <item>Full Size</item>
     </string-array>
 
 </resources>
