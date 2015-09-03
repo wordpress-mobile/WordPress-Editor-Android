@@ -5,12 +5,15 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -71,5 +74,31 @@ public class ImageSettingsDialogFragment extends DialogFragment {
         }
 
         return builder.create();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        final Resources res = getResources();
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = getActivity().getTheme();
+        theme.resolveAttribute(R.attr.colorControlActivated, typedValue, true);
+        int controlActivatedColor = typedValue.data;
+
+        // If a divider exists under the dialog title (API < 19 by default), change the divider and text color
+        // to match the EditText underline color
+        final int titleDividerId = res.getIdentifier("titleDivider", "id", "android");
+        final View titleDivider = getDialog().findViewById(titleDividerId);
+        if (titleDivider != null) {
+            titleDivider.setBackgroundColor(controlActivatedColor);
+
+            // Update the title text color
+            final int titleId = res.getIdentifier("alertTitle", "id", "android");
+            final TextView titleTextView = (TextView) getDialog().findViewById(titleId);
+            if (titleTextView != null) {
+                titleTextView.setTextColor(controlActivatedColor);
+            }
+        }
     }
 }
