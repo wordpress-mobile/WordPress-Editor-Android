@@ -1,115 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <View
+        android:id="@+id/top_separator"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentTop="true"
+        android:background="@android:color/darker_gray"
+        android:alpha="0.3"/>
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingLeft="@dimen/link_dialog_margin_outer"
-        android:paddingRight="@dimen/link_dialog_margin_outer"
-        android:paddingTop="@dimen/link_dialog_margin_outer">
+        android:layout_height="match_parent"
+        android:layout_below="@id/top_separator">
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/title"
-            android:textColor="@color/image_options_label"
-            android:textStyle="bold"/>
-
-        <EditText
-            android:id="@+id/image_title"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textCapSentences"
-            android:singleLine="true"/>
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/image_settings_dialog_padding_side"
+            android:paddingRight="@dimen/image_settings_dialog_padding_side">
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/image_caption"
-            android:textColor="@color/image_options_label"
-            android:textStyle="bold"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/title"
+                style="@style/ImageOptionsDialogLabel"/>
 
-        <EditText
-            android:id="@+id/image_caption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textCapSentences"
-            android:singleLine="true"/>
+            <EditText
+                android:id="@+id/image_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapSentences"
+                android:layout_marginBottom="16dp"
+                android:singleLine="true"/>
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/image_alt_text"
-            android:textColor="@color/image_options_label"
-            android:textStyle="bold"/>
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/image_caption"
+                style="@style/ImageOptionsDialogLabel"/>
 
-        <EditText
-            android:id="@+id/image_alt_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textCapSentences"
-            android:singleLine="true"/>
+            <EditText
+                android:id="@+id/image_caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:inputType="textCapSentences"
+                android:singleLine="true"/>
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/image_alignment"
-            android:textColor="@color/image_options_label"
-            android:textStyle="bold"/>
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/image_alt_text"
+                style="@style/ImageOptionsDialogLabel"/>
 
-        <Spinner
-            android:id="@+id/alignment_spinner"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:entries="@array/alignment_array"
-            android:prompt="@string/image_alignment"/>
+            <EditText
+                android:id="@+id/image_alt_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:inputType="textCapSentences"
+                android:singleLine="true"/>
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/image_link_to"
-            android:textColor="@color/image_options_label"
-            android:textStyle="bold"/>
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/image_alignment"
+                style="@style/ImageOptionsDialogLabel"/>
 
-        <EditText
-            android:id="@+id/image_link_to"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textNoSuggestions"
-            android:singleLine="true"/>
+            <Spinner
+                android:id="@+id/alignment_spinner"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/alignment_array"
+                android:layout_marginBottom="16dp"
+                android:prompt="@string/image_alignment"/>
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/image_size"
-            android:textColor="@color/image_options_label"
-            android:textStyle="bold"/>
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/image_link_to"
+                style="@style/ImageOptionsDialogLabel"/>
 
-        <Spinner
-            android:id="@+id/size_spinner"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:entries="@array/image_size_array"
-            android:prompt="@string/image_size"/>
+            <EditText
+                android:id="@+id/image_link_to"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:inputType="textNoSuggestions"
+                android:singleLine="true"/>
 
-        <CheckBox
-            android:id="@+id/featuredImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:text="@string/featured"
-            android:visibility="visible"/>
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/image_size"
+                style="@style/ImageOptionsDialogLabel"/>
 
-        <CheckBox
-            android:id="@+id/featuredInPost"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:text="@string/featured_in_post"
-            android:visibility="visible"/>
-    </LinearLayout>
-</ScrollView>
+            <Spinner
+                android:id="@+id/size_spinner"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/image_size_array"
+                android:layout_marginBottom="16dp"
+                android:prompt="@string/image_size"/>
+
+            <CheckBox
+                android:id="@+id/featuredImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/featured"
+                android:visibility="visible"/>
+
+            <CheckBox
+                android:id="@+id/featuredInPost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/featured_in_post"
+                android:visibility="visible"/>
+        </LinearLayout>
+    </ScrollView>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/darker_gray"
+        android:alpha="0.3"/>
+</RelativeLayout>
