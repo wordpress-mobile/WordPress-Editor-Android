@@ -28,7 +28,7 @@ public class ImageSettingsDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        View view = inflater.inflate(R.layout.dialog_image_options, null);
+        View view = inflater.inflate(R.layout.dialog_image_options_container, null);
 
         final EditText titleText = (EditText) view.findViewById(R.id.image_title);
         final EditText captionText = (EditText) view.findViewById(R.id.image_caption);
