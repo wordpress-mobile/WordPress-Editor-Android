@@ -9,6 +9,7 @@
         android:id="@+id/top_separator"
         android:layout_width="fill_parent"
         android:layout_height="1dp"
+        android:layout_marginTop="@dimen/image_settings_dialog_top_separator_margin_top"
         android:layout_alignParentTop="true"
         android:background="@android:color/darker_gray"
         android:alpha="0.3"/>
