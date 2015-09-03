@@ -34,6 +34,7 @@
     <dimen name="image_settings_dialog_label_indent">4dp</dimen>
     <dimen name="image_settings_dialog_label_margin_bottom">8dp</dimen>
     <dimen name="image_settings_dialog_input_margin_bottom">16dp</dimen>
+    <dimen name="image_settings_dialog_input_field_start_margin">-4dp</dimen>
 
     <dimen name="post_editor_content_side_margin">20dp</dimen>
 

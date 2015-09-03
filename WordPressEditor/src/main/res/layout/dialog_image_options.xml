@@ -78,6 +78,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:entries="@array/alignment_array"
+                android:layout_marginStart="@dimen/image_settings_dialog_input_field_start_margin"
+                android:layout_marginLeft="@dimen/image_settings_dialog_input_field_start_margin"
                 android:layout_marginBottom="16dp"
                 android:prompt="@string/image_alignment"/>
 
@@ -106,6 +108,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:entries="@array/image_size_array"
+                android:layout_marginStart="@dimen/image_settings_dialog_input_field_start_margin"
+                android:layout_marginLeft="@dimen/image_settings_dialog_input_field_start_margin"
                 android:layout_marginBottom="16dp"
                 android:prompt="@string/image_size"/>
 
@@ -114,6 +118,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/featured"
+                android:layout_marginStart="@dimen/image_settings_dialog_input_field_start_margin"
+                android:layout_marginLeft="@dimen/image_settings_dialog_input_field_start_margin"
                 android:visibility="visible"/>
 
             <CheckBox
@@ -121,6 +127,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/featured_in_post"
+                android:layout_marginStart="@dimen/image_settings_dialog_input_field_start_margin"
+                android:layout_marginLeft="@dimen/image_settings_dialog_input_field_start_margin"
                 android:visibility="visible"/>
         </LinearLayout>
     </ScrollView>
