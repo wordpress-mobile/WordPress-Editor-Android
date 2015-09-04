@@ -1329,7 +1329,9 @@ ZSSEditor.extractImageMeta = function( imageNode ) {
 
     // Extract caption
     var captionMeta = ZSSEditor.captionMetaForImage( imageNode )
-    metadata = $.extend( metadata, captionMeta );
+    if (captionMeta.caption != '') {
+        metadata = $.extend( metadata, captionMeta );
+    }
 
     // Extract linkTo
     if ( imageNode.parentNode && imageNode.parentNode.nodeName === 'A' ) {
