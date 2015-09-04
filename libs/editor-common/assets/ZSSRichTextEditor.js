@@ -1077,7 +1077,8 @@ ZSSEditor.updateCurrentImageMeta = function( imageMetaString ) {
     // elements surround the targeted node.  This approach is safer.
     var node = ZSSEditor.findImageCaptionNode( ZSSEditor.currentEditingImage );
     node.insertAdjacentHTML( 'afterend', html );
-    node.remove();
+    // Use {node}.{parent}.removeChild() instead of {node}.remove(), since Android API<19 doesn't support Node.remove()
+    node.parentNode.removeChild(node);
 
     ZSSEditor.currentEditingImage = null;
 }
@@ -1106,7 +1107,8 @@ ZSSEditor.removeImageSelectionFormatting = function( imageNode ) {
     var parentNode = node.parentNode;
     var container = parentNode.parentNode;
     container.insertBefore( node, parentNode );
-    parentNode.remove();
+    // Use {node}.{parent}.removeChild() instead of {node}.remove(), since Android API<19 doesn't support Node.remove()
+    container.removeChild(parentNode);
 }
 
 ZSSEditor.removeImageSelectionFormattingFromHTML = function( html ) {
