@@ -493,6 +493,24 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 mWebView.execJavaScriptFromString(jsMethod + "('" + Utils.escapeHtml(linkUrl) + "', '" +
                         Utils.escapeHtml(linkText) + "');");
             }
+        } else if (requestCode == ImageSettingsDialogFragment.IMAGE_SETTINGS_DIALOG_REQUEST_CODE) {
+            if (data == null) {
+                return;
+            }
+
+            Bundle extras = data.getExtras();
+            if (extras == null) {
+                return;
+            }
+
+            final String imageMeta = extras.getString("imageMeta");
+
+            mWebView.post(new Runnable() {
+                @Override
+                public void run() {
+                    mWebView.execJavaScriptFromString("ZSSEditor.updateCurrentImageMeta('" + imageMeta + "');");
+                }
+            });
         }
     }
 
