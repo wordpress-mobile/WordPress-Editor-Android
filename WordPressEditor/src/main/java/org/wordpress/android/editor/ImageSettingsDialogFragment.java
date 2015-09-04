@@ -19,6 +19,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.wordpress.android.util.AppLog;
 
+import java.util.Arrays;
+
 public class ImageSettingsDialogFragment extends DialogFragment {
 
     public static final int IMAGE_SETTINGS_DIALOG_REQUEST_CODE = 5;
@@ -50,6 +52,9 @@ public class ImageSettingsDialogFragment extends DialogFragment {
                 titleText.setText(imageMeta.getString("title"));
                 captionText.setText(imageMeta.getString("caption"));
                 altText.setText(imageMeta.getString("alt"));
+                String alignment = imageMeta.getString("align");
+                String[] alignmentArray = getResources().getStringArray(R.array.alignment_array);
+                alignmentSpinner.setSelection(Arrays.asList(alignmentArray).indexOf(alignment));
                 linkTo.setText(imageMeta.getString("linkUrl"));
             } catch (JSONException e1) {
                 AppLog.d(AppLog.T.EDITOR, "Missing JSON properties");
@@ -65,6 +70,7 @@ public class ImageSettingsDialogFragment extends DialogFragment {
                             imageMeta.put("title", titleText.getText().toString());
                             imageMeta.put("caption", captionText.getText().toString());
                             imageMeta.put("alt", altText.getText().toString());
+                            imageMeta.put("align", alignmentSpinner.getSelectedItem().toString());
                             imageMeta.put("linkUrl", linkTo.getText().toString());
                         } catch (JSONException e) {
                             AppLog.d(AppLog.T.EDITOR, "Unable to update JSON array");
