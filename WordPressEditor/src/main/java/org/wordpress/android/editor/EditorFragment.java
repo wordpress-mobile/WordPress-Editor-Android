@@ -792,6 +792,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 Bundle dialogBundle = new Bundle();
 
                 dialogBundle.putString("imageMeta", meta);
+                dialogBundle.putString("maxWidth", mBlogSettingMaxImageWidth);
 
                 imageSettingsDialogFragment.setArguments(dialogBundle);
                 imageSettingsDialogFragment.show(getFragmentManager(), "ImageSettingsDialogFragment");

@@ -86,17 +86,22 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/image_size"
+            android:text="@string/image_width"
             style="@style/ImageOptionsDialogLabel"/>
 
-        <Spinner
-            android:id="@+id/size_spinner"
-            android:layout_width="fill_parent"
+        <SeekBar
+            android:id="@+id/image_width_seekbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/image_width_text"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:entries="@array/image_size_array"
-            android:layout_marginStart="@dimen/image_settings_dialog_input_field_start_margin"
-            android:layout_marginLeft="@dimen/image_settings_dialog_input_field_start_margin"
-            android:prompt="@string/image_size"
+            android:text=""
+            android:imeOptions="actionDone"
+            android:singleLine="true"
+            android:inputType="number"
             style="@style/ImageOptionsDialogInput"/>
 
         <CheckBox

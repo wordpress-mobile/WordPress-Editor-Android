@@ -40,7 +40,7 @@
     <string name="image_caption">Caption</string>
     <string name="image_alt_text">Alt text</string>
     <string name="image_link_to">Link to</string>
-    <string name="image_size">Size</string>
+    <string name="image_width">Width</string>
 
     <string-array name="alignment_array">
         <item>None</item>
