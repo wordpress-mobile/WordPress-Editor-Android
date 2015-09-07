@@ -26,7 +26,7 @@
             style="@style/ImageOptionsDialogInput"/>
 
         <TextView
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/image_caption"
             style="@style/ImageOptionsDialogLabel"/>
@@ -40,7 +40,7 @@
             style="@style/ImageOptionsDialogInput"/>
 
         <TextView
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/image_alt_text"
             style="@style/ImageOptionsDialogLabel"/>
@@ -54,14 +54,14 @@
             style="@style/ImageOptionsDialogInput"/>
 
         <TextView
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/image_alignment"
             style="@style/ImageOptionsDialogLabel"/>
 
         <Spinner
             android:id="@+id/alignment_spinner"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:entries="@array/alignment_array"
             android:layout_marginStart="@dimen/image_settings_dialog_input_field_start_margin"
@@ -70,7 +70,7 @@
             style="@style/ImageOptionsDialogInput"/>
 
         <TextView
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/image_link_to"
             style="@style/ImageOptionsDialogLabel"/>
@@ -84,7 +84,7 @@
             style="@style/ImageOptionsDialogInput"/>
 
         <TextView
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/image_size"
             style="@style/ImageOptionsDialogLabel"/>
