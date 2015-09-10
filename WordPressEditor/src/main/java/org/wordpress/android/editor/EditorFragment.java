@@ -320,7 +320,9 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
         mWebView.loadDataWithBaseURL("file:///android_asset/", htmlEditor, "text/html", "utf-8", "");
 
-        enableWebDebugging(true);
+        if (mDebugModeEnabled) {
+            enableWebDebugging(true);
+        }
     }
 
     @Override
