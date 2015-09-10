@@ -15,6 +15,9 @@ import android.text.Editable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +55,8 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
     private static final float TOOLBAR_ALPHA_ENABLED = 1;
     private static final float TOOLBAR_ALPHA_DISABLED = 0.5f;
+
+    protected static final int BUTTON_ID_LOG_HTML = 555;
 
     private String mTitle = "";
     private String mContentHtml = "";
@@ -322,6 +327,8 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
         if (mDebugModeEnabled) {
             enableWebDebugging(true);
+            // Enable the HTML logging button
+            setHasOptionsMenu(true);
         }
     }
 
@@ -503,6 +510,34 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             AppLog.i(T.EDITOR, "Enabling web debugging");
             WebView.setWebContentsDebuggingEnabled(enable);
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.add(0, BUTTON_ID_LOG_HTML, 0, "Log HTML")
+                .setIcon(R.drawable.ic_log_html)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == BUTTON_ID_LOG_HTML) {
+            if (mDebugModeEnabled) {
+                // Log the raw html
+                mWebView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mWebView.execJavaScriptFromString("console.log(document.body.innerHTML);");
+                    }
+                });
+            } else {
+                AppLog.d(T.EDITOR, "Could not execute JavaScript - debug mode not enabled");
+            }
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
         }
     }
 
