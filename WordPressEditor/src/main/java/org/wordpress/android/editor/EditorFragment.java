@@ -50,6 +50,9 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
     private static final String JS_CALLBACK_HANDLER = "nativeCallbackHandler";
 
+    private static final String KEY_TITLE = "title";
+    private static final String KEY_CONTENT = "content";
+
     private static final String TAG_FORMAT_BAR_BUTTON_MEDIA = "media";
     private static final String TAG_FORMAT_BAR_BUTTON_LINK = "link";
 
@@ -140,6 +143,11 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
         initJsEditor();
 
+        if (savedInstanceState != null) {
+            setTitle(savedInstanceState.getCharSequence(KEY_TITLE));
+            setContent(savedInstanceState.getCharSequence(KEY_CONTENT));
+        }
+
         // -- HTML mode configuration
 
         mSourceView = view.findViewById(R.id.sourceview);
@@ -197,6 +205,12 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putCharSequence(KEY_TITLE, getTitle());
+        outState.putCharSequence(KEY_CONTENT, getContent());
     }
 
     private ActionBar getActionBar() {
