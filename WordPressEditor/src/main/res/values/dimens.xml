@@ -30,7 +30,7 @@
     <dimen name="link_dialog_margin_inner">4dp</dimen>
     <dimen name="link_dialog_margin_outer">16dp</dimen>
 
-    <dimen name="image_settings_dialog_padding_side">24dp</dimen>
+    <dimen name="image_settings_dialog_padding">16dp</dimen>
     <dimen name="image_settings_dialog_label_indent">4dp</dimen>
     <dimen name="image_settings_dialog_label_margin_bottom">4dp</dimen>
     <dimen name="image_settings_dialog_input_margin_bottom">16dp</dimen>

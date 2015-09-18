@@ -2,14 +2,14 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/wp_gray_light">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingLeft="@dimen/image_settings_dialog_padding_side"
-        android:paddingRight="@dimen/image_settings_dialog_padding_side">
+        android:padding="@dimen/image_settings_dialog_padding">
 
         <TextView
             android:layout_width="match_parent"
