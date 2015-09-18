@@ -122,13 +122,7 @@ public class ImageSettingsDialogFragment extends DialogFragment {
         int id = item.getItemId();
 
         if (id == android.R.id.home) {
-            ActionBar actionBar = getActionBar();
-            if (actionBar != null) {
-                actionBar.setTitle(mPreviousActionBarTitle);
-                actionBar.setHomeAsUpIndicator(null);
-                actionBar.setDisplayHomeAsUpEnabled(mPreviousHomeAsUpEnabled);
-            }
-
+            restorePreviousActionBar();
             getFragmentManager().popBackStack();
             return true;
         } else if (id == R.id.menu_save) {
@@ -153,7 +147,7 @@ public class ImageSettingsDialogFragment extends DialogFragment {
             intent.putExtra("imageMeta", mImageMeta.toString());
             getTargetFragment().onActivityResult(getTargetRequestCode(), getTargetRequestCode(), intent);
 
-            // TODO: Put actionbar back to normal
+            restorePreviousActionBar();
             getFragmentManager().popBackStack();
         }
         return super.onOptionsItemSelected(item);
@@ -168,6 +162,15 @@ public class ImageSettingsDialogFragment extends DialogFragment {
             return ((AppCompatActivity) getActivity()).getSupportActionBar();
         } else {
             return null;
+        }
+    }
+
+    private void restorePreviousActionBar() {
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(mPreviousActionBarTitle);
+            actionBar.setHomeAsUpIndicator(null);
+            actionBar.setDisplayHomeAsUpEnabled(mPreviousHomeAsUpEnabled);
         }
     }
 
