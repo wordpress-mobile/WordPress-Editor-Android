@@ -32,20 +32,27 @@ public class ImageSettingsDialogFragment extends DialogFragment {
     private JSONObject mImageMeta;
     private int mMaxImageWidth;
 
+    private EditText mTitleText;
+    private EditText mCaptionText;
+    private EditText mAltText;
+    private Spinner mAlignmentSpinner;
+    private EditText mLinkTo;
+    private EditText mWidthText;
+
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        View view = inflater.inflate(R.layout.dialog_image_options_container, null);
 
-        final EditText titleText = (EditText) view.findViewById(R.id.image_title);
-        final EditText captionText = (EditText) view.findViewById(R.id.image_caption);
-        final EditText altText = (EditText) view.findViewById(R.id.image_alt_text);
-        final Spinner alignmentSpinner = (Spinner) view.findViewById(R.id.alignment_spinner);
-        final EditText linkTo = (EditText) view.findViewById(R.id.image_link_to);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.dialog_image_options, container, false);
+
+        mTitleText = (EditText) view.findViewById(R.id.image_title);
+        mCaptionText = (EditText) view.findViewById(R.id.image_caption);
+        mAltText = (EditText) view.findViewById(R.id.image_alt_text);
+        mAlignmentSpinner = (Spinner) view.findViewById(R.id.alignment_spinner);
+        mLinkTo = (EditText) view.findViewById(R.id.image_link_to);
         final SeekBar widthSeekBar = (SeekBar) view.findViewById(R.id.image_width_seekbar);
-        final EditText widthText = (EditText) view.findViewById(R.id.image_width_text);
+        mWidthText = (EditText) view.findViewById(R.id.image_width_text);
         final CheckBox featuredCheckBox = (CheckBox) view.findViewById(R.id.featuredImage);
         final CheckBox featuredInPostCheckBox = (CheckBox) view.findViewById(R.id.featuredInPost);
 
@@ -55,19 +62,19 @@ public class ImageSettingsDialogFragment extends DialogFragment {
             try {
                 mImageMeta = new JSONObject(bundle.getString("imageMeta"));
 
-                titleText.setText(mImageMeta.getString("title"));
-                captionText.setText(mImageMeta.getString("caption"));
-                altText.setText(mImageMeta.getString("alt"));
+                mTitleText.setText(mImageMeta.getString("title"));
+                mCaptionText.setText(mImageMeta.getString("caption"));
+                mAltText.setText(mImageMeta.getString("alt"));
 
                 String alignment = mImageMeta.getString("align");
                 String[] alignmentArray = getResources().getStringArray(R.array.alignment_array);
-                alignmentSpinner.setSelection(Arrays.asList(alignmentArray).indexOf(alignment));
+                mAlignmentSpinner.setSelection(Arrays.asList(alignmentArray).indexOf(alignment));
 
-                linkTo.setText(mImageMeta.getString("linkUrl"));
+                mLinkTo.setText(mImageMeta.getString("linkUrl"));
 
                 mMaxImageWidth = getMaximumImageWidth(mImageMeta.getInt("naturalWidth"), bundle.getString("maxWidth"));
 
-                setupWidthSeekBar(widthSeekBar, widthText, mImageMeta.getInt("width"));
+                setupWidthSeekBar(widthSeekBar, mWidthText, mImageMeta.getInt("width"));
 
                 // TODO: Featured image handling
 
@@ -76,40 +83,8 @@ public class ImageSettingsDialogFragment extends DialogFragment {
             }
         }
 
-        builder.setView(view)
-                .setTitle(getString(R.string.image_settings))
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        try {
-                            mImageMeta.put("title", titleText.getText().toString());
-                            mImageMeta.put("caption", captionText.getText().toString());
-                            mImageMeta.put("alt", altText.getText().toString());
-                            mImageMeta.put("align", alignmentSpinner.getSelectedItem().toString());
-                            mImageMeta.put("linkUrl", linkTo.getText().toString());
 
-                            int newWidth = getEditTextIntegerClamped(widthText, 10, mMaxImageWidth);
-                            mImageMeta.put("width", newWidth);
-                            mImageMeta.put("height", getRelativeHeightFromWidth(newWidth));
-
-                            // TODO: Featured image handling
-
-                        } catch (JSONException e) {
-                            AppLog.d(AppLog.T.EDITOR, "Unable to update JSON array");
-                        }
-
-                        Intent intent = new Intent();
-                        intent.putExtra("imageMeta", mImageMeta.toString());
-                        getTargetFragment().onActivityResult(getTargetRequestCode(), getTargetRequestCode(), intent);
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        ImageSettingsDialogFragment.this.getDialog().cancel();
-                    }
-                });
-
-        return builder.create();
+        return view;
     }
 
     @Override

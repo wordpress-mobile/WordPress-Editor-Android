@@ -1,6 +1,8 @@
 package org.wordpress.android.editor;
 
 import android.annotation.SuppressLint;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -795,7 +797,13 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 dialogBundle.putString("maxWidth", mBlogSettingMaxImageWidth);
 
                 imageSettingsDialogFragment.setArguments(dialogBundle);
-                imageSettingsDialogFragment.show(getFragmentManager(), "ImageSettingsDialogFragment");
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+
+                fragmentTransaction.add(android.R.id.content, imageSettingsDialogFragment)
+                        .addToBackStack(null)
+                        .commit();
                 break;
         }
     }
