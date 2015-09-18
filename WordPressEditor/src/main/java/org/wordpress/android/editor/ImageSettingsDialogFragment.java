@@ -30,6 +30,8 @@ public class ImageSettingsDialogFragment extends DialogFragment {
 
     public static final int IMAGE_SETTINGS_DIALOG_REQUEST_CODE = 5;
 
+    private static final int DEFAULT_MAX_IMAGE_WIDTH = 1024;
+
     private JSONObject mImageMeta;
     private int mMaxImageWidth;
 
@@ -248,7 +250,7 @@ public class ImageSettingsDialogFragment extends DialogFragment {
 
         if (Math.min(imageWidthPictureSetting, imageWidthBlogSetting) == Integer.MAX_VALUE) {
             // Default value in case of errors reading the picture size and the blog settings is set to Original size
-            return 1024;
+            return DEFAULT_MAX_IMAGE_WIDTH;
         } else {
             return Math.min(imageWidthPictureSetting, imageWidthBlogSetting);
         }
