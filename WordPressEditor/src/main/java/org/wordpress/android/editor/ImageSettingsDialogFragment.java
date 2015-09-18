@@ -3,6 +3,7 @@ package org.wordpress.android.editor;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -69,12 +71,14 @@ public class ImageSettingsDialogFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_image_options, container, false);
 
+        ImageView thumbnailImage = (ImageView) view.findViewById(R.id.image_thumbnail);
+        TextView filenameLabel = (TextView) view.findViewById(R.id.image_filename);
         mTitleText = (EditText) view.findViewById(R.id.image_title);
         mCaptionText = (EditText) view.findViewById(R.id.image_caption);
         mAltText = (EditText) view.findViewById(R.id.image_alt_text);
         mAlignmentSpinner = (Spinner) view.findViewById(R.id.alignment_spinner);
         mLinkTo = (EditText) view.findViewById(R.id.image_link_to);
-        final SeekBar widthSeekBar = (SeekBar) view.findViewById(R.id.image_width_seekbar);
+        SeekBar widthSeekBar = (SeekBar) view.findViewById(R.id.image_width_seekbar);
         mWidthText = (EditText) view.findViewById(R.id.image_width_text);
         final CheckBox featuredCheckBox = (CheckBox) view.findViewById(R.id.featuredImage);
         final CheckBox featuredInPostCheckBox = (CheckBox) view.findViewById(R.id.featuredInPost);
@@ -84,6 +88,12 @@ public class ImageSettingsDialogFragment extends DialogFragment {
         if (bundle != null) {
             try {
                 mImageMeta = new JSONObject(bundle.getString("imageMeta"));
+
+                final String imageSrc = mImageMeta.getString("src");
+                final String imageFilename = imageSrc.substring(imageSrc.lastIndexOf("/") + 1);
+
+                loadThumbnail(imageSrc, thumbnailImage);
+                filenameLabel.setText(imageFilename);
 
                 mTitleText.setText(mImageMeta.getString("title"));
                 mCaptionText.setText(mImageMeta.getString("caption"));
@@ -171,6 +181,24 @@ public class ImageSettingsDialogFragment extends DialogFragment {
             actionBar.setHomeAsUpIndicator(null);
             actionBar.setDisplayHomeAsUpEnabled(mPreviousHomeAsUpEnabled);
         }
+    }
+
+    private void loadThumbnail(final String src, final ImageView thumbnailImage) {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final Uri localUri = Utils.downloadExternalMedia(getActivity(), Uri.parse(src));
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        thumbnailImage.setImageURI(localUri);
+                    }
+                });
+            }
+        });
+
+        thread.start();
     }
 
     /**

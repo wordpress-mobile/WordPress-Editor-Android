@@ -36,6 +36,9 @@
     <dimen name="image_settings_dialog_input_margin_bottom">16dp</dimen>
     <dimen name="image_settings_dialog_input_field_start_margin">-4dp</dimen>
     <dimen name="image_settings_dialog_top_separator_margin_top">16dp</dimen>
+    <dimen name="image_settings_dialog_thumbnail_container_margin_bottom">8dp</dimen>
+    <dimen name="image_settings_dialog_thumbnail_size">100dp</dimen>
+    <dimen name="image_settings_dialog_thumbnail_margin">8dp</dimen>
 
     <dimen name="post_editor_content_side_margin">20dp</dimen>
 
