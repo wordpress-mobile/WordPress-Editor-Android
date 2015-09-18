@@ -7,6 +7,7 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
+    <string name="save">Save</string>
 
     <string name="alert_insert_image_html_mode">Can\'t insert media directly in HTML mode. Please switch back to visual mode.</string>
     <string name="alert_html_toggle_uploading">You are currently uploading media. Please wait until this completes.</string>

@@ -6,11 +6,9 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -45,21 +43,27 @@ public class ImageSettingsDialogFragment extends DialogFragment {
     private EditText mLinkTo;
     private EditText mWidthText;
 
+    private CharSequence mPreviousActionBarTitle;
+    private boolean mPreviousHomeAsUpEnabled;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        if (getActivity() instanceof AppCompatActivity) {
-            ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-            if (actionBar == null) {
-                return;
-            }
-
-            actionBar.setTitle(R.string.image_settings);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
+        ActionBar actionBar = getActionBar();
+        if (actionBar == null) {
+            return;
         }
+
+        mPreviousActionBarTitle = actionBar.getTitle();
+
+        final int displayOptions = actionBar.getDisplayOptions();
+        mPreviousHomeAsUpEnabled = (displayOptions & ActionBar.DISPLAY_HOME_AS_UP) != 0;
+
+        actionBar.setTitle(R.string.image_settings);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
     }
 
     @Override
@@ -115,28 +119,15 @@ public class ImageSettingsDialogFragment extends DialogFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-    public void onStart() {
-        super.onStart();
 
-        final Resources res = getResources();
-        TypedValue typedValue = new TypedValue();
-        Resources.Theme theme = getActivity().getTheme();
-        theme.resolveAttribute(R.attr.colorControlActivated, typedValue, true);
-        int controlActivatedColor = typedValue.data;
-
-        // If a divider exists under the dialog title (API < 19 by default), change the divider and text color
-        // to match the EditText underline color
-        final int titleDividerId = res.getIdentifier("titleDivider", "id", "android");
-        final View titleDivider = getDialog().findViewById(titleDividerId);
-        if (titleDivider != null) {
-            titleDivider.setBackgroundColor(controlActivatedColor);
-
-            // Update the title text color
-            final int titleId = res.getIdentifier("alertTitle", "id", "android");
-            final TextView titleTextView = (TextView) getDialog().findViewById(titleId);
-            if (titleTextView != null) {
-                titleTextView.setTextColor(controlActivatedColor);
         if (id == android.R.id.home) {
+            ActionBar actionBar = getActionBar();
+            if (actionBar != null) {
+                actionBar.setTitle(mPreviousActionBarTitle);
+                actionBar.setHomeAsUpIndicator(null);
+                actionBar.setDisplayHomeAsUpEnabled(mPreviousHomeAsUpEnabled);
+            }
+
             getFragmentManager().popBackStack();
             return true;
         } else if (id == R.id.save) {
@@ -166,6 +157,16 @@ public class ImageSettingsDialogFragment extends DialogFragment {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private ActionBar getActionBar() {
+        if (!isAdded()) {
+            return null;
+        }
+
+        if (getActivity() instanceof AppCompatActivity) {
+            return ((AppCompatActivity) getActivity()).getSupportActionBar();
+        } else {
+            return null;
         }
     }
 
