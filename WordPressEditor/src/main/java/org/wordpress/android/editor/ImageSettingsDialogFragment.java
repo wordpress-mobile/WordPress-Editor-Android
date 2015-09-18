@@ -131,7 +131,7 @@ public class ImageSettingsDialogFragment extends DialogFragment {
 
             getFragmentManager().popBackStack();
             return true;
-        } else if (id == R.id.save) {
+        } else if (id == R.id.menu_save) {
             try {
                 mImageMeta.put("title", mTitleText.getText().toString());
                 mImageMeta.put("caption", mCaptionText.getText().toString());
