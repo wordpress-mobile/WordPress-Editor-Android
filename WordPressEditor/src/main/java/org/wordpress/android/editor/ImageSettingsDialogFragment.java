@@ -107,6 +107,7 @@ public class ImageSettingsDialogFragment extends DialogFragment {
             }
         }
 
+        mTitleText.requestFocus();
 
         return view;
     }
