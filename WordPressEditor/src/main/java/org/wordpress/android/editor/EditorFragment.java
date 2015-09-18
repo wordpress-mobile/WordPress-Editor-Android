@@ -17,6 +17,9 @@ import android.text.Editable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,11 +52,16 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
     private static final String JS_CALLBACK_HANDLER = "nativeCallbackHandler";
 
+    private static final String KEY_TITLE = "title";
+    private static final String KEY_CONTENT = "content";
+
     private static final String TAG_FORMAT_BAR_BUTTON_MEDIA = "media";
     private static final String TAG_FORMAT_BAR_BUTTON_LINK = "link";
 
     private static final float TOOLBAR_ALPHA_ENABLED = 1;
     private static final float TOOLBAR_ALPHA_DISABLED = 0.5f;
+
+    protected static final int BUTTON_ID_LOG_HTML = 555;
 
     private String mTitle = "";
     private String mContentHtml = "";
@@ -137,6 +145,11 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
         initJsEditor();
 
+        if (savedInstanceState != null) {
+            setTitle(savedInstanceState.getCharSequence(KEY_TITLE));
+            setContent(savedInstanceState.getCharSequence(KEY_CONTENT));
+        }
+
         // -- HTML mode configuration
 
         mSourceView = view.findViewById(R.id.sourceview);
@@ -194,6 +207,12 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putCharSequence(KEY_TITLE, getTitle());
+        outState.putCharSequence(KEY_CONTENT, getContent());
     }
 
     private ActionBar getActionBar() {
@@ -322,7 +341,11 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
         mWebView.loadDataWithBaseURL("file:///android_asset/", htmlEditor, "text/html", "utf-8", "");
 
-        enableWebDebugging(true);
+        if (mDebugModeEnabled) {
+            enableWebDebugging(true);
+            // Enable the HTML logging button
+            setHasOptionsMenu(true);
+        }
     }
 
     @Override
@@ -521,6 +544,34 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             AppLog.i(T.EDITOR, "Enabling web debugging");
             WebView.setWebContentsDebuggingEnabled(enable);
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.add(0, BUTTON_ID_LOG_HTML, 0, "Log HTML")
+                .setIcon(R.drawable.ic_log_html)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == BUTTON_ID_LOG_HTML) {
+            if (mDebugModeEnabled) {
+                // Log the raw html
+                mWebView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mWebView.execJavaScriptFromString("console.log(document.body.innerHTML);");
+                    }
+                });
+            } else {
+                AppLog.d(T.EDITOR, "Could not execute JavaScript - debug mode not enabled");
+            }
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
         }
     }
 

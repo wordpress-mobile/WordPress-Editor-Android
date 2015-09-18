@@ -31,6 +31,7 @@ public abstract class EditorFragmentAbstract extends Fragment {
     protected boolean mFeaturedImageSupported;
     protected String mBlogSettingMaxImageWidth;
     protected ImageLoader mImageLoader;
+    protected boolean mDebugModeEnabled;
 
     @Override
     public void onAttach(Activity activity) {
@@ -74,6 +75,10 @@ public abstract class EditorFragmentAbstract extends Fragment {
 
     public void setBlogSettingMaxImageWidth(String blogSettingMaxImageWidth) {
         mBlogSettingMaxImageWidth = blogSettingMaxImageWidth;
+    }
+
+    public void setDebugModeEnabled(boolean debugModeEnabled) {
+        mDebugModeEnabled = debugModeEnabled;
     }
 
     /**

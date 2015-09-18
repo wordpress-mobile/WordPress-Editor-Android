@@ -148,6 +148,7 @@ public class EditorExampleActivity extends AppCompatActivity implements EditorFr
         // arbitrary setup
         mEditorFragment.setFeaturedImageSupported(true);
         mEditorFragment.setBlogSettingMaxImageWidth("600");
+        mEditorFragment.setDebugModeEnabled(true);
 
         // get title and content and draft switch
         String title = getIntent().getStringExtra(TITLE_PARAM);
