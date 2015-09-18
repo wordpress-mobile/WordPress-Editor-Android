@@ -8,10 +8,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -40,7 +46,21 @@ public class ImageSettingsDialogFragment extends DialogFragment {
     private EditText mWidthText;
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 
+        if (getActivity() instanceof AppCompatActivity) {
+            ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+            if (actionBar == null) {
+                return;
+            }
+
+            actionBar.setTitle(R.string.image_settings);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -88,6 +108,13 @@ public class ImageSettingsDialogFragment extends DialogFragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.image_options_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
     public void onStart() {
         super.onStart();
 
@@ -109,7 +136,36 @@ public class ImageSettingsDialogFragment extends DialogFragment {
             final TextView titleTextView = (TextView) getDialog().findViewById(titleId);
             if (titleTextView != null) {
                 titleTextView.setTextColor(controlActivatedColor);
+        if (id == android.R.id.home) {
+            getFragmentManager().popBackStack();
+            return true;
+        } else if (id == R.id.save) {
+            try {
+                mImageMeta.put("title", mTitleText.getText().toString());
+                mImageMeta.put("caption", mCaptionText.getText().toString());
+                mImageMeta.put("alt", mAltText.getText().toString());
+                mImageMeta.put("align", mAlignmentSpinner.getSelectedItem().toString());
+                mImageMeta.put("linkUrl", mLinkTo.getText().toString());
+
+                int newWidth = getEditTextIntegerClamped(mWidthText, 10, mMaxImageWidth);
+                mImageMeta.put("width", newWidth);
+                mImageMeta.put("height", getRelativeHeightFromWidth(newWidth));
+
+                // TODO: Featured image handling
+
+            } catch (JSONException e) {
+                AppLog.d(AppLog.T.EDITOR, "Unable to update JSON array");
             }
+
+            Intent intent = new Intent();
+            intent.putExtra("imageMeta", mImageMeta.toString());
+            getTargetFragment().onActivityResult(getTargetRequestCode(), getTargetRequestCode(), intent);
+
+            // TODO: Put actionbar back to normal
+            getFragmentManager().popBackStack();
+        }
+        return super.onOptionsItemSelected(item);
+    }
         }
     }
 
