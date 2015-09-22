@@ -65,7 +65,11 @@ public class ImageSettingsDialogFragment extends DialogFragment {
 
         actionBar.setTitle(R.string.image_settings);
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
+        if (getResources().getBoolean(R.bool.show_extra_side_padding)) {
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_close_padded);
+        } else {
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
+        }
     }
 
     @Override
