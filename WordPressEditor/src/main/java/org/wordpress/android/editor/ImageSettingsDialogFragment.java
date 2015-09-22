@@ -123,6 +123,10 @@ public class ImageSettingsDialogFragment extends DialogFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        if (menu != null) {
+            menu.clear();
+        }
+
         inflater.inflate(R.menu.image_options_menu, menu);
     }
 
