@@ -1,5 +1,6 @@
 package org.wordpress.android.editor;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
@@ -191,14 +192,16 @@ public class ImageSettingsDialogFragment extends DialogFragment {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                final Uri localUri = Utils.downloadExternalMedia(getActivity(), Uri.parse(src));
+                if (isAdded()) {
+                    final Uri localUri = Utils.downloadExternalMedia(getActivity(), Uri.parse(src));
 
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        thumbnailImage.setImageURI(localUri);
-                    }
-                });
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            thumbnailImage.setImageURI(localUri);
+                        }
+                    });
+                }
             }
         });
 
