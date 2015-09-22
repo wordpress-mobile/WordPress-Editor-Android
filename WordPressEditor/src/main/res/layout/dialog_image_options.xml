@@ -14,7 +14,7 @@
         android:padding="@dimen/image_settings_dialog_padding">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginBottom="@dimen/image_settings_dialog_thumbnail_container_margin_bottom">
@@ -23,7 +23,8 @@
                 android:id="@+id/image_thumbnail"
                 android:layout_width="@dimen/image_settings_dialog_thumbnail_size"
                 android:layout_height="@dimen/image_settings_dialog_thumbnail_size"
-                android:layout_margin="@dimen/image_settings_dialog_thumbnail_margin"/>
+                android:layout_marginLeft="@dimen/image_settings_dialog_thumbnail_left_margin"
+                android:layout_marginRight="@dimen/image_settings_dialog_thumbnail_right_margin"/>
 
             <TextView
                 android:id="@+id/image_filename"
