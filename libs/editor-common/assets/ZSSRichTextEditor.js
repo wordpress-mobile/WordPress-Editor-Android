@@ -1092,6 +1092,13 @@ ZSSEditor.applyImageSelectionFormatting = function( imageNode ) {
     }
 
     var overlay = '<span class="edit-overlay" contenteditable="false"><span class="edit-content">Edit</span></span>';
+
+    if (document.body.style.filter == null) {
+        // CSS Filters (including blur) are not supported
+        // Use dark semi-transparent background for edit overlay instead of blur in this case
+        overlay = overlay + '<div class="edit-overlay-bg"></div>';
+    }
+
     var html = '<span class="edit-container' + sizeClass + '">' + overlay + '</span>';
    	node.insertAdjacentHTML( 'beforebegin', html );
     var selectionNode = node.previousSibling;
