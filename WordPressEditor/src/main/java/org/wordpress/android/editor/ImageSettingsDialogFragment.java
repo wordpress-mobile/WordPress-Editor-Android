@@ -1,6 +1,5 @@
 package org.wordpress.android.editor;
 
-import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +31,7 @@ import java.util.Arrays;
 public class ImageSettingsDialogFragment extends DialogFragment {
 
     public static final int IMAGE_SETTINGS_DIALOG_REQUEST_CODE = 5;
+    public static final String IMAGE_SETTINGS_DIALOG_TAG = "image-settings";
 
     private static final int DEFAULT_MAX_IMAGE_WIDTH = 1024;
 

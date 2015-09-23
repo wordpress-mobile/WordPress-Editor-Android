@@ -838,6 +838,12 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 break;
             default:
                 // Show media options fragment
+                FragmentManager fragmentManager = getFragmentManager();
+
+                if (fragmentManager.findFragmentByTag(ImageSettingsDialogFragment.IMAGE_SETTINGS_DIALOG_TAG) != null) {
+                    return;
+                }
+
                 ImageSettingsDialogFragment imageSettingsDialogFragment = new ImageSettingsDialogFragment();
                 imageSettingsDialogFragment.setTargetFragment(this,
                         ImageSettingsDialogFragment.IMAGE_SETTINGS_DIALOG_REQUEST_CODE);
@@ -848,11 +854,12 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 dialogBundle.putString("maxWidth", mBlogSettingMaxImageWidth);
 
                 imageSettingsDialogFragment.setArguments(dialogBundle);
-                FragmentManager fragmentManager = getFragmentManager();
+
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 
-                fragmentTransaction.add(android.R.id.content, imageSettingsDialogFragment)
+                fragmentTransaction.add(android.R.id.content, imageSettingsDialogFragment,
+                        ImageSettingsDialogFragment.IMAGE_SETTINGS_DIALOG_TAG)
                         .addToBackStack(null)
                         .commit();
                 break;
