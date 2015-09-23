@@ -3,6 +3,7 @@ package org.wordpress.android.editor;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -57,6 +58,8 @@ public class ImageSettingsDialogFragment extends DialogFragment {
         if (actionBar == null) {
             return;
         }
+
+        actionBar.show();
 
         mPreviousActionBarTitle = actionBar.getTitle();
 
@@ -124,6 +127,14 @@ public class ImageSettingsDialogFragment extends DialogFragment {
         mTitleText.requestFocus();
 
         return view;
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            actionBar.show();
+        }
     }
 
     @Override
