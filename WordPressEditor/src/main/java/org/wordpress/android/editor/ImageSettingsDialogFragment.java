@@ -48,6 +48,7 @@ public class ImageSettingsDialogFragment extends DialogFragment {
 
     private CharSequence mPreviousActionBarTitle;
     private boolean mPreviousHomeAsUpEnabled;
+    private View mPreviousCustomView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -62,6 +63,7 @@ public class ImageSettingsDialogFragment extends DialogFragment {
         actionBar.show();
 
         mPreviousActionBarTitle = actionBar.getTitle();
+        mPreviousCustomView = actionBar.getCustomView();
 
         final int displayOptions = actionBar.getDisplayOptions();
         mPreviousHomeAsUpEnabled = (displayOptions & ActionBar.DISPLAY_HOME_AS_UP) != 0;
@@ -73,6 +75,39 @@ public class ImageSettingsDialogFragment extends DialogFragment {
         } else {
             actionBar.setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
         }
+
+        // Show custom view with padded Save button
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setCustomView(R.layout.image_settings_formatbar);
+
+        actionBar.getCustomView().findViewById(R.id.menu_save).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    mImageMeta.put("title", mTitleText.getText().toString());
+                    mImageMeta.put("caption", mCaptionText.getText().toString());
+                    mImageMeta.put("alt", mAltText.getText().toString());
+                    mImageMeta.put("align", mAlignmentSpinner.getSelectedItem().toString());
+                    mImageMeta.put("linkUrl", mLinkTo.getText().toString());
+
+                    int newWidth = getEditTextIntegerClamped(mWidthText, 10, mMaxImageWidth);
+                    mImageMeta.put("width", newWidth);
+                    mImageMeta.put("height", getRelativeHeightFromWidth(newWidth));
+
+                    // TODO: Featured image handling
+
+                } catch (JSONException e) {
+                    AppLog.d(AppLog.T.EDITOR, "Unable to update JSON array");
+                }
+
+                Intent intent = new Intent();
+                intent.putExtra("imageMeta", mImageMeta.toString());
+                getTargetFragment().onActivityResult(getTargetRequestCode(), getTargetRequestCode(), intent);
+
+                restorePreviousActionBar();
+                getFragmentManager().popBackStack();
+            }
+        });
     }
 
     @Override
@@ -142,8 +177,6 @@ public class ImageSettingsDialogFragment extends DialogFragment {
         if (menu != null) {
             menu.clear();
         }
-
-        inflater.inflate(R.menu.image_options_menu, menu);
     }
 
     @Override
@@ -154,30 +187,6 @@ public class ImageSettingsDialogFragment extends DialogFragment {
             restorePreviousActionBar();
             getFragmentManager().popBackStack();
             return true;
-        } else if (id == R.id.menu_save) {
-            try {
-                mImageMeta.put("title", mTitleText.getText().toString());
-                mImageMeta.put("caption", mCaptionText.getText().toString());
-                mImageMeta.put("alt", mAltText.getText().toString());
-                mImageMeta.put("align", mAlignmentSpinner.getSelectedItem().toString());
-                mImageMeta.put("linkUrl", mLinkTo.getText().toString());
-
-                int newWidth = getEditTextIntegerClamped(mWidthText, 10, mMaxImageWidth);
-                mImageMeta.put("width", newWidth);
-                mImageMeta.put("height", getRelativeHeightFromWidth(newWidth));
-
-                // TODO: Featured image handling
-
-            } catch (JSONException e) {
-                AppLog.d(AppLog.T.EDITOR, "Unable to update JSON array");
-            }
-
-            Intent intent = new Intent();
-            intent.putExtra("imageMeta", mImageMeta.toString());
-            getTargetFragment().onActivityResult(getTargetRequestCode(), getTargetRequestCode(), intent);
-
-            restorePreviousActionBar();
-            getFragmentManager().popBackStack();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -200,6 +209,11 @@ public class ImageSettingsDialogFragment extends DialogFragment {
             actionBar.setTitle(mPreviousActionBarTitle);
             actionBar.setHomeAsUpIndicator(null);
             actionBar.setDisplayHomeAsUpEnabled(mPreviousHomeAsUpEnabled);
+            if (mPreviousCustomView != null) {
+                actionBar.setCustomView(mPreviousCustomView);
+            } else {
+                actionBar.setDisplayShowCustomEnabled(false);
+            }
         }
     }
 
