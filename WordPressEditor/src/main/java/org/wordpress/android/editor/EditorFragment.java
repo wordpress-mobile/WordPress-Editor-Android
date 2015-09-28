@@ -1,6 +1,8 @@
 package org.wordpress.android.editor;
 
 import android.annotation.SuppressLint;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -516,6 +518,24 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 mWebView.execJavaScriptFromString(jsMethod + "('" + Utils.escapeHtml(linkUrl) + "', '" +
                         Utils.escapeHtml(linkText) + "');");
             }
+        } else if (requestCode == ImageSettingsDialogFragment.IMAGE_SETTINGS_DIALOG_REQUEST_CODE) {
+            if (data == null) {
+                return;
+            }
+
+            Bundle extras = data.getExtras();
+            if (extras == null) {
+                return;
+            }
+
+            final String imageMeta = extras.getString("imageMeta");
+
+            mWebView.post(new Runnable() {
+                @Override
+                public void run() {
+                    mWebView.execJavaScriptFromString("ZSSEditor.updateCurrentImageMeta('" + imageMeta + "');");
+                }
+            });
         }
     }
 
@@ -773,7 +793,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         });
     }
 
-    public void onMediaTapped(final String mediaId, String url, String meta, String uploadStatus) {
+    public void onMediaTapped(final String mediaId, String url, final String meta, String uploadStatus) {
         switch (uploadStatus) {
             case "uploading":
                 // Display 'cancel upload' dialog
@@ -817,7 +837,31 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 });
                 break;
             default:
-                // TODO: Show media options screen
+                // Show media options fragment
+                FragmentManager fragmentManager = getFragmentManager();
+
+                if (fragmentManager.findFragmentByTag(ImageSettingsDialogFragment.IMAGE_SETTINGS_DIALOG_TAG) != null) {
+                    return;
+                }
+
+                ImageSettingsDialogFragment imageSettingsDialogFragment = new ImageSettingsDialogFragment();
+                imageSettingsDialogFragment.setTargetFragment(this,
+                        ImageSettingsDialogFragment.IMAGE_SETTINGS_DIALOG_REQUEST_CODE);
+
+                Bundle dialogBundle = new Bundle();
+
+                dialogBundle.putString("imageMeta", meta);
+                dialogBundle.putString("maxWidth", mBlogSettingMaxImageWidth);
+
+                imageSettingsDialogFragment.setArguments(dialogBundle);
+
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+
+                fragmentTransaction.add(android.R.id.content, imageSettingsDialogFragment,
+                        ImageSettingsDialogFragment.IMAGE_SETTINGS_DIALOG_TAG)
+                        .addToBackStack(null)
+                        .commit();
                 break;
         }
     }
