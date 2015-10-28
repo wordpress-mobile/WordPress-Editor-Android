@@ -606,7 +606,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             return "";
         }
 
-        if (mSourceView.getVisibility() == View.VISIBLE) {
+        if (mSourceView != null && mSourceView.getVisibility() == View.VISIBLE) {
             mTitle = mSourceViewTitle.getText().toString();
             return StringUtils.notNullStr(mTitle);
         }
@@ -645,7 +645,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             return "";
         }
 
-        if (mSourceView.getVisibility() == View.VISIBLE) {
+        if (mSourceView != null && mSourceView.getVisibility() == View.VISIBLE) {
             mContentHtml = mSourceViewContent.getText().toString();
             return StringUtils.notNullStr(mContentHtml);
         }
