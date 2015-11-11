@@ -2,11 +2,13 @@ package org.wordpress.android.editor;
 
 import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -83,22 +85,10 @@ public class ImageSettingsDialogFragment extends DialogFragment {
         actionBar.getCustomView().findViewById(R.id.menu_save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    mImageMeta.put("title", mTitleText.getText().toString());
-                    mImageMeta.put("caption", mCaptionText.getText().toString());
-                    mImageMeta.put("alt", mAltText.getText().toString());
-                    mImageMeta.put("align", mAlignmentSpinner.getSelectedItem().toString());
-                    mImageMeta.put("linkUrl", mLinkTo.getText().toString());
+                mImageMeta = extractMetaDataFromFields(mImageMeta);
 
-                    int newWidth = getEditTextIntegerClamped(mWidthText, 10, mMaxImageWidth);
-                    mImageMeta.put("width", newWidth);
-                    mImageMeta.put("height", getRelativeHeightFromWidth(newWidth));
+                // TODO: Featured image handling
 
-                    // TODO: Featured image handling
-
-                } catch (JSONException e) {
-                    AppLog.d(AppLog.T.EDITOR, "Unable to update JSON array");
-                }
 
                 Intent intent = new Intent();
                 intent.putExtra("imageMeta", mImageMeta.toString());
@@ -184,6 +174,23 @@ public class ImageSettingsDialogFragment extends DialogFragment {
         int id = item.getItemId();
 
         if (id == android.R.id.home) {
+            try {
+                JSONObject newImageMeta = extractMetaDataFromFields(new JSONObject());
+
+                for (int i = 0; i < newImageMeta.names().length(); i++) {
+                    String name = newImageMeta.names().getString(i);
+                    if (!newImageMeta.getString(name).equals(mImageMeta.getString(name))) {
+                        showDiscardChangesDialog();
+                        return true;
+                    }
+                }
+
+                // TODO: Also check if featured image status has changed once it's supported
+
+            } catch (JSONException e) {
+                AppLog.d(AppLog.T.EDITOR, "Unable to update JSON array");
+            }
+
             restorePreviousActionBar();
             getFragmentManager().popBackStack();
             return true;
@@ -215,6 +222,50 @@ public class ImageSettingsDialogFragment extends DialogFragment {
                 actionBar.setDisplayShowCustomEnabled(false);
             }
         }
+    }
+
+    /**
+     * Displays a dialog asking the user to confirm that they want to exit, discarding unsaved changes.
+     */
+    private void showDiscardChangesDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(getString(R.string.image_settings_dismiss_dialog_title));
+        builder.setPositiveButton(getString(R.string.discard), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                restorePreviousActionBar();
+                getFragmentManager().popBackStack();
+            }
+        });
+
+        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    /**
+     * Extracts the meta data from the dialog fields and updates the entries in the given JSONObject.
+     */
+    private JSONObject extractMetaDataFromFields(JSONObject metaData) {
+        try {
+            metaData.put("title", mTitleText.getText().toString());
+            metaData.put("caption", mCaptionText.getText().toString());
+            metaData.put("alt", mAltText.getText().toString());
+            metaData.put("align", mAlignmentSpinner.getSelectedItem().toString());
+            metaData.put("linkUrl", mLinkTo.getText().toString());
+
+            int newWidth = getEditTextIntegerClamped(mWidthText, 10, mMaxImageWidth);
+            metaData.put("width", newWidth);
+            metaData.put("height", getRelativeHeightFromWidth(newWidth));
+        } catch (JSONException e) {
+            AppLog.d(AppLog.T.EDITOR, "Unable to build JSON object from new meta data");
+        }
+
+        return metaData;
     }
 
     private void loadThumbnail(final String src, final ImageView thumbnailImage) {
