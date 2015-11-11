@@ -255,7 +255,7 @@ public class ImageSettingsDialogFragment extends DialogFragment {
             metaData.put("title", mTitleText.getText().toString());
             metaData.put("caption", mCaptionText.getText().toString());
             metaData.put("alt", mAltText.getText().toString());
-            metaData.put("align", mAlignmentSpinner.getSelectedItem().toString());
+            metaData.put("align", mAlignmentSpinner.getSelectedItem().toString().toLowerCase());
             metaData.put("linkUrl", mLinkTo.getText().toString());
 
             int newWidth = getEditTextIntegerClamped(mWidthText, 10, mMaxImageWidth);
