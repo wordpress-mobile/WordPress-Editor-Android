@@ -30,6 +30,7 @@ import org.json.JSONObject;
 import org.wordpress.android.util.AppLog;
 
 import java.util.Arrays;
+import java.util.Locale;
 
 /**
  * A full-screen DialogFragment with image settings.
@@ -139,6 +140,10 @@ public class ImageSettingsDialogFragment extends DialogFragment {
                 mAltText.setText(mImageMeta.getString("alt"));
 
                 String alignment = mImageMeta.getString("align");
+
+                // Capitalize the alignment value to match the spinner entries
+                alignment = alignment.substring(0, 1).toUpperCase(Locale.US) + alignment.substring(1);
+
                 String[] alignmentArray = getResources().getStringArray(R.array.alignment_array);
                 mAlignmentSpinner.setSelection(Arrays.asList(alignmentArray).indexOf(alignment));
 
@@ -271,7 +276,7 @@ public class ImageSettingsDialogFragment extends DialogFragment {
             metaData.put("title", mTitleText.getText().toString());
             metaData.put("caption", mCaptionText.getText().toString());
             metaData.put("alt", mAltText.getText().toString());
-            metaData.put("align", mAlignmentSpinner.getSelectedItem().toString().toLowerCase());
+            metaData.put("align", mAlignmentSpinner.getSelectedItem().toString().toLowerCase(Locale.US));
             metaData.put("linkUrl", mLinkTo.getText().toString());
 
             int newWidth = getEditTextIntegerClamped(mWidthText, 10, mMaxImageWidth);
