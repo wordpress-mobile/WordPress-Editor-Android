@@ -28,6 +28,7 @@ import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.wordpress.android.util.AppLog;
+import org.wordpress.android.util.ToastUtils;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -103,6 +104,7 @@ public class ImageSettingsDialogFragment extends DialogFragment {
 
                 restorePreviousActionBar();
                 getFragmentManager().popBackStack();
+                ToastUtils.showToast(getActivity(), R.string.image_settings_save_toast);
             }
         });
     }
