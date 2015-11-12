@@ -12,6 +12,7 @@ import android.view.View;
 import org.wordpress.android.editor.EditorFragmentAbstract;
 import org.wordpress.android.editor.EditorFragmentAbstract.EditorFragmentListener;
 import org.wordpress.android.editor.EditorMediaUploadListener;
+import org.wordpress.android.editor.ImageSettingsDialogFragment;
 import org.wordpress.android.util.ToastUtils;
 import org.wordpress.android.util.helpers.MediaFile;
 
@@ -57,6 +58,17 @@ public class EditorExampleActivity extends AppCompatActivity implements EditorFr
         super.onAttachFragment(fragment);
         if (fragment instanceof EditorFragmentAbstract) {
             mEditorFragment = (EditorFragmentAbstract) fragment;
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Fragment fragment =  getFragmentManager()
+                .findFragmentByTag(ImageSettingsDialogFragment.IMAGE_SETTINGS_DIALOG_TAG);
+        if (fragment != null && fragment.isVisible()) {
+            ((ImageSettingsDialogFragment) fragment).dismissFragment();
+        } else {
+            super.onBackPressed();
         }
     }
 

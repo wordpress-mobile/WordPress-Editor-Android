@@ -31,6 +31,12 @@ import org.wordpress.android.util.AppLog;
 
 import java.util.Arrays;
 
+/**
+ * A full-screen DialogFragment with image settings.
+ *
+ * Modifies the action bar - host activity must call {@link ImageSettingsDialogFragment#dismissFragment()}
+ * when the fragment is dismissed to restore it.
+ */
 public class ImageSettingsDialogFragment extends DialogFragment {
 
     public static final int IMAGE_SETTINGS_DIALOG_REQUEST_CODE = 5;
@@ -174,25 +180,7 @@ public class ImageSettingsDialogFragment extends DialogFragment {
         int id = item.getItemId();
 
         if (id == android.R.id.home) {
-            try {
-                JSONObject newImageMeta = extractMetaDataFromFields(new JSONObject());
-
-                for (int i = 0; i < newImageMeta.names().length(); i++) {
-                    String name = newImageMeta.names().getString(i);
-                    if (!newImageMeta.getString(name).equals(mImageMeta.getString(name))) {
-                        showDiscardChangesDialog();
-                        return true;
-                    }
-                }
-
-                // TODO: Also check if featured image status has changed once it's supported
-
-            } catch (JSONException e) {
-                AppLog.d(AppLog.T.EDITOR, "Unable to update JSON array");
-            }
-
-            restorePreviousActionBar();
-            getFragmentManager().popBackStack();
+            dismissFragment();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -208,6 +196,34 @@ public class ImageSettingsDialogFragment extends DialogFragment {
         } else {
             return null;
         }
+    }
+
+    /**
+     * To be called when the fragment is being dismissed, either by ActionBar navigation or by pressing back in the
+     * navigation bar.
+     * Displays a confirmation dialog if there are unsaved changes, otherwise undoes the fragment's modifications to
+     * the ActionBar and restores the last visible fragment.
+     */
+    public void dismissFragment() {
+        try {
+            JSONObject newImageMeta = extractMetaDataFromFields(new JSONObject());
+
+            for (int i = 0; i < newImageMeta.names().length(); i++) {
+                String name = newImageMeta.names().getString(i);
+                if (!newImageMeta.getString(name).equals(mImageMeta.getString(name))) {
+                    showDiscardChangesDialog();
+                    return;
+                }
+            }
+
+            // TODO: Also check if featured image status has changed once it's supported
+
+        } catch (JSONException e) {
+            AppLog.d(AppLog.T.EDITOR, "Unable to update JSON array");
+        }
+
+        restorePreviousActionBar();
+        getFragmentManager().popBackStack();
     }
 
     private void restorePreviousActionBar() {
