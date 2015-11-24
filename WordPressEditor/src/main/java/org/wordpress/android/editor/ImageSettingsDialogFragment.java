@@ -57,6 +57,8 @@ public class ImageSettingsDialogFragment extends DialogFragment {
     private EditText mWidthText;
     private CheckBox mFeaturedCheckBox;
 
+    private boolean mIsFeatured;
+
     private CharSequence mPreviousActionBarTitle;
     private boolean mPreviousHomeAsUpEnabled;
     private View mPreviousCustomView;
@@ -106,8 +108,8 @@ public class ImageSettingsDialogFragment extends DialogFragment {
                 Intent intent = new Intent();
                 intent.putExtra("imageMeta", mImageMeta.toString());
 
-                boolean isFeaturedImage = mFeaturedCheckBox.isChecked();
-                intent.putExtra("isFeatured", isFeaturedImage);
+                mIsFeatured = mFeaturedCheckBox.isChecked();
+                intent.putExtra("isFeatured", mIsFeatured);
 
                 if (!imageRemoteId.isEmpty()) {
                     intent.putExtra("imageRemoteId", Integer.parseInt(imageRemoteId));
@@ -170,7 +172,8 @@ public class ImageSettingsDialogFragment extends DialogFragment {
                 boolean featuredImageSupported = bundle.getBoolean("featuredImageSupported");
                 if (featuredImageSupported) {
                     mFeaturedCheckBox.setVisibility(View.VISIBLE);
-                    mFeaturedCheckBox.setChecked(bundle.getBoolean("isFeatured", false));
+                    mIsFeatured = bundle.getBoolean("isFeatured", false);
+                    mFeaturedCheckBox.setChecked(mIsFeatured);
                 }
 
             } catch (JSONException e1) {
@@ -239,8 +242,11 @@ public class ImageSettingsDialogFragment extends DialogFragment {
                 }
             }
 
-            // TODO: Also check if featured image status has changed once it's supported
-
+            if (mFeaturedCheckBox.isChecked() != mIsFeatured) {
+                // Featured image status has changed
+                showDiscardChangesDialog();
+                return;
+            }
         } catch (JSONException e) {
             AppLog.d(AppLog.T.EDITOR, "Unable to update JSON array");
         }
