@@ -32,6 +32,8 @@ public class EditorExampleActivity extends AppCompatActivity implements EditorFr
     public static final int ADD_MEDIA_ACTIVITY_REQUEST_CODE = 1111;
     public static final int ADD_MEDIA_FAIL_ACTIVITY_REQUEST_CODE = 1112;
 
+    public static final String MEDIA_REMOTE_ID_SAMPLE = "123";
+
     private static final int SELECT_PHOTO_MENU_POSITION = 0;
     private static final int SELECT_PHOTO_FAIL_MENU_POSITION = 1;
 
@@ -156,6 +158,11 @@ public class EditorExampleActivity extends AppCompatActivity implements EditorFr
     }
 
     @Override
+    public void onFeaturedImageChanged(int mediaId) {
+
+    }
+
+    @Override
     public void onEditorFragmentInitialized() {
         // arbitrary setup
         mEditorFragment.setFeaturedImageSupported(true);
@@ -192,7 +199,8 @@ public class EditorExampleActivity extends AppCompatActivity implements EditorFr
                         count += 0.1;
                     }
 
-                    ((EditorMediaUploadListener) mEditorFragment).onMediaUploadSucceeded(mediaId, mediaUrl);
+                    ((EditorMediaUploadListener) mEditorFragment).onMediaUploadSucceeded(mediaId,
+                            MEDIA_REMOTE_ID_SAMPLE, mediaUrl);
 
                     if (mFailedUploads.containsKey(mediaId)) {
                         mFailedUploads.remove(mediaId);
