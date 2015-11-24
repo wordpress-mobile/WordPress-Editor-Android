@@ -96,8 +96,12 @@ public class ImageSettingsDialogFragment extends DialogFragment {
             public void onClick(View v) {
                 mImageMeta = extractMetaDataFromFields(mImageMeta);
 
-
-                imageRemoteId = mImageMeta.getString("attachment_id");
+                String imageRemoteId = "";
+                try {
+                    imageRemoteId = mImageMeta.getString("attachment_id");
+                } catch (JSONException e) {
+                    AppLog.e(AppLog.T.EDITOR, "Unable to retrieve featured image id from meta data");
+                }
 
                 Intent intent = new Intent();
                 intent.putExtra("imageMeta", mImageMeta.toString());
