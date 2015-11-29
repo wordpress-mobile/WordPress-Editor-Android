@@ -1028,6 +1028,9 @@ ZSSEditor.markImageUploadFailed = function(imageNodeIdentifier, message) {
     if (imageProgressNode.length != 0){
         imageProgressNode.addClass('failed');
     }
+
+    // Delete the compatibility overlay if present
+    imageContainerNode.find("span.upload-overlay").addClass("failed");
 };
 
 /**
@@ -1051,6 +1054,9 @@ ZSSEditor.unmarkImageUploadFailed = function(imageNodeIdentifier, message) {
     if (imageProgressNode.length != 0){
         imageProgressNode.removeClass('failed');
     }
+
+    // Display the compatibility overlay again if present
+    imageContainerNode.find("span.upload-overlay").removeClass("failed");
 };
 
 /**
