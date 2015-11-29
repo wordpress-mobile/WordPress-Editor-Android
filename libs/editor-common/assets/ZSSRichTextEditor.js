@@ -946,6 +946,12 @@ ZSSEditor.setProgressOnImage = function(imageNodeIdentifier, progress) {
         imageNode.addClass("uploading");
     }
 
+    // Revert to non-compatibility image container once image upload has begun. This centers the overlays on the image
+    // (instead of the screen), while still circumventing the small container bug the compat class was added to fix
+    if (progress > 0) {
+        this.getImageContainerNodeWithIdentifier(imageNodeIdentifier).removeClass("compat");
+    }
+
     var imageProgressNode = this.getImageProgressNodeWithIdentifier(imageNodeIdentifier);
     if (imageProgressNode.length == 0){
           return;
