@@ -841,11 +841,18 @@ ZSSEditor.insertLocalImage = function(imageNodeIdentifier, localImageUrl) {
     var paragraphCloseTag = '</' + this.defaultParagraphSeparator + '>';
     var progressIdentifier = this.getImageProgressIdentifier(imageNodeIdentifier);
     var imageContainerIdentifier = this.getImageContainerIdentifier(imageNodeIdentifier);
+
+    if (ZSSEditor.androidApiLevel > 18) {
+        var progressElement = '<progress id="' + progressIdentifier + '" value=0 class="wp_media_indicator" contenteditable="false"></progress>';
+    } else {
+        // Before API 19, the WebView didn't support progress tags. Use an upload overlay instead of a progress bar
+        var progressElement = '<span class="upload-overlay" contenteditable="false">Uploading...</span>';
+    }
+
     var imgContainerStart = '<span id="' + imageContainerIdentifier+'" class="img_container" contenteditable="false" data-failed="Tap to try again!">';
     var imgContainerEnd = '</span>';
-    var progress = '<progress id="' + progressIdentifier+'" value=0  class="wp_media_indicator"  contenteditable="false"></progress>';
     var image = '<img data-wpid="' + imageNodeIdentifier + '" src="' + localImageUrl + '" alt="" />';
-    var html = imgContainerStart + progress+image + imgContainerEnd;
+    var html = imgContainerStart + progressElement + image + imgContainerEnd;
 
     if (this.getFocusedField().getHTML().length == 0) {
         html = paragraphOpenTag + html;
