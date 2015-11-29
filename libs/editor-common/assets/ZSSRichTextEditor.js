@@ -41,6 +41,9 @@ ZSSEditor.caretInfo = { y: 0, height: 0 };
 // Is this device an iPad
 ZSSEditor.isiPad;
 
+// The API level of the native host (Android)
+ZSSEditor.androidApiLevel;
+
 // The current selection
 ZSSEditor.currentSelection;
 
@@ -68,6 +71,8 @@ ZSSEditor.defaultParagraphSeparator = 'p';
 ZSSEditor.init = function() {
 
     rangy.init();
+
+    ZSSEditor.androidApiLevel = nativeState.getAPILevel();
 
     // Change a few CSS values if the device is an iPad
     ZSSEditor.isiPad = (navigator.userAgent.match(/iPad/i) != null);

@@ -24,6 +24,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.JavascriptInterface;
 import android.webkit.URLUtil;
 import android.webkit.WebView;
 import android.widget.ToggleButton;
@@ -351,6 +352,8 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         String htmlEditor = Utils.getHtmlFromFile(getActivity(), "android-editor.html");
 
         mWebView.addJavascriptInterface(new JsCallbackReceiver(this), JS_CALLBACK_HANDLER);
+
+        mWebView.addJavascriptInterface(new NativeStateJsInterface(), "nativeState");
 
         mWebView.loadDataWithBaseURL("file:///android_asset/", htmlEditor, "text/html", "utf-8", "");
 
@@ -1120,6 +1123,14 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             // Insert closing tag
             content.insert(selectionEnd, endTag);
             mSourceViewContent.setSelection(selectionEnd + endTag.length());
+        }
+    }
+
+    private class NativeStateJsInterface {
+
+        @JavascriptInterface
+        public int getAPILevel() {
+            return Build.VERSION.SDK_INT;
         }
     }
 }
