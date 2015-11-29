@@ -23,6 +23,11 @@
     background-color: rgba(0, 0, 0, 0.5);
 }
 
+/* Used only on older APIs (API<19), where using inline-block is buggy and sometimes displays a very small container */
+span.img_container.compat {
+    display: block;
+}
+
 /* Used only on older APIs (API<19) instead of a progress bar for uploading images, since the WebView at those API
    levels does not support the progress tag */
 .img_container .upload-overlay {
