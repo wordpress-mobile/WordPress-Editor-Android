@@ -12,6 +12,8 @@
     }
 }
 
+/* --- API<19 workarounds --- */
+
 /* Used only on older APIs (API<19), which don't support CSS filter effects (specifically, blur). */
 .edit-container .edit-overlay-bg {
     position: absolute;
@@ -26,6 +28,16 @@
 /* Used only on older APIs (API<19), where using inline-block is buggy and sometimes displays a very small container */
 span.img_container.compat {
     display: block;
+}
+
+/* Used on API<19 to darken the image so that the 'uploading' and 'retry' overlays can still be seen when the image is
+light */
+.img_container .upload-overlay-bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: block;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 /* Used only on older APIs (API<19) instead of a progress bar for uploading images, since the WebView at those API

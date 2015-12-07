@@ -848,7 +848,7 @@ ZSSEditor.insertLocalImage = function(imageNodeIdentifier, localImageUrl) {
     } else {
         // Before API 19, the WebView didn't support progress tags. Use an upload overlay instead of a progress bar
         var imgContainerClass = 'img_container compat';
-        var progressElement = '<span class="upload-overlay" contenteditable="false">Uploading...</span>';
+        var progressElement = '<span class="upload-overlay" contenteditable="false">Uploading...</span><span class="upload-overlay-bg"></span>';
     }
 
     var imgContainerStart = '<span id="' + imageContainerIdentifier + '" class="' + imgContainerClass + '" contenteditable="false" data-failed="Tap to try again!">';
