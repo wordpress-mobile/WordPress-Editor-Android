@@ -2361,6 +2361,15 @@ ZSSField.prototype.handleTapEvent = function(e) {
             return;
         }
 
+        if (targetNode.className.indexOf('upload-overlay') != -1 ||
+            targetNode.className.indexOf('upload-overlay-bg') != -1 ) {
+            // Select the image node associated with the selected upload overlay
+            var imageNode = targetNode.parentNode.getElementsByTagName('img')[0];
+
+            this.sendImageTappedCallback( imageNode );
+            return;
+        }
+
         if ( ZSSEditor.currentEditingImage ) {
             ZSSEditor.removeImageSelectionFormatting( ZSSEditor.currentEditingImage );
             ZSSEditor.currentEditingImage = null;
