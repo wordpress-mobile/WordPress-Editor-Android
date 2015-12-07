@@ -40,6 +40,20 @@ light */
     background-color: rgba(0, 0, 0, 0.5);
 }
 
+/* When the upload-overlay-bg element is present (API<19), a bug is exposed where the img_container is slightly larger
+than its containing image. The upload-overlay-bg is larger as well, leaving a dark line below the image. By setting
+display:block on the image and setting a width limit we get around this issue. */
+
+.img_container .upload-overlay-bg ~ img.uploading {
+    display:block;
+    max-width:100%;
+}
+
+.img_container .upload-overlay-bg ~ img.failed {
+    display:block;
+    max-width:100%;
+}
+
 /* Used only on older APIs (API<19) instead of a progress bar for uploading images, since the WebView at those API
    levels does not support the progress tag */
 .img_container .upload-overlay {
