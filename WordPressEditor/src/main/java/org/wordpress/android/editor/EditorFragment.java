@@ -800,7 +800,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         mWebView.post(new Runnable() {
             @Override
             public void run() {
-                AnalyticsTracker.track(Stat.EDITOR_UPDLOAD_MEDIA_FAILED);
+                AnalyticsTracker.track(Stat.EDITOR_UPLOAD_MEDIA_FAILED);
                 mWebView.execJavaScriptFromString("ZSSEditor.markImageUploadFailed(" + mediaId + ");");
                 mFailedMediaIds.add(mediaId);
                 mUploadingMediaIds.remove(mediaId);
@@ -959,7 +959,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 mWebView.post(new Runnable() {
                     @Override
                     public void run() {
-                        AnalyticsTracker.track(Stat.EDITOR_UPDLOAD_MEDIA_RETRIED);
+                        AnalyticsTracker.track(Stat.EDITOR_UPLOAD_MEDIA_RETRIED);
                         mWebView.execJavaScriptFromString("ZSSEditor.unmarkImageUploadFailed(" + mediaId + ");");
                         mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnImage(" + mediaId + ", " + 0 + ");");
                         mFailedMediaIds.remove(mediaId);
