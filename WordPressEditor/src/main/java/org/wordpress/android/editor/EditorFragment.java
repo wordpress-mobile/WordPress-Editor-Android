@@ -974,7 +974,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 if (fragmentManager.findFragmentByTag(ImageSettingsDialogFragment.IMAGE_SETTINGS_DIALOG_TAG) != null) {
                     return;
                 }
-
+                AnalyticsTracker.track(Stat.EDITOR_EDITED_IMAGE);
                 ImageSettingsDialogFragment imageSettingsDialogFragment = new ImageSettingsDialogFragment();
                 imageSettingsDialogFragment.setTargetFragment(this,
                         ImageSettingsDialogFragment.IMAGE_SETTINGS_DIALOG_REQUEST_CODE);
