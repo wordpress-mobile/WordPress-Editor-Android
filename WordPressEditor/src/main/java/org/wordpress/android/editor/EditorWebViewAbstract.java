@@ -7,6 +7,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
+import android.view.View;
 import android.webkit.ConsoleMessage;
 import android.webkit.JsResult;
 import android.webkit.URLUtil;
@@ -69,27 +70,27 @@ public abstract class EditorWebViewAbstract extends WebView {
                     return super.shouldInterceptRequest(view, request);
                 }
 
-                try {
-                    // Keep any existing request headers from the WebResourceRequest
-                    Map<String, String> headerMap = request.getRequestHeaders();
-                    for (Map.Entry<String, String> entry : mHeaderMap.entrySet()) {
-                        headerMap.put(entry.getKey(), entry.getValue());
-                    }
-
-                    // Request and add an authorization header for HTTPS resource requests.
-                    // Use https:// when requesting the auth header, in case the resource is incorrectly using http://.
-                    // If an auth header is returned, force https:// for the actual HTTP request.
-                    String authHeader = mAuthHeaderRequestListener.onAuthHeaderRequested(UrlUtils.makeHttps(url));
-                    if (StringUtils.notNullStr(authHeader).length() > 0) {
+                // Request and add an authorization header for HTTPS resource requests.
+                // Use https:// when requesting the auth header, in case the resource is incorrectly using http://.
+                // If an auth header is returned, force https:// for the actual HTTP request.
+                String authHeader = mAuthHeaderRequestListener.onAuthHeaderRequested(UrlUtils.makeHttps(url));
+                if (StringUtils.notNullStr(authHeader).length() > 0) {
+                    try {
                         url = UrlUtils.makeHttps(url);
-                        headerMap.put("Authorization", authHeader);
-                    }
 
-                    HttpURLConnection conn = HTTPUtils.setupUrlConnection(url, headerMap);
-                    return new WebResourceResponse(conn.getContentType(), conn.getContentEncoding(),
-                            conn.getInputStream());
-                } catch (IOException e) {
-                    AppLog.e(AppLog.T.EDITOR, e);
+                        // Keep any existing request headers from the WebResourceRequest
+                        Map<String, String> headerMap = request.getRequestHeaders();
+                        for (Map.Entry<String, String> entry : mHeaderMap.entrySet()) {
+                            headerMap.put(entry.getKey(), entry.getValue());
+                        }
+                        headerMap.put("Authorization", authHeader);
+
+                        HttpURLConnection conn = HTTPUtils.setupUrlConnection(url, headerMap);
+                        return new WebResourceResponse(conn.getContentType(), conn.getContentEncoding(),
+                                conn.getInputStream());
+                    } catch (IOException e) {
+                        AppLog.e(AppLog.T.EDITOR, e);
+                    }
                 }
 
                 return super.shouldInterceptRequest(view, request);
@@ -105,22 +106,23 @@ public abstract class EditorWebViewAbstract extends WebView {
                     return super.shouldInterceptRequest(view, url);
                 }
 
-                try {
-                    // Request and add an authorization header for HTTPS resource requests.
-                    // Use https:// when requesting the auth header, in case the resource is incorrectly using http://.
-                    // If an auth header is returned, force https:// for the actual HTTP request.
-                    Map<String, String> headerMap = new HashMap<>(mHeaderMap);
-                    String authHeader = mAuthHeaderRequestListener.onAuthHeaderRequested(UrlUtils.makeHttps(url));
-                    if (StringUtils.notNullStr(authHeader).length() > 0) {
+                // Request and add an authorization header for HTTPS resource requests.
+                // Use https:// when requesting the auth header, in case the resource is incorrectly using http://.
+                // If an auth header is returned, force https:// for the actual HTTP request.
+                String authHeader = mAuthHeaderRequestListener.onAuthHeaderRequested(UrlUtils.makeHttps(url));
+                if (StringUtils.notNullStr(authHeader).length() > 0) {
+                    try {
                         url = UrlUtils.makeHttps(url);
-                        headerMap.put("Authorization", authHeader);
-                    }
 
-                    HttpURLConnection conn = HTTPUtils.setupUrlConnection(url, headerMap);
-                    return new WebResourceResponse(conn.getContentType(), conn.getContentEncoding(),
-                            conn.getInputStream());
-                } catch (IOException e) {
-                    AppLog.e(AppLog.T.EDITOR, e);
+                        Map<String, String> headerMap = new HashMap<>(mHeaderMap);
+                        headerMap.put("Authorization", authHeader);
+
+                        HttpURLConnection conn = HTTPUtils.setupUrlConnection(url, headerMap);
+                        return new WebResourceResponse(conn.getContentType(), conn.getContentEncoding(),
+                                conn.getInputStream());
+                    } catch (IOException e) {
+                        AppLog.e(AppLog.T.EDITOR, e);
+                    }
                 }
 
                 return super.shouldInterceptRequest(view, url);
@@ -145,6 +147,27 @@ public abstract class EditorWebViewAbstract extends WebView {
     @Override
     public boolean onCheckIsTextEditor() {
         return true;
+    }
+
+    @Override
+    public void setVisibility(int visibility) {
+        notifyVisibilityChanged(visibility == View.VISIBLE);
+        super.setVisibility(visibility);
+    }
+
+    /**
+     * Handles events that should be triggered when the WebView is hidden or is shown to the user
+     * @param visible the new visibility status of the WebView
+     */
+    public void notifyVisibilityChanged(boolean visible) {
+        if (!visible) {
+            this.post(new Runnable() {
+                @Override
+                public void run() {
+                    execJavaScriptFromString("ZSSEditor.pauseAllVideos();");
+                }
+            });
+        }
     }
 
     public void setOnImeBackListener(OnImeBackListener listener) {

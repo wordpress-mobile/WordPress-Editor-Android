@@ -239,6 +239,14 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     }
 
     @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        if (mDomHasLoaded) {
+            mWebView.notifyVisibilityChanged(isVisibleToUser);
+        }
+        super.setUserVisibleHint(isVisibleToUser);
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putCharSequence(KEY_TITLE, getTitle());
         outState.putCharSequence(KEY_CONTENT, getContent());
@@ -767,6 +775,17 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     }
 
     @Override
+    public void setUrlForVideoPressId(final String videoId, final String videoUrl, final String posterUrl) {
+        mWebView.post(new Runnable() {
+            @Override
+            public void run() {
+                mWebView.execJavaScriptFromString("ZSSEditor.setVideoPressLinks('" + videoId + "', '" +
+                        videoUrl + "', '" + posterUrl + "');");
+            }
+        });
+    }
+
+    @Override
     public boolean hasFailedMediaUploads() {
         return (mFailedMediaIds.size() > 0);
     }
@@ -1031,6 +1050,8 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                         ImageSettingsDialogFragment.IMAGE_SETTINGS_DIALOG_TAG)
                         .addToBackStack(null)
                         .commit();
+
+                mWebView.notifyVisibilityChanged(false);
                 break;
         }
     }
@@ -1046,6 +1067,11 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
         linkDialogFragment.setArguments(dialogBundle);
         linkDialogFragment.show(getFragmentManager(), "LinkDialogFragment");
+    }
+
+    @Override
+    public void onVideoPressInfoRequested(final String videoId) {
+        mEditorFragmentListener.onVideoPressInfoRequested(videoId);
     }
 
     public void onGetHtmlResponse(Map<String, String> inputArgs) {
