@@ -73,4 +73,6 @@
     <string name="format_bar_description_ul">Unordered list</string>
     <string name="format_bar_description_ol">Ordered list</string>
     <string name="format_bar_description_html">HTML mode</string>
+    <string name="visual_editor">Visual editor</string>
+
 </resources>

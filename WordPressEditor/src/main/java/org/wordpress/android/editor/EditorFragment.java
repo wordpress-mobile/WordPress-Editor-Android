@@ -360,16 +360,16 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     }
 
     protected void initJsEditor() {
-        if(!isAdded()) {
+        if (!isAdded()) {
             return;
         }
 
         String htmlEditor = Utils.getHtmlFromFile(getActivity(), "android-editor.html");
-
+        if (htmlEditor != null) {
+            htmlEditor = htmlEditor.replace("%%TITLE%%", getString(R.string.visual_editor));
+        }
         mWebView.addJavascriptInterface(new JsCallbackReceiver(this), JS_CALLBACK_HANDLER);
-
         mWebView.loadDataWithBaseURL("file:///android_asset/", htmlEditor, "text/html", "utf-8", "");
-
         if (mDebugModeEnabled) {
             enableWebDebugging(true);
             // Enable the HTML logging button
