@@ -1131,7 +1131,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     private void hideActionBarIfNeeded() {
 
         ActionBar actionBar = getActionBar();
-        if (getActionBar() != null
+        if (actionBar != null
                 && !isHardwareKeyboardPresent()
                 && mHideActionBarOnSoftKeyboardUp
                 && mIsKeyboardOpen
@@ -1146,8 +1146,8 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     private void showActionBarIfNeeded() {
 
         ActionBar actionBar = getActionBar();
-        if (getActionBar() != null && !actionBar.isShowing()) {
-            getActionBar().show();
+        if (actionBar != null && !actionBar.isShowing()) {
+            actionBar.show();
         }
     }
 
