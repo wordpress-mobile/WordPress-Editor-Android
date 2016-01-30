@@ -62,6 +62,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     private static final String ARG_PARAM_CONTENT = "param_content";
 
     private static final String JS_CALLBACK_HANDLER = "nativeCallbackHandler";
+    private static final String JS_STATE_INTERFACE = "nativeState";
 
     private static final String KEY_TITLE = "title";
     private static final String KEY_CONTENT = "content";
@@ -379,7 +380,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         }
 
         mWebView.addJavascriptInterface(new JsCallbackReceiver(this), JS_CALLBACK_HANDLER);
-        mWebView.addJavascriptInterface(new NativeStateJsInterface(), "nativeState");
+        mWebView.addJavascriptInterface(new NativeStateJsInterface(), JS_STATE_INTERFACE);
 
         mWebView.loadDataWithBaseURL("file:///android_asset/", htmlEditor, "text/html", "utf-8", "");
 
