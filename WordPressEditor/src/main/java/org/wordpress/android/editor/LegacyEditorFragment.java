@@ -54,8 +54,6 @@ import android.widget.ToggleButton;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 
-import org.wordpress.android.analytics.AnalyticsTracker;
-import org.wordpress.android.analytics.AnalyticsTracker.Stat;
 import org.wordpress.android.editor.legacy.EditLinkActivity;
 import org.wordpress.android.editor.legacy.WPEditImageSpan;
 import org.wordpress.android.util.AppLog;
@@ -415,22 +413,22 @@ public class LegacyEditorFragment extends EditorFragmentAbstract implements Text
         public void onClick(View v) {
             int id = v.getId();
             if (id == R.id.bold) {
-                AnalyticsTracker.track(Stat.EDITOR_TAPPED_BOLD);
+                mEditorOptionalListener.boldButtonTapped();
                 onFormatButtonClick(mBoldToggleButton, TAG_FORMAT_BAR_BUTTON_STRONG);
             } else if (id == R.id.em) {
-                AnalyticsTracker.track(Stat.EDITOR_TAPPED_ITALIC);
+                mEditorOptionalListener.italicButtonTapped();
                 onFormatButtonClick(mEmToggleButton, TAG_FORMAT_BAR_BUTTON_EM);
             } else if (id == R.id.underline) {
-                AnalyticsTracker.track(Stat.EDITOR_TAPPED_UNDERLINE);
+                mEditorOptionalListener.underlineButtonTapped();
                 onFormatButtonClick(mUnderlineToggleButton, TAG_FORMAT_BAR_BUTTON_UNDERLINE);
             } else if (id == R.id.strike) {
-                AnalyticsTracker.track(Stat.EDITOR_TAPPED_STRIKETHROUGH);
+                mEditorOptionalListener.strikethroughButtonTapped();
                 onFormatButtonClick(mStrikeToggleButton, TAG_FORMAT_BAR_BUTTON_STRIKE);
             } else if (id == R.id.bquote) {
-                AnalyticsTracker.track(Stat.EDITOR_TAPPED_BLOCKQUOTE);
+                mEditorOptionalListener.blockquoteButtonTapped();
                 onFormatButtonClick(mBquoteToggleButton, TAG_FORMAT_BAR_BUTTON_QUOTE);
             } else if (id == R.id.more) {
-                AnalyticsTracker.track(Stat.EDITOR_TAPPED_MORE);
+                mEditorOptionalListener.moreButtonTapped();
                 mSelectionEnd = mContentEditText.getSelectionEnd();
                 Editable str = mContentEditText.getText();
                 if (str != null) {
@@ -439,7 +437,7 @@ public class LegacyEditorFragment extends EditorFragmentAbstract implements Text
                     str.insert(mSelectionEnd, "\n<!--more-->\n");
                 }
             } else if (id == R.id.link) {
-                AnalyticsTracker.track(Stat.EDITOR_TAPPED_LINK);
+                mEditorOptionalListener.linkButtonTapped();
                 mSelectionStart = mContentEditText.getSelectionStart();
                 mStyleStart = mSelectionStart;
                 mSelectionEnd = mContentEditText.getSelectionEnd();
@@ -457,7 +455,7 @@ public class LegacyEditorFragment extends EditorFragmentAbstract implements Text
                 }
                 startActivityForResult(i, ACTIVITY_REQUEST_CODE_CREATE_LINK);
             } else if (id == R.id.addPictureButton) {
-                AnalyticsTracker.track(Stat.EDITOR_TAPPED_IMAGE);
+                mEditorOptionalListener.imageButtonTapped();
                 mEditorFragmentListener.onAddMediaClicked();
                 if (isAdded()) {
                     getActivity().openContextMenu(mAddPictureButton);

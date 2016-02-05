@@ -3,7 +3,7 @@ package org.wordpress.android.editor;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
-
+import android.support.annotation.NonNull;
 import android.text.Spanned;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -12,7 +12,6 @@ import org.wordpress.android.util.helpers.MediaFile;
 import org.wordpress.android.util.helpers.MediaGallery;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public abstract class EditorFragmentAbstract extends Fragment {
     public abstract void setTitle(CharSequence text);
@@ -40,6 +39,9 @@ public abstract class EditorFragmentAbstract extends Fragment {
     protected boolean mDebugModeEnabled;
 
     protected HashMap<String, String> mCustomHttpHeaders;
+
+    // Use a dummy listener by default
+    protected EditorOptionalListener mEditorOptionalListener = new EditorOptionalListener();
 
     @Override
     public void onAttach(Activity activity) {
@@ -95,6 +97,10 @@ public abstract class EditorFragmentAbstract extends Fragment {
         }
 
         mCustomHttpHeaders.put(name, value);
+    }
+
+    public void setListener(@NonNull EditorOptionalListener listener) {
+        mEditorOptionalListener = listener;
     }
 
     public void setDebugModeEnabled(boolean debugModeEnabled) {
