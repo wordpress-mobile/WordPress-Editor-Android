@@ -41,7 +41,7 @@ public abstract class EditorFragmentAbstract extends Fragment {
     protected HashMap<String, String> mCustomHttpHeaders;
 
     // Use a dummy listener by default
-    protected EditorOptionalListener mEditorOptionalListener = new EditorOptionalListener();
+    protected EditorFragmentOptionalListener mEditorOptionalListener = new EditorFragmentOptionalListener();
 
     @Override
     public void onAttach(Activity activity) {
@@ -99,7 +99,7 @@ public abstract class EditorFragmentAbstract extends Fragment {
         mCustomHttpHeaders.put(name, value);
     }
 
-    public void setListener(@NonNull EditorOptionalListener listener) {
+    public void setListener(@NonNull EditorFragmentOptionalListener listener) {
         mEditorOptionalListener = listener;
     }
 
@@ -137,5 +137,28 @@ public abstract class EditorFragmentAbstract extends Fragment {
         String onAuthHeaderRequested(String url);
         // TODO: remove saveMediaFile, it's currently needed for the legacy editor
         void saveMediaFile(MediaFile mediaFile);
+    }
+
+    /**
+     * Optional callbacks used to communicate with the parent Activity
+     */
+    public class EditorFragmentOptionalListener {
+        public void htmlButtonTapped() {}
+        public void imageButtonTapped() {}
+        public void unlinkButtonTapped() {}
+        public void networkMediaAdded(String mediaUrl) {}
+        public void localMediaAdded(String id) {}
+        public void linkButtonTapped() {}
+        public void uploadMediaFailed() {}
+        public void uploadMediaRetried() {}
+        public void imageEdited() {}
+        public void boldButtonTapped() {}
+        public void italicButtonTapped() {}
+        public void olButtonTapped() {}
+        public void ulButtonTapped() {}
+        public void blockquoteButtonTapped() {}
+        public void strikethroughButtonTapped() {}
+        public void underlineButtonTapped() {}
+        public void moreButtonTapped() {}
     }
 }
