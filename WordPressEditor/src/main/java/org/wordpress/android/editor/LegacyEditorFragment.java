@@ -413,22 +413,22 @@ public class LegacyEditorFragment extends EditorFragmentAbstract implements Text
         public void onClick(View v) {
             int id = v.getId();
             if (id == R.id.bold) {
-                mEditorOptionalListener.boldButtonTapped();
+                mEditorFragmentListener.onTrackableEvent(TrackableEvent.BOLD_BUTTON_TAPPED);
                 onFormatButtonClick(mBoldToggleButton, TAG_FORMAT_BAR_BUTTON_STRONG);
             } else if (id == R.id.em) {
-                mEditorOptionalListener.italicButtonTapped();
+                mEditorFragmentListener.onTrackableEvent(TrackableEvent.ITALIC_BUTTON_TAPPED);
                 onFormatButtonClick(mEmToggleButton, TAG_FORMAT_BAR_BUTTON_EM);
             } else if (id == R.id.underline) {
-                mEditorOptionalListener.underlineButtonTapped();
+                mEditorFragmentListener.onTrackableEvent(TrackableEvent.UNDERLINE_BUTTON_TAPPED);
                 onFormatButtonClick(mUnderlineToggleButton, TAG_FORMAT_BAR_BUTTON_UNDERLINE);
             } else if (id == R.id.strike) {
-                mEditorOptionalListener.strikethroughButtonTapped();
+                mEditorFragmentListener.onTrackableEvent(TrackableEvent.STRIKETHROUGH_BUTTON_TAPPED);
                 onFormatButtonClick(mStrikeToggleButton, TAG_FORMAT_BAR_BUTTON_STRIKE);
             } else if (id == R.id.bquote) {
-                mEditorOptionalListener.blockquoteButtonTapped();
+                mEditorFragmentListener.onTrackableEvent(TrackableEvent.BLOCKQUOTE_BUTTON_TAPPED);
                 onFormatButtonClick(mBquoteToggleButton, TAG_FORMAT_BAR_BUTTON_QUOTE);
             } else if (id == R.id.more) {
-                mEditorOptionalListener.moreButtonTapped();
+                mEditorFragmentListener.onTrackableEvent(TrackableEvent.MORE_BUTTON_TAPPED);
                 mSelectionEnd = mContentEditText.getSelectionEnd();
                 Editable str = mContentEditText.getText();
                 if (str != null) {
@@ -437,7 +437,7 @@ public class LegacyEditorFragment extends EditorFragmentAbstract implements Text
                     str.insert(mSelectionEnd, "\n<!--more-->\n");
                 }
             } else if (id == R.id.link) {
-                mEditorOptionalListener.linkButtonTapped();
+                mEditorFragmentListener.onTrackableEvent(TrackableEvent.LINK_BUTTON_TAPPED);
                 mSelectionStart = mContentEditText.getSelectionStart();
                 mStyleStart = mSelectionStart;
                 mSelectionEnd = mContentEditText.getSelectionEnd();
@@ -455,7 +455,7 @@ public class LegacyEditorFragment extends EditorFragmentAbstract implements Text
                 }
                 startActivityForResult(i, ACTIVITY_REQUEST_CODE_CREATE_LINK);
             } else if (id == R.id.addPictureButton) {
-                mEditorOptionalListener.imageButtonTapped();
+                mEditorFragmentListener.onTrackableEvent(TrackableEvent.IMAGE_BUTTON_TAPPED);
                 mEditorFragmentListener.onAddMediaClicked();
                 if (isAdded()) {
                     getActivity().openContextMenu(mAddPictureButton);

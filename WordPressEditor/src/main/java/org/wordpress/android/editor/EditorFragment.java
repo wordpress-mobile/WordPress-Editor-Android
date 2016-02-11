@@ -387,7 +387,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.format_bar_button_html) {
-            mEditorOptionalListener.htmlButtonTapped();
+            mEditorFragmentListener.onTrackableEvent(TrackableEvent.HTML_BUTTON_TAPPED);
 
             // Don't switch to HTML mode if currently uploading media
             if (!mUploadingMediaIds.isEmpty()) {
@@ -429,7 +429,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 mWebView.execJavaScriptFromString("ZSSEditor.getField('zss_field_content').focus();");
             }
         } else if (id == R.id.format_bar_button_media) {
-            mEditorOptionalListener.imageButtonTapped();
+            mEditorFragmentListener.onTrackableEvent(TrackableEvent.IMAGE_BUTTON_TAPPED);
             ((ToggleButton) v).setChecked(false);
 
             if (mSourceView.getVisibility() == View.VISIBLE) {
@@ -444,10 +444,10 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             if (!((ToggleButton) v).isChecked()) {
                 // The link button was checked when it was pressed; remove the current link
                 mWebView.execJavaScriptFromString("ZSSEditor.unlink();");
-                mEditorOptionalListener.unlinkButtonTapped();
+                mEditorFragmentListener.onTrackableEvent(TrackableEvent.UNLINK_BUTTON_TAPPED);
                 return;
             }
-            mEditorOptionalListener.linkButtonTapped();
+            mEditorFragmentListener.onTrackableEvent(TrackableEvent.LINK_BUTTON_TAPPED);
 
             ((ToggleButton) v).setChecked(false);
 
@@ -738,13 +738,13 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 if (URLUtil.isNetworkUrl(mediaUrl)) {
                     String mediaId = mediaFile.getMediaId();
                     mWebView.execJavaScriptFromString("ZSSEditor.insertImage('" + mediaUrl + "', '" + mediaId + "');");
-                    mEditorOptionalListener.networkMediaAdded(mediaUrl);
+                    mEditorFragmentListener.onTrackableEvent(TrackableEvent.NETWORK_MEDIA_ADDED);
                 } else {
                     String id = mediaFile.getMediaId();
                     mWebView.execJavaScriptFromString("ZSSEditor.insertLocalImage(" + id + ", '" + mediaUrl + "');");
                     mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnImage(" + id + ", " + 0 + ");");
                     mUploadingMediaIds.add(id);
-                    mEditorOptionalListener.localMediaAdded(id);
+                    mEditorFragmentListener.onTrackableEvent(TrackableEvent.LOCAL_MEDIA_ADDED);
                 }
             }
         });
@@ -832,7 +832,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         mWebView.post(new Runnable() {
             @Override
             public void run() {
-                mEditorOptionalListener.uploadMediaFailed();
+                mEditorFragmentListener.onTrackableEvent(TrackableEvent.UPLOAD_MEDIA_FAILED);
                 mWebView.execJavaScriptFromString("ZSSEditor.markImageUploadFailed(" + mediaId + ");");
                 mFailedMediaIds.add(mediaId);
                 mUploadingMediaIds.remove(mediaId);
@@ -991,7 +991,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 mWebView.post(new Runnable() {
                     @Override
                     public void run() {
-                        mEditorOptionalListener.uploadMediaRetried();
+                        mEditorFragmentListener.onTrackableEvent(TrackableEvent.UPLOAD_MEDIA_RETRIED);
                         mWebView.execJavaScriptFromString("ZSSEditor.unmarkImageUploadFailed(" + mediaId + ");");
                         mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnImage(" + mediaId + ", " + 0 + ");");
                         mFailedMediaIds.remove(mediaId);
@@ -1006,7 +1006,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 if (fragmentManager.findFragmentByTag(ImageSettingsDialogFragment.IMAGE_SETTINGS_DIALOG_TAG) != null) {
                     return;
                 }
-                mEditorOptionalListener.imageEdited();
+                mEditorFragmentListener.onTrackableEvent(TrackableEvent.IMAGE_EDITED);
                 ImageSettingsDialogFragment imageSettingsDialogFragment = new ImageSettingsDialogFragment();
                 imageSettingsDialogFragment.setTargetFragment(this,
                         ImageSettingsDialogFragment.IMAGE_SETTINGS_DIALOG_REQUEST_CODE);
@@ -1184,17 +1184,17 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     private void buttonTappedListener(ToggleButton toggleButton) {
         int id = toggleButton.getId();
         if (id == R.id.format_bar_button_bold) {
-            mEditorOptionalListener.boldButtonTapped();
+            mEditorFragmentListener.onTrackableEvent(TrackableEvent.BOLD_BUTTON_TAPPED);
         } else if (id == R.id.format_bar_button_italic) {
-            mEditorOptionalListener.italicButtonTapped();
+            mEditorFragmentListener.onTrackableEvent(TrackableEvent.ITALIC_BUTTON_TAPPED);
         } else if (id == R.id.format_bar_button_ol) {
-            mEditorOptionalListener.olButtonTapped();
+            mEditorFragmentListener.onTrackableEvent(TrackableEvent.OL_BUTTON_TAPPED);
         } else if (id == R.id.format_bar_button_ul) {
-            mEditorOptionalListener.ulButtonTapped();
+            mEditorFragmentListener.onTrackableEvent(TrackableEvent.UL_BUTTON_TAPPED);
         } else if (id == R.id.format_bar_button_quote) {
-            mEditorOptionalListener.blockquoteButtonTapped();
+            mEditorFragmentListener.onTrackableEvent(TrackableEvent.BLOCKQUOTE_BUTTON_TAPPED);
         } else if (id == R.id.format_bar_button_strikethrough) {
-            mEditorOptionalListener.strikethroughButtonTapped();
+            mEditorFragmentListener.onTrackableEvent(TrackableEvent.STRIKETHROUGH_BUTTON_TAPPED);
         }
     }
 

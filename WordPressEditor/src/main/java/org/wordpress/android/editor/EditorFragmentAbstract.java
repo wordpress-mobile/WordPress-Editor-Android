@@ -3,7 +3,6 @@ package org.wordpress.android.editor;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.text.Spanned;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -39,9 +38,6 @@ public abstract class EditorFragmentAbstract extends Fragment {
     protected boolean mDebugModeEnabled;
 
     protected HashMap<String, String> mCustomHttpHeaders;
-
-    // Use a dummy listener by default
-    protected EditorFragmentOptionalListener mEditorOptionalListener = new EditorFragmentOptionalListener();
 
     @Override
     public void onAttach(Activity activity) {
@@ -99,10 +95,6 @@ public abstract class EditorFragmentAbstract extends Fragment {
         mCustomHttpHeaders.put(name, value);
     }
 
-    public void setListener(@NonNull EditorFragmentOptionalListener listener) {
-        mEditorOptionalListener = listener;
-    }
-
     public void setDebugModeEnabled(boolean debugModeEnabled) {
         mDebugModeEnabled = debugModeEnabled;
     }
@@ -137,28 +129,26 @@ public abstract class EditorFragmentAbstract extends Fragment {
         String onAuthHeaderRequested(String url);
         // TODO: remove saveMediaFile, it's currently needed for the legacy editor
         void saveMediaFile(MediaFile mediaFile);
+        void onTrackableEvent(TrackableEvent event);
     }
 
-    /**
-     * Optional callbacks used to communicate with the parent Activity
-     */
-    public class EditorFragmentOptionalListener {
-        public void htmlButtonTapped() {}
-        public void imageButtonTapped() {}
-        public void unlinkButtonTapped() {}
-        public void networkMediaAdded(String mediaUrl) {}
-        public void localMediaAdded(String id) {}
-        public void linkButtonTapped() {}
-        public void uploadMediaFailed() {}
-        public void uploadMediaRetried() {}
-        public void imageEdited() {}
-        public void boldButtonTapped() {}
-        public void italicButtonTapped() {}
-        public void olButtonTapped() {}
-        public void ulButtonTapped() {}
-        public void blockquoteButtonTapped() {}
-        public void strikethroughButtonTapped() {}
-        public void underlineButtonTapped() {}
-        public void moreButtonTapped() {}
+    public enum TrackableEvent {
+        HTML_BUTTON_TAPPED,
+        IMAGE_BUTTON_TAPPED,
+        UNLINK_BUTTON_TAPPED,
+        NETWORK_MEDIA_ADDED,
+        LOCAL_MEDIA_ADDED,
+        LINK_BUTTON_TAPPED,
+        UPLOAD_MEDIA_FAILED,
+        UPLOAD_MEDIA_RETRIED,
+        IMAGE_EDITED,
+        BOLD_BUTTON_TAPPED,
+        ITALIC_BUTTON_TAPPED,
+        OL_BUTTON_TAPPED,
+        UL_BUTTON_TAPPED,
+        BLOCKQUOTE_BUTTON_TAPPED,
+        STRIKETHROUGH_BUTTON_TAPPED,
+        UNDERLINE_BUTTON_TAPPED,
+        MORE_BUTTON_TAPPED
     }
 }
