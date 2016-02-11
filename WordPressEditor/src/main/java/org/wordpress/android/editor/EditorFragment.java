@@ -380,7 +380,8 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         }
 
         mWebView.addJavascriptInterface(new JsCallbackReceiver(this), JS_CALLBACK_HANDLER);
-        mWebView.addJavascriptInterface(new NativeStateJsInterface(), JS_STATE_INTERFACE);
+        mWebView.addJavascriptInterface(new NativeStateJsInterface(getActivity().getApplicationContext()),
+                                        JS_STATE_INTERFACE);
 
         mWebView.loadDataWithBaseURL("file:///android_asset/", htmlEditor, "text/html", "utf-8", "");
 
@@ -1271,6 +1272,31 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     }
 
     private class NativeStateJsInterface {
+        Context mContext;
+
+        NativeStateJsInterface(Context context) {
+            mContext = context;
+        }
+
+        @JavascriptInterface
+        public String getStringEdit() {
+            return mContext.getString(R.string.edit);
+        }
+
+        @JavascriptInterface
+        public String getStringTapToRetry() {
+            return mContext.getString(R.string.tap_to_try_again);
+        }
+
+        @JavascriptInterface
+        public String getStringUploading() {
+            return mContext.getString(R.string.uploading);
+        }
+
+        @JavascriptInterface
+        public String getStringUploadingGallery() {
+            return mContext.getString(R.string.uploading_gallery_placeholder);
+        }
 
         @JavascriptInterface
         public int getAPILevel() {

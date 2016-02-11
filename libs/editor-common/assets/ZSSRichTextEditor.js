@@ -862,10 +862,12 @@ ZSSEditor.insertLocalImage = function(imageNodeIdentifier, localImageUrl) {
     } else {
         // Before API 19, the WebView didn't support progress tags. Use an upload overlay instead of a progress bar
         var imgContainerClass = 'img_container compat';
-        var progressElement = '<span class="upload-overlay" contenteditable="false">Uploading...</span><span class="upload-overlay-bg"></span>';
+        var progressElement = '<span class="upload-overlay" contenteditable="false">' + nativeState.getStringUploading()
+                              + '</span><span class="upload-overlay-bg"></span>';
     }
 
-    var imgContainerStart = '<span id="' + imageContainerIdentifier + '" class="' + imgContainerClass + '" contenteditable="false" data-failed="Tap to try again!">';
+    var imgContainerStart = '<span id="' + imageContainerIdentifier + '" class="' + imgContainerClass
+                            + '" contenteditable="false" data-failed="' + nativeState.getStringTapToRetry() + '">';
     var imgContainerEnd = '</span>';
     var image = '<img data-wpid="' + imageNodeIdentifier + '" src="' + localImageUrl + '" alt="" />';
     var html = imgContainerStart + progressElement + image + imgContainerEnd;
@@ -1458,7 +1460,8 @@ ZSSEditor.applyVideoPressFormattingCallback = function( match ) {
     var posterSVG = '"wpposter.svg"';
     // The empty 'onclick' is important. It prevents the cursor jumping to the end
     // of the content body when `-webkit-user-select: none` is set and the video is tapped.
-    var out = '<video data-wpvideopress="' + videopressID + '" webkit-playsinline src="" preload="metadata" poster=' + posterSVG +' onclick="" onerror="ZSSEditor.sendVideoPressInfoRequest(\'' + videopressID +'\');"></video>';
+    var out = '<video data-wpvideopress="' + videopressID + '" webkit-playsinline src="" preload="metadata" poster='
+           + posterSVG +' onclick="" onerror="ZSSEditor.sendVideoPressInfoRequest(\'' + videopressID +'\');"></video>';
 
     out = out + '<br>';
     return out;
@@ -1578,7 +1581,8 @@ ZSSEditor.applyImageSelectionFormatting = function( imageNode ) {
         sizeClass = " small";
     }
 
-    var overlay = '<span class="edit-overlay" contenteditable="false"><span class="edit-content">Edit</span></span>';
+    var overlay = '<span class="edit-overlay" contenteditable="false"><span class="edit-content">'
+                  + nativeState.getStringEdit() + '</span></span>';
 
     if (document.body.style.filter == null) {
         // CSS Filters (including blur) are not supported
@@ -2017,8 +2021,8 @@ ZSSEditor.insertGallery = function( imageIds, type, columns ) {
 }
 
 ZSSEditor.insertLocalGallery = function( placeholderId ) {
-    var container = '<span id="' + placeholderId + '" class="gallery_container">[Uploading gallery...]</span>';
-
+    var container = '<span id="' + placeholderId + '" class="gallery_container">'
+                    + nativeState.getStringUploadingGallery() + '</span>';
     this.insertHTML(this.wrapInParagraphTags(container));
 }
 
