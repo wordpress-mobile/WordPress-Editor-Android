@@ -134,13 +134,13 @@ public abstract class EditorFragmentAbstract extends Fragment {
 
     public enum TrackableEvent {
         HTML_BUTTON_TAPPED,
-        IMAGE_BUTTON_TAPPED,
         UNLINK_BUTTON_TAPPED,
-        NETWORK_MEDIA_ADDED,
-        LOCAL_MEDIA_ADDED,
         LINK_BUTTON_TAPPED,
-        UPLOAD_MEDIA_FAILED,
-        UPLOAD_MEDIA_RETRIED,
+        MEDIA_BUTTON_TAPPED,
+        NETWORK_IMAGE_ADDED,
+        LOCAL_IMAGE_ADDED,
+        UPLOAD_IMAGE_FAILED,
+        UPLOAD_IMAGE_RETRIED,
         IMAGE_EDITED,
         BOLD_BUTTON_TAPPED,
         ITALIC_BUTTON_TAPPED,

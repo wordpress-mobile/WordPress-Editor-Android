@@ -455,7 +455,7 @@ public class LegacyEditorFragment extends EditorFragmentAbstract implements Text
                 }
                 startActivityForResult(i, ACTIVITY_REQUEST_CODE_CREATE_LINK);
             } else if (id == R.id.addPictureButton) {
-                mEditorFragmentListener.onTrackableEvent(TrackableEvent.IMAGE_BUTTON_TAPPED);
+                mEditorFragmentListener.onTrackableEvent(TrackableEvent.MEDIA_BUTTON_TAPPED);
                 mEditorFragmentListener.onAddMediaClicked();
                 if (isAdded()) {
                     getActivity().openContextMenu(mAddPictureButton);
