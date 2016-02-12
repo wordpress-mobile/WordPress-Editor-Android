@@ -2021,8 +2021,8 @@ ZSSEditor.insertGallery = function( imageIds, type, columns ) {
 }
 
 ZSSEditor.insertLocalGallery = function( placeholderId ) {
-    var container = '<span id="' + placeholderId + '" class="gallery_container">'
-                    + nativeState.getStringUploadingGallery() + '</span>';
+    var container = '<span id="' + placeholderId + '" class="gallery_container">['
+                    + nativeState.getStringUploadingGallery() + ']</span>';
     this.insertHTML(this.wrapInParagraphTags(container));
 }
 
