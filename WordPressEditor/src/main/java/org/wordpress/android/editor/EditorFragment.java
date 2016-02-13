@@ -37,6 +37,7 @@ import org.wordpress.android.analytics.AnalyticsTracker.Stat;
 import org.wordpress.android.util.AppLog;
 import org.wordpress.android.util.AppLog.T;
 import org.wordpress.android.util.JSONUtils;
+import org.wordpress.android.util.ShortcodeUtils;
 import org.wordpress.android.util.StringUtils;
 import org.wordpress.android.util.ToastUtils;
 import org.wordpress.android.util.UrlUtils;
@@ -739,8 +740,17 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             public void run() {
                 if (URLUtil.isNetworkUrl(mediaUrl)) {
                     String mediaId = mediaFile.getMediaId();
-                    mWebView.execJavaScriptFromString("ZSSEditor.insertImage('" + mediaUrl + "', '" + mediaId + "');");
-                    AnalyticsTracker.track(Stat.EDITOR_ADDED_PHOTO_VIA_WP_MEDIA_LIBRARY);
+                    if (mediaFile.isVideo()) {
+                        String videoPressId = ShortcodeUtils.getVideoPressIdFromShortCode(
+                                mediaFile.getVideoPressShortCode());
+
+                        mWebView.execJavaScriptFromString("ZSSEditor.insertVideo('" + mediaUrl + "', '" +
+                                mediaFile.getThumbnailURL() + "', '" + videoPressId +  "');");
+                    } else {
+                        mWebView.execJavaScriptFromString("ZSSEditor.insertImage('" + mediaUrl + "', '" + mediaId +
+                                "');");
+                        AnalyticsTracker.track(Stat.EDITOR_ADDED_PHOTO_VIA_WP_MEDIA_LIBRARY);
+                    }
                 } else {
                     String id = mediaFile.getMediaId();
                     mWebView.execJavaScriptFromString("ZSSEditor.insertLocalImage(" + id + ", '" + mediaUrl + "');");
