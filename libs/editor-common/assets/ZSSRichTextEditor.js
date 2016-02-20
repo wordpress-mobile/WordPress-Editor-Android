@@ -232,7 +232,11 @@ ZSSEditor.callback = function(callbackScheme, callbackPath) {
 	if (isUsingiOS) {
         ZSSEditor.callbackThroughIFrame(url);
     } else if (isUsingAndroid) {
-        nativeCallbackHandler.executeCallback(callbackScheme, callbackPath);
+        if (ZSSEditor.androidApiLevel < 17) {
+            ZSSEditor.callbackThroughIFrame(url);
+        } else {
+            nativeCallbackHandler.executeCallback(callbackScheme, callbackPath);
+        }
 	} else {
 		console.log(url);
 	}
@@ -249,6 +253,7 @@ ZSSEditor.callback = function(callbackScheme, callbackPath) {
  */
 ZSSEditor.callbackThroughIFrame = function(url) {
     var iframe = document.createElement("IFRAME");
+    iframe.setAttribute('sandbox', '');
     iframe.setAttribute("src", url);
 
     // IMPORTANT: the IFrame was showing up as a black box below our text.  By setting its borders
@@ -2909,7 +2914,6 @@ ZSSField.prototype.sendVideoFullScreenEnded = function() {
 // MARK: - Callback Execution
 
 ZSSField.prototype.callback = function(callbackScheme, callbackPath) {
-
     var url = callbackScheme + ":";
 
     url = url + "id=" + this.getNodeId();
@@ -2921,7 +2925,11 @@ ZSSField.prototype.callback = function(callbackScheme, callbackPath) {
     if (isUsingiOS) {
         ZSSEditor.callbackThroughIFrame(url);
     } else if (isUsingAndroid) {
-        nativeCallbackHandler.executeCallback(callbackScheme, callbackPath);
+        if (ZSSEditor.androidApiLevel < 17) {
+            ZSSEditor.callbackThroughIFrame(url);
+        } else {
+            nativeCallbackHandler.executeCallback(callbackScheme, callbackPath);
+        }
     } else {
         console.log(url);
     }

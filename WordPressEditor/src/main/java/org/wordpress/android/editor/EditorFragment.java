@@ -377,7 +377,15 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             htmlEditor = htmlEditor.replace("%%TITLE%%", getString(R.string.visual_editor));
         }
 
-        mWebView.addJavascriptInterface(new JsCallbackReceiver(this), JS_CALLBACK_HANDLER);
+        // To avoid reflection security issues with JavascriptInterface on API<17, we use an iframe to make URL requests
+        // for callbacks from JS instead. These are received by WebViewClient.shouldOverrideUrlLoading() and then
+        // passed on to the JsCallbackReceiver
+        if (Build.VERSION.SDK_INT < 17) {
+            mWebView.setJsCallbackReceiver(new JsCallbackReceiver(this));
+        } else {
+            mWebView.addJavascriptInterface(new JsCallbackReceiver(this), JS_CALLBACK_HANDLER);
+        }
+
         mWebView.addJavascriptInterface(new NativeStateJsInterface(getActivity().getApplicationContext()),
                                         JS_STATE_INTERFACE);
 
