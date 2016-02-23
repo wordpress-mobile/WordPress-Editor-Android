@@ -862,7 +862,7 @@ ZSSEditor.insertLocalImage = function(imageNodeIdentifier, localImageUrl) {
     } else {
         // Before API 19, the WebView didn't support progress tags. Use an upload overlay instead of a progress bar
         var imgContainerClass = 'img_container compat';
-        var progressElement = '<span class="upload-overlay" contenteditable="false">' + nativeState.getStringUploading()
+        var progressElement = '<span class="upload-overlay" contenteditable="false">' + nativeState.localizedStringUploading
                               + '</span><span class="upload-overlay-bg"></span>';
     }
 
@@ -1582,7 +1582,7 @@ ZSSEditor.applyImageSelectionFormatting = function( imageNode ) {
     }
 
     var overlay = '<span class="edit-overlay" contenteditable="false"><span class="edit-content">'
-                  + nativeState.getStringEdit() + '</span></span>';
+                  + nativeState.localizedStringEdit + '</span></span>';
 
     if (document.body.style.filter == null) {
         // CSS Filters (including blur) are not supported
@@ -2022,7 +2022,7 @@ ZSSEditor.insertGallery = function( imageIds, type, columns ) {
 
 ZSSEditor.insertLocalGallery = function( placeholderId ) {
     var container = '<span id="' + placeholderId + '" class="gallery_container">['
-                    + nativeState.getStringUploadingGallery() + ']</span>';
+                    + nativeState.localizedStringUploadingGallery + ']</span>';
     this.insertHTML(this.wrapInParagraphTags(container));
 }
 
