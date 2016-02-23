@@ -35,6 +35,7 @@ import org.json.JSONObject;
 import org.wordpress.android.util.AppLog;
 import org.wordpress.android.util.AppLog.T;
 import org.wordpress.android.util.JSONUtils;
+import org.wordpress.android.util.ProfilingUtils;
 import org.wordpress.android.util.StringUtils;
 import org.wordpress.android.util.ToastUtils;
 import org.wordpress.android.util.UrlUtils;
@@ -119,6 +120,9 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ProfilingUtils.start("Visual Editor Startup");
+        ProfilingUtils.split("EditorFragment.onCreate");
     }
 
     @Override
@@ -369,6 +373,8 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         if (!isAdded()) {
             return;
         }
+
+        ProfilingUtils.split("EditorFragment.initJsEditor");
 
         String htmlEditor = Utils.getHtmlFromFile(getActivity(), "android-editor.html");
         if (htmlEditor != null) {
@@ -875,6 +881,8 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     }
 
     public void onDomLoaded() {
+        ProfilingUtils.split("EditorFragment.onDomLoaded");
+
         mWebView.post(new Runnable() {
             public void run() {
                 mDomHasLoaded = true;
@@ -931,6 +939,10 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
                     mWaitingGalleries.clear();
                 }
+
+                ProfilingUtils.split("EditorFragment.onDomLoaded completed");
+                ProfilingUtils.dump();
+                ProfilingUtils.stop();
             }
         });
     }
