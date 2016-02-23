@@ -60,7 +60,6 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     private static final String ARG_PARAM_CONTENT = "param_content";
 
     private static final String JS_CALLBACK_HANDLER = "nativeCallbackHandler";
-    private static final String JS_STATE_INTERFACE = "nativeState";
 
     private static final String KEY_TITLE = "title";
     private static final String KEY_CONTENT = "content";
@@ -376,6 +375,10 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         if (htmlEditor != null) {
             htmlEditor = htmlEditor.replace("%%TITLE%%", getString(R.string.visual_editor));
             htmlEditor = htmlEditor.replace("%%ANDROID_API_LEVEL%%", String.valueOf(Build.VERSION.SDK_INT));
+            htmlEditor = htmlEditor.replace("%%LOCALIZED_STRING_INIT%%",
+                    "nativeState.localizedStringEdit = '" + getString(R.string.edit) + "';\n" +
+                    "nativeState.localizedStringUploading = '" + getString(R.string.uploading) + "';\n" +
+                    "nativeState.localizedStringUploadingGallery = '" + getString(R.string.uploading_gallery_placeholder) + "';\n");
         }
 
         // To avoid reflection security issues with JavascriptInterface on API<17, we use an iframe to make URL requests
@@ -386,9 +389,6 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         } else {
             mWebView.addJavascriptInterface(new JsCallbackReceiver(this), JS_CALLBACK_HANDLER);
         }
-
-        mWebView.addJavascriptInterface(new NativeStateJsInterface(getActivity().getApplicationContext()),
-                                        JS_STATE_INTERFACE);
 
         mWebView.loadDataWithBaseURL("file:///android_asset/", htmlEditor, "text/html", "utf-8", "");
 
@@ -1273,29 +1273,6 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             // Insert closing tag
             content.insert(selectionEnd, endTag);
             mSourceViewContent.setSelection(selectionEnd + endTag.length());
-        }
-    }
-
-    private class NativeStateJsInterface {
-        Context mContext;
-
-        NativeStateJsInterface(Context context) {
-            mContext = context;
-        }
-
-        @JavascriptInterface
-        public String getStringEdit() {
-            return mContext.getString(R.string.edit);
-        }
-
-        @JavascriptInterface
-        public String getStringUploading() {
-            return mContext.getString(R.string.uploading);
-        }
-
-        @JavascriptInterface
-        public String getStringUploadingGallery() {
-            return mContext.getString(R.string.uploading_gallery_placeholder);
         }
     }
 }
