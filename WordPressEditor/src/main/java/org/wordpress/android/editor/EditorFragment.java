@@ -375,6 +375,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         String htmlEditor = Utils.getHtmlFromFile(getActivity(), "android-editor.html");
         if (htmlEditor != null) {
             htmlEditor = htmlEditor.replace("%%TITLE%%", getString(R.string.visual_editor));
+            htmlEditor = htmlEditor.replace("%%ANDROID_API_LEVEL%%", String.valueOf(Build.VERSION.SDK_INT));
         }
 
         // To avoid reflection security issues with JavascriptInterface on API<17, we use an iframe to make URL requests
@@ -1295,11 +1296,6 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         @JavascriptInterface
         public String getStringUploadingGallery() {
             return mContext.getString(R.string.uploading_gallery_placeholder);
-        }
-
-        @JavascriptInterface
-        public int getAPILevel() {
-            return Build.VERSION.SDK_INT;
         }
     }
 }

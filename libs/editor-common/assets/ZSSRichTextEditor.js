@@ -41,9 +41,6 @@ ZSSEditor.caretInfo = { y: 0, height: 0 };
 // Is this device an iPad
 ZSSEditor.isiPad;
 
-// The API level of the native host (Android)
-ZSSEditor.androidApiLevel;
-
 // The current selection
 ZSSEditor.currentSelection;
 
@@ -78,8 +75,6 @@ ZSSEditor.videoShortcodeFormats = ["mp4", "m4v", "webm", "ogv", "wmv", "flv"];
 ZSSEditor.init = function() {
 
     rangy.init();
-
-    ZSSEditor.androidApiLevel = nativeState.getAPILevel();
 
     // Change a few CSS values if the device is an iPad
     ZSSEditor.isiPad = (navigator.userAgent.match(/iPad/i) != null);
@@ -232,7 +227,7 @@ ZSSEditor.callback = function(callbackScheme, callbackPath) {
 	if (isUsingiOS) {
         ZSSEditor.callbackThroughIFrame(url);
     } else if (isUsingAndroid) {
-        if (ZSSEditor.androidApiLevel < 17) {
+        if (nativeState.androidApiLevel < 17) {
             ZSSEditor.callbackThroughIFrame(url);
         } else {
             nativeCallbackHandler.executeCallback(callbackScheme, callbackPath);
@@ -861,7 +856,7 @@ ZSSEditor.insertLocalImage = function(imageNodeIdentifier, localImageUrl) {
     var progressIdentifier = this.getImageProgressIdentifier(imageNodeIdentifier);
     var imageContainerIdentifier = this.getImageContainerIdentifier(imageNodeIdentifier);
 
-    if (ZSSEditor.androidApiLevel > 18) {
+    if (nativeState.androidApiLevel > 18) {
         var imgContainerClass = 'img_container';
         var progressElement = '<progress id="' + progressIdentifier + '" value=0 class="wp_media_indicator" contenteditable="false"></progress>';
     } else {
@@ -2925,7 +2920,7 @@ ZSSField.prototype.callback = function(callbackScheme, callbackPath) {
     if (isUsingiOS) {
         ZSSEditor.callbackThroughIFrame(url);
     } else if (isUsingAndroid) {
-        if (ZSSEditor.androidApiLevel < 17) {
+        if (nativeState.androidApiLevel < 17) {
             ZSSEditor.callbackThroughIFrame(url);
         } else {
             nativeCallbackHandler.executeCallback(callbackScheme, callbackPath);
