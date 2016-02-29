@@ -156,7 +156,7 @@ span.img_container.failed::after {
     padding:27px 0 0 0;
     top:50%;
     left:0%;
-    font-family:Roboto;
+    font-family: sans-serif;
     font-size:20px;
     font-weight:600;
     text-align: center;
@@ -175,7 +175,7 @@ span.img_container.failed.largeFail::after {
 }
 
 span.img_container.failed.smallFail::after {
-    font-family:Roboto;
+    font-family: sans-serif;
     content:attr(data-failed);
 }
 
@@ -230,7 +230,7 @@ span.video_container.failed::after {
     padding:27px 0 0 0;
     top:50%;
     left:0%;
-    font-family:Roboto;
+    font-family: sans-serif;
     font-size:20px;
     font-weight:600;
     text-align: center;
@@ -249,7 +249,7 @@ span.video_container.failed.largeFail::after {
 }
 
 span.video_container.failed.smallFail::after {
-    font-family:Roboto;
+    font-family: sans-serif;
     content:attr(data-failed);
 }
 
@@ -301,7 +301,7 @@ span.video_container.failed.smallFail::after {
 }
 
 .edit-container .edit-content {
-    font-family:Roboto;
+    font-family: sans-serif;
     font-size:20px;
     font-weight:600;
     text-align: center;

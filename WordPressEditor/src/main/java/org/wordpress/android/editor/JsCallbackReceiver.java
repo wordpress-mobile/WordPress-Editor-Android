@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.wordpress.android.editor.EditorFragmentAbstract.MediaType;
+
 public class JsCallbackReceiver {
     private static final String JS_CALLBACK_DELIMITER = "~";
 
@@ -27,6 +29,7 @@ public class JsCallbackReceiver {
     private static final String CALLBACK_FOCUS_OUT = "callback-focus-out";
 
     private static final String CALLBACK_IMAGE_REPLACED = "callback-image-replaced";
+    private static final String CALLBACK_VIDEO_REPLACED = "callback-video-replaced";
     private static final String CALLBACK_IMAGE_TAP = "callback-image-tap";
     private static final String CALLBACK_LINK_TAP = "callback-link-tap";
 
@@ -91,8 +94,20 @@ public class JsCallbackReceiver {
                 AppLog.d(AppLog.T.EDITOR, "New field created, " + params);
                 break;
             case CALLBACK_IMAGE_REPLACED:
-                // TODO: Notifies that image upload has finished and that the local url was replaced by the remote url in the ZSS editor
                 AppLog.d(AppLog.T.EDITOR, "Image replaced, " + params);
+
+                // Extract the local media id from the callback string (stripping the 'id=' part)
+                if (params.length() > 3) {
+                    mListener.onMediaReplaced(params.substring(3));
+                }
+                break;
+            case CALLBACK_VIDEO_REPLACED:
+                AppLog.d(AppLog.T.EDITOR, "Video replaced, " + params);
+
+                // Extract the local media id from the callback string (stripping the 'id=' part)
+                if (params.length() > 3) {
+                    mListener.onMediaReplaced(params.substring(3));
+                }
                 break;
             case CALLBACK_IMAGE_TAP:
                 AppLog.d(AppLog.T.EDITOR, "Image tapped, " + params);
@@ -103,6 +118,7 @@ public class JsCallbackReceiver {
                 mediaIds.add("id");
                 mediaIds.add("url");
                 mediaIds.add("meta");
+                mediaIds.add("type");
 
                 Set<String> mediaDataSet = Utils.splitValuePairDelimitedString(params, JS_CALLBACK_DELIMITER, mediaIds);
                 Map<String, String> mediaDataMap = Utils.buildMapFromKeyValuePairs(mediaDataSet);
@@ -113,6 +129,8 @@ public class JsCallbackReceiver {
                 if (mediaUrl != null) {
                     mediaUrl = Utils.decodeHtml(mediaUrl);
                 }
+
+                MediaType mediaType = MediaType.fromString(mediaDataMap.get("type"));
 
                 String mediaMeta = mediaDataMap.get("meta");
                 JSONObject mediaMetaJson = new JSONObject();
@@ -136,7 +154,7 @@ public class JsCallbackReceiver {
                     }
                 }
 
-                mListener.onMediaTapped(mediaId, mediaUrl, mediaMetaJson, uploadStatus);
+                mListener.onMediaTapped(mediaId, mediaType, mediaMetaJson, uploadStatus);
                 break;
             case CALLBACK_LINK_TAP:
                 // Extract and HTML-decode the link data from the callback params
@@ -188,7 +206,7 @@ public class JsCallbackReceiver {
                         case "getSelectedText":
                             responseIds.add("result");
                             break;
-                        case "getFailedImages":
+                        case "getFailedMedia":
                             responseIds.add("ids");
                     }
 
