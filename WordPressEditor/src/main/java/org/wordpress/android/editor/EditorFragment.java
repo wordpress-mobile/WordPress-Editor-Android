@@ -513,7 +513,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             }
 
             linkDialogFragment.setArguments(dialogBundle);
-            linkDialogFragment.show(getFragmentManager(), "LinkDialogFragment");
+            linkDialogFragment.show(getFragmentManager(), LinkDialogFragment.class.getSimpleName());
         } else {
             if (v instanceof ToggleButton) {
                 onFormattingButtonClicked((ToggleButton) v);
