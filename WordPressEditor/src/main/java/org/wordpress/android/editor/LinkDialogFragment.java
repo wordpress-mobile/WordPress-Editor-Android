@@ -16,6 +16,9 @@ public class LinkDialogFragment extends DialogFragment {
     public static final int LINK_DIALOG_REQUEST_CODE_UPDATE = 2;
     public static final int LINK_DIALOG_REQUEST_CODE_DELETE = 3;
 
+    public static final String LINK_DIALOG_ARG_URL  = "linkURL";
+    public static final String LINK_DIALOG_ARG_TEXT = "linkText";
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -31,8 +34,8 @@ public class LinkDialogFragment extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         Intent intent = new Intent();
-                        intent.putExtra("linkURL", urlEditText.getText().toString());
-                        intent.putExtra("linkText", linkEditText.getText().toString());
+                        intent.putExtra(LINK_DIALOG_ARG_URL, urlEditText.getText().toString());
+                        intent.putExtra(LINK_DIALOG_ARG_TEXT, linkEditText.getText().toString());
                         getTargetFragment().onActivityResult(getTargetRequestCode(), getTargetRequestCode(), intent);
                     }
                 })
@@ -55,9 +58,9 @@ public class LinkDialogFragment extends DialogFragment {
         // Prepare initial state of EditTexts
         Bundle bundle = getArguments();
         if (bundle != null) {
-            linkEditText.setText(bundle.getString("linkText"));
+            linkEditText.setText(bundle.getString(LINK_DIALOG_ARG_TEXT));
 
-            String url = bundle.getString("linkURL");
+            String url = bundle.getString(LINK_DIALOG_ARG_URL);
             if (url != null) {
                 urlEditText.setText(url);
             }
