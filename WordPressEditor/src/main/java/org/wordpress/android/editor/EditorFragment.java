@@ -485,6 +485,12 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
             Bundle dialogBundle = new Bundle();
 
+            // Pass potential URL from user clipboard
+            String clipboardUri = Utils.getUrlFromClipboard(getActivity());
+            if (clipboardUri != null) {
+                dialogBundle.putString(LinkDialogFragment.LINK_DIALOG_ARG_URL, clipboardUri);
+            }
+
             // Pass selected text to dialog
             if (mSourceView.getVisibility() == View.VISIBLE) {
                 // HTML mode
