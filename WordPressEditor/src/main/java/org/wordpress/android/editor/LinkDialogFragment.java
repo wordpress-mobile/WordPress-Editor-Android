@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 
 public class LinkDialogFragment extends DialogFragment {
@@ -67,6 +68,9 @@ public class LinkDialogFragment extends DialogFragment {
             urlEditText.setSelection(urlEditText.length());
         }
 
-        return builder.create();
+        AlertDialog dialog =  builder.create();
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+
+        return dialog;
     }
 }
