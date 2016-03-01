@@ -65,7 +65,7 @@ public class LinkDialogFragment extends DialogFragment {
             if (url != null) {
                 urlEditText.setText(url);
             }
-            urlEditText.setSelection(urlEditText.length());
+            urlEditText.selectAll();
         }
 
         AlertDialog dialog =  builder.create();
