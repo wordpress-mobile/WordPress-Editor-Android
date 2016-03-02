@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
@@ -16,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -573,6 +575,8 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             if (linkText == null || linkText.equals("")) {
                 linkText = linkUrl;
             }
+
+            if (TextUtils.isEmpty(Uri.parse(linkUrl).getScheme())) linkUrl = "http://" + linkUrl;
 
             if (mSourceView.getVisibility() == View.VISIBLE) {
                 Editable content = mSourceViewContent.getText();
