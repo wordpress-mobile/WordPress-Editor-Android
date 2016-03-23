@@ -3,6 +3,7 @@ package org.wordpress.android.editor;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Instrumentation;
+import android.os.Build;
 import android.test.ActivityInstrumentationTestCase2;
 import android.webkit.JavascriptInterface;
 
@@ -46,13 +47,26 @@ public class ZssEditorTest extends ActivityInstrumentationTestCase2<MockActivity
 
         mSetUpLatch.countDown();
 
-        final String htmlEditor = Utils.getHtmlFromFile(activity, "android-editor.html");
+        String htmlEditor = Utils.getHtmlFromFile(activity, "android-editor.html");
+
+        if (htmlEditor != null) {
+            htmlEditor = htmlEditor.replace("%%TITLE%%", getActivity().getString(R.string.visual_editor));
+            htmlEditor = htmlEditor.replace("%%ANDROID_API_LEVEL%%", String.valueOf(Build.VERSION.SDK_INT));
+            htmlEditor = htmlEditor.replace("%%LOCALIZED_STRING_INIT%%",
+                    "nativeState.localizedStringEdit = '" + getActivity().getString(R.string.edit) + "';\n" +
+                    "nativeState.localizedStringUploading = '" + getActivity().getString(R.string.uploading) + "';\n" +
+                    "nativeState.localizedStringUploadingGallery = '" +
+                            getActivity().getString(R.string.uploading_gallery_placeholder) + "';\n");
+        }
+
+        final String finalHtmlEditor = htmlEditor;
+
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 mWebView = new EditorWebView(mInstrumentation.getContext(), null);
                 mWebView.addJavascriptInterface(new MockJsCallbackReceiver(), JS_CALLBACK_HANDLER);
-                mWebView.loadDataWithBaseURL("file:///android_asset/", htmlEditor, "text/html", "utf-8", "");
+                mWebView.loadDataWithBaseURL("file:///android_asset/", finalHtmlEditor, "text/html", "utf-8", "");
                 mSetUpLatch.countDown();
             }
         });
