@@ -93,7 +93,7 @@ public class ZssEditorTest extends ActivityInstrumentationTestCase2<MockActivity
         Set<String> expectedSet = new HashSet<>();
         expectedSet.add("callback-new-field:id=zss_field_title");
         expectedSet.add("callback-new-field:id=zss_field_content");
-        expectedSet.add("callback-dom-loaded:undefined");
+        expectedSet.add("callback-dom-loaded:");
 
         assertEquals(expectedSet, mCallbackSet);
     }
@@ -113,10 +113,12 @@ public class ZssEditorTest extends ActivityInstrumentationTestCase2<MockActivity
             // Handle callbacks and count down latches according to the currently running test
             switch(mTestMethod) {
                 case INIT:
-                    if (callbackId.equals("callback-new-field") || callbackId.equals("callback-dom-loaded")) {
+                    if (callbackId.equals("callback-dom-loaded")) {
+                        mCallbackSet.add(callbackId + ":");
+                    } else if (callbackId.equals("callback-new-field")) {
                         mCallbackSet.add(callbackId + ":" + params);
-                        mCallbackLatch.countDown();
                     }
+                    mCallbackLatch.countDown();
                     break;
                 default:
                     throw(new RuntimeException("Unknown calling method"));
