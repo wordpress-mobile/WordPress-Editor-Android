@@ -65,7 +65,12 @@ public class ZssEditorTest extends ActivityInstrumentationTestCase2<MockActivity
             @Override
             public void run() {
                 mWebView = new EditorWebView(mInstrumentation.getContext(), null);
-                mWebView.addJavascriptInterface(new MockJsCallbackReceiver(), JS_CALLBACK_HANDLER);
+                if (Build.VERSION.SDK_INT < 17) {
+                    mWebView.setJsCallbackReceiver(new MockJsCallbackReceiver(new EditorFragmentForTests()));
+                } else {
+                    mWebView.addJavascriptInterface(new MockJsCallbackReceiver(new EditorFragmentForTests()),
+                            JS_CALLBACK_HANDLER);
+                }
                 mWebView.loadDataWithBaseURL("file:///android_asset/", finalHtmlEditor, "text/html", "utf-8", "");
                 mSetUpLatch.countDown();
             }
@@ -93,7 +98,11 @@ public class ZssEditorTest extends ActivityInstrumentationTestCase2<MockActivity
         assertEquals(expectedSet, mCallbackSet);
     }
 
-    private class MockJsCallbackReceiver {
+    private class MockJsCallbackReceiver extends JsCallbackReceiver {
+        public MockJsCallbackReceiver(EditorFragmentAbstract editorFragmentAbstract) {
+            super(editorFragmentAbstract);
+        }
+
         @JavascriptInterface
         public void executeCallback(String callbackId, String params) {
             if (callbackId.equals("callback-dom-loaded")) {
