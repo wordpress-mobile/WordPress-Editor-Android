@@ -197,13 +197,18 @@ ZSSEditor.getFocusedField = function() {
 
     if (currentField) {
         currentFieldId = currentField.attr('id');
+    }
 
     while (currentField && (!currentFieldId || this.editableFields[currentFieldId] == null)) {
         currentField = this.closerParentNodeStartingAtNode('div', currentField);
         if (currentField) {
             currentFieldId = currentField.attr('id');
         }
+    }
 
+    if (!currentFieldId) {
+        ZSSEditor.resetSelectionOnField('zss_field_content');
+        currentFieldId = 'zss_field_content';
     }
 
     return this.editableFields[currentFieldId];
@@ -415,7 +420,6 @@ ZSSEditor.getCaretArguments = function() {
 };
 
 ZSSEditor.getJoinedFocusedFieldIdAndCaretArguments = function() {
-
     var joinedArguments = ZSSEditor.getJoinedCaretArguments();
     var idArgument = "id=" + ZSSEditor.getFocusedField().getNodeId();
 
