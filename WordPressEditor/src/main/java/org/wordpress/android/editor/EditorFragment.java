@@ -822,6 +822,11 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
     }
 
     @Override
+    public void removeAllFailedMediaUploads() {
+        mWebView.execJavaScriptFromString("ZSSEditor.removeAllFailedMediaUploads();");
+    }
+
+    @Override
     public Spanned getSpannedContent() {
         return null;
     }
