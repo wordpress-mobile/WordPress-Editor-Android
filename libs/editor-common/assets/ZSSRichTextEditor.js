@@ -193,12 +193,16 @@ ZSSEditor.getField = function(fieldId) {
 
 ZSSEditor.getFocusedField = function() {
     var currentField = $(this.closerParentNodeWithName('div'));
-    var currentFieldId = currentField.attr('id');
+    var currentFieldId;
 
-    while (currentField
-           && (!currentFieldId || this.editableFields[currentFieldId] == null)) {
-        currentField = this.closerParentNodeStartingAtNode('div', currentField);
+    if (currentField) {
         currentFieldId = currentField.attr('id');
+
+    while (currentField && (!currentFieldId || this.editableFields[currentFieldId] == null)) {
+        currentField = this.closerParentNodeStartingAtNode('div', currentField);
+        if (currentField) {
+            currentFieldId = currentField.attr('id');
+        }
 
     }
 
@@ -2760,7 +2764,7 @@ ZSSEditor.closerParentNodeStartingAtNode = function(nodeName, startingNode) {
             break;
         }
 
-        if (currentNode.nodeName.toLowerCase() == nodeName
+        if (currentNode.nodeName && currentNode.nodeName.toLowerCase() == nodeName
             && currentNode.nodeType == document.ELEMENT_NODE) {
             parentNode = currentNode;
 
@@ -2779,6 +2783,9 @@ ZSSEditor.closerParentNodeWithName = function(nodeName) {
 
     var parentNode = null;
     var selection = window.getSelection();
+    if (selection.rangeCount < 1) {
+        return null;
+    }
     var range = selection.getRangeAt(0).cloneRange();
 
     var referenceNode = range.commonAncestorContainer;
