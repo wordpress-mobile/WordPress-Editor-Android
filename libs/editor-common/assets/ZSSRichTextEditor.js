@@ -2955,6 +2955,7 @@ ZSSField.prototype.handleKeyDownEvent = function(e) {
             // Exit blockquote when the user presses Enter inside a blockquote on a new line
             // (main use case is to allow double Enter to exit blockquote)
             } else if (sel.isCollapsed && sel.baseOffset == 0 && parentNode && parentNode.nodeName == 'BLOCKQUOTE') {
+                e.preventDefault();
                 ZSSEditor.setBlockquote();
             }
         }
