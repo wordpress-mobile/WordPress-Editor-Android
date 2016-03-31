@@ -406,7 +406,16 @@ ZSSEditor.resetSelectionOnField = function(fieldId) {
 
 ZSSEditor.getSelectedText = function() {
 	var selection = window.getSelection();
+	return selection.toString();
+};
 
+ZSSEditor.getSelectedTextToLinkify = function() {
+	var selection = window.getSelection();
+	// If there is no text selected, try to expand it to the word under the cursor
+    if (selection.rangeCount <= 1) {
+        selection.modify("move", "backward", "word");
+        selection.modify("extend", "forward", "word");
+    }
 	return selection.toString();
 };
 
