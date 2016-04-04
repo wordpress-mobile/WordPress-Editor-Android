@@ -63,7 +63,7 @@ ZSSEditor.editableFields = {};
 ZSSEditor.lastTappedNode = null;
 
 // The default paragraph separator
-ZSSEditor.defaultParagraphSeparator = 'p';
+ZSSEditor.defaultParagraphSeparator = 'div';
 
 // Video format tags supported by the [video] shortcode: https://codex.wordpress.org/Video_Shortcode
 // mp4, m4v and webm prioritized since they're supported by the stock player as of Android API 23
@@ -92,7 +92,6 @@ ZSSEditor.init = function() {
     }
 
     document.execCommand('insertBrOnReturn', false, false);
-    document.execCommand('defaultParagraphSeparator', false, this.defaultParagraphSeparator);
 
     var editor = $('div.field').each(function() {
         var editableField = new ZSSField($(this));
@@ -172,7 +171,7 @@ ZSSEditor.formatNewLine = function(e) {
             this.formatNewLineInsideBlockquote(e);
         } else if (!ZSSEditor.isCommandEnabled('insertOrderedList')
                    && !ZSSEditor.isCommandEnabled('insertUnorderedList')) {
-            document.execCommand('formatBlock', false, 'p');
+            document.execCommand('formatBlock', false, 'div');
         }
     } else {
         e.preventDefault();
@@ -654,7 +653,7 @@ ZSSEditor.setHeading = function(heading) {
 };
 
 ZSSEditor.setParagraph = function() {
-	var formatTag = "p";
+	var formatTag = "div";
 	var formatBlock = document.queryCommandValue('formatBlock');
 
 	if (formatBlock.length > 0 && formatBlock.toLowerCase() == formatTag) {
@@ -3252,7 +3251,7 @@ ZSSField.prototype.wrapCaretInParagraphIfNecessary = function()
             var range = selection.getRangeAt(0);
 
             if (range.startContainer == range.endContainer) {
-                var paragraph = document.createElement("p");
+                var paragraph = document.createElement("div");
                 var textNode = document.createTextNode("&#x200b;");
 
                 paragraph.appendChild(textNode);
