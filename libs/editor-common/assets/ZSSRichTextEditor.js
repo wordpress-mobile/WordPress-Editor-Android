@@ -3271,7 +3271,11 @@ ZSSField.prototype.isEmpty = function() {
 };
 
 ZSSField.prototype.getHTML = function() {
-    var html = wp.saveText(this.wrappedObject.html());
+    var html = this.wrappedObject.html();
+    if (ZSSEditor.defaultParagraphSeparator == 'div') {
+        html = html.replace(/(<div)/igm, '<p').replace(/<\/div>/igm, '</p>');
+    }
+    html = wp.saveText(html);
     html = ZSSEditor.removeVisualFormatting( html );
     return html;
 };
@@ -3298,6 +3302,12 @@ ZSSField.prototype.setHTML = function(html) {
     ZSSEditor.currentEditingImage = null;
     var mutatedHTML = wp.loadText(html);
     mutatedHTML = ZSSEditor.applyVisualFormatting(mutatedHTML);
+
+    if (ZSSEditor.defaultParagraphSeparator == 'div') {
+        // Replace the paragraph tags we get from wpload with divs
+        mutatedHTML = mutatedHTML.replace(/(<p)/igm, '<div').replace(/<\/p>/igm, '</div>');
+    }
+
     this.wrappedObject.html(mutatedHTML);
 };
 
