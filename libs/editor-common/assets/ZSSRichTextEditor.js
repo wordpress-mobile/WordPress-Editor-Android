@@ -193,7 +193,19 @@ ZSSEditor.getField = function(fieldId) {
 };
 
 ZSSEditor.getFocusedField = function() {
-    return this.focusedField;
+    var currentField = $(this.findParentContenteditableDiv());
+    var currentFieldId;
+
+    if (currentField) {
+        currentFieldId = currentField.attr('id');
+    }
+
+    if (!currentFieldId) {
+        ZSSEditor.resetSelectionOnField('zss_field_content');
+        currentFieldId = 'zss_field_content';
+    }
+
+    return this.editableFields[currentFieldId];
 };
 
 ZSSEditor.execFunctionForResult = function(methodName) {
@@ -2729,6 +2741,23 @@ ZSSEditor.hasPreviousSiblingWithName = function(node, siblingNodeName) {
 
 
 // MARK: - Parent nodes & tags
+
+ZSSEditor.findParentContenteditableDiv = function() {
+    var parentNode = null;
+    var selection = window.getSelection();
+    if (selection.rangeCount < 1) {
+        return null;
+    }
+    var range = selection.getRangeAt(0).cloneRange();
+
+    var referenceNode = this.closerParentNodeWithNameRelativeToNode('div', range.commonAncestorContainer);
+
+    while (referenceNode.parentNode.nodeName != NodeName.BODY) {
+        referenceNode = this.closerParentNodeWithNameRelativeToNode('div', referenceNode.parentNode);
+    }
+
+    return referenceNode;
+};
 
 ZSSEditor.closerParentNode = function() {
 
