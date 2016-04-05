@@ -26,7 +26,9 @@ const NodeName = {
     LI: "LI",
     CODE: "CODE",
     SPAN: "SPAN",
-    BR: "BR"
+    BR: "BR",
+    DIV: "DIV",
+    BODY: "BODY"
 };
 
 // The editor object
@@ -2604,7 +2606,9 @@ ZSSEditor.getAncestorElementForSettingBlockquote = function(range) {
                || parentElement.nodeName == NodeName.OL
                || parentElement.nodeName == NodeName.LI
                || parentElement.nodeName == NodeName.CODE
-               || parentElement.nodeName == NodeName.SPAN)) {
+               || parentElement.nodeName == NodeName.SPAN
+               // Include nested divs, but ignore the parent contenteditable field div
+               || (parentElement.nodeName == NodeName.DIV && parentElement.parentElement.nodeName != NodeName.BODY))) {
         parentElement = parentElement.parentNode;
     }
 
