@@ -474,7 +474,7 @@ ZSSEditor.getYCaretInfo = function() {
     //
     if (needsToWorkAroundNewlineBug) {
         var closerParentNode = ZSSEditor.closerParentNode();
-        var closerDiv = ZSSEditor.closerParentNodeWithName('div');
+        var closerDiv = ZSSEditor.findParentContenteditableDiv();
 
         var fontSize = $(closerParentNode).css('font-size');
         var lineHeight = Math.floor(parseInt(fontSize.replace('px','')) * 1.5);
