@@ -409,14 +409,48 @@ ZSSEditor.getSelectedText = function() {
 	return selection.toString();
 };
 
+ZSSEditor.canExpandBackward = function(range) {
+  var caretRange = range.cloneRange();
+  if (range.startOffset == 0) {
+  	return false;
+  }
+  caretRange.setStart(range.startContainer, range.startOffset - 1);
+  caretRange.setEnd(range.startContainer, range.startOffset);
+  if (!caretRange.toString().match(/\w/)) {
+  	return false;
+  }
+  return true;
+};
+
+ZSSEditor.canExpandForward = function(range) {
+  var caretRange = range.cloneRange();
+  if (range.endOffset == range.endContainer.length)  {
+  	return false;
+  }
+  caretRange.setStart(range.endContainer, range.endOffset);
+  caretRange.setEnd(range.endContainer, range.endOffset + 1);
+  if (!caretRange.toString().match(/\w/)) {
+  	return false;
+  }
+  return true;
+};
+
 ZSSEditor.getSelectedTextToLinkify = function() {
-	var selection = window.getSelection();
-	// If there is no text selected, try to expand it to the word under the cursor
-    if (selection.rangeCount <= 1) {
-        selection.modify("move", "backward", "word");
-        selection.modify("extend", "forward", "word");
+  var selection = window.getSelection();
+  var element = ZSSEditor.getField("zss_field_content");
+  // If there is no text selected, try to expand it to the word under the cursor
+  if (selection.rangeCount == 1) {
+    var range = selection.getRangeAt(0);
+    while (ZSSEditor.canExpandBackward(range)) {
+      range.setStart(range.startContainer, range.startOffset - 1);
     }
-	return selection.toString();
+    while (ZSSEditor.canExpandForward(range)) {
+      range.setEnd(range.endContainer, range.endOffset + 1);
+    }
+    selection.removeAllRanges();
+    selection.addRange(range);
+  }
+  return selection.toString();
 };
 
 ZSSEditor.getCaretArguments = function() {
