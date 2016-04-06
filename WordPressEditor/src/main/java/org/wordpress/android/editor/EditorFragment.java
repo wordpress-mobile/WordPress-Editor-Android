@@ -793,12 +793,10 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                         String posterUrl = Utils.escapeQuotes(StringUtils.notNullStr(mediaFile.getThumbnailURL()));
                         mWebView.execJavaScriptFromString("ZSSEditor.insertLocalVideo(" + id + ", '" + posterUrl +
                                 "');");
-                        mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnVideo(" + id + ", " + 0 + ");");
                         mUploadingMedia.put(id, MediaType.VIDEO);
                     } else {
                         mWebView.execJavaScriptFromString("ZSSEditor.insertLocalImage(" + id + ", '" + safeMediaUrl +
                                 "');");
-                        mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnImage(" + id + ", " + 0 + ");");
                         mUploadingMedia.put(id, MediaType.IMAGE);
                     }
                 }

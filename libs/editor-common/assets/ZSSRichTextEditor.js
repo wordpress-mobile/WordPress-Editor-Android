@@ -1068,6 +1068,8 @@ ZSSEditor.insertLocalImage = function(imageNodeIdentifier, localImageUrl) {
 
     ZSSEditor.trackNodeForMutation(this.getImageContainerNodeWithIdentifier(imageNodeIdentifier));
 
+    this.setProgressOnImage(imageNodeIdentifier, 0);
+
     this.sendEnabledStyles();
 };
 
@@ -1173,10 +1175,13 @@ ZSSEditor.tryToReload = function (image, imageNode, imageNodeIdentifier, remoteI
  */
 ZSSEditor.setProgressOnImage = function(imageNodeIdentifier, progress) {
     var imageNode = this.getImageNodeWithIdentifier(imageNodeIdentifier);
-    if (imageNode.length == 0){
+    var imageProgressNode = this.getImageProgressNodeWithIdentifier(imageNodeIdentifier);
+
+    if (imageNode.length == 0 || imageProgressNode.length == 0){
         return;
     }
-    if (progress < 1){
+
+    if (progress == 0) {
         imageNode.addClass("uploading");
     }
 
@@ -1186,10 +1191,6 @@ ZSSEditor.setProgressOnImage = function(imageNodeIdentifier, progress) {
         this.getImageContainerNodeWithIdentifier(imageNodeIdentifier).removeClass("compat");
     }
 
-    var imageProgressNode = this.getImageProgressNodeWithIdentifier(imageNodeIdentifier);
-    if (imageProgressNode.length == 0){
-          return;
-    }
     imageProgressNode.attr("value",progress);
 };
 
@@ -1398,6 +1399,8 @@ ZSSEditor.insertLocalVideo = function(videoNodeIdentifier, posterURL) {
 
     ZSSEditor.trackNodeForMutation(this.getVideoContainerNodeWithIdentifier(videoNodeIdentifier));
 
+    this.setProgressOnVideo(videoNodeIdentifier, 0);
+
     this.sendEnabledStyles();
 };
 
@@ -1470,10 +1473,13 @@ ZSSEditor.replaceLocalVideoWithRemoteVideo = function(videoNodeIdentifier, remot
  */
 ZSSEditor.setProgressOnVideo = function(videoNodeIdentifier, progress) {
     var videoNode = this.getVideoNodeWithIdentifier(videoNodeIdentifier);
-    if (videoNode.length == 0){
+    var videoProgressNode = this.getVideoProgressNodeWithIdentifier(videoNodeIdentifier);
+
+    if (videoNode.length == 0 || videoProgressNode.length == 0){
         return;
     }
-    if (progress < 1){
+
+    if (progress == 0) {
         videoNode.addClass("uploading");
     }
 
@@ -1484,10 +1490,6 @@ ZSSEditor.setProgressOnVideo = function(videoNodeIdentifier, progress) {
         this.getVideoContainerNodeWithIdentifier(videoNodeIdentifier).removeClass("compat");
     }
 
-    var videoProgressNode = this.getVideoProgressNodeWithIdentifier(videoNodeIdentifier);
-    if (videoProgressNode.length == 0){
-        return;
-    }
     videoProgressNode.attr("value",progress);
 };
 
