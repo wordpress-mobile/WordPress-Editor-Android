@@ -754,6 +754,10 @@ ZSSEditor.insertHTMLWrappedInParagraphTags = function(html) {
         html = paragraphOpenTag + html;
     }
 
+    if (nativeState.androidApiLevel < 19) {
+        html = html + '&#x200b;';
+    }
+
     // Due to the way the WebView handles divs, we need to add a new paragraph in a separate insertion - otherwise,
     // the new paragraph will be nested within the existing paragraph.
     this.insertHTML(html);
