@@ -2241,13 +2241,13 @@ ZSSEditor.insertGallery = function( imageIds, type, columns ) {
         shortcode = '[gallery columns="' + columns + '" ids="' + imageIds + '"]';
     }
 
-    this.insertHTMLWrappedInParagraphTags(shotcode);
+    this.insertHTMLWrappedInParagraphTags(shortcode);
 }
 
 ZSSEditor.insertLocalGallery = function( placeholderId ) {
     var container = '<span id="' + placeholderId + '" class="gallery_container">['
                     + nativeState.localizedStringUploadingGallery + ']</span>';
-    this.insertHTMLWrappedInParagraphTags(html);
+    this.insertHTMLWrappedInParagraphTags(container);
 }
 
 ZSSEditor.replacePlaceholderGallery = function( placeholderId, imageIds, type, columns ) {
