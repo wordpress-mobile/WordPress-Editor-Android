@@ -754,6 +754,8 @@ ZSSEditor.insertHTMLWrappedInParagraphTags = function(html) {
         html = paragraphOpenTag + html;
     }
 
+    // Without this line, API<19 WebView will reset the caret to the start of the document, inserting the new line
+    // there instead of under the newly added media item
     if (nativeState.androidApiLevel < 19) {
         html = html + '&#x200b;';
     }
