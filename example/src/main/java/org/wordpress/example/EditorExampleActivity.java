@@ -143,33 +143,33 @@ public class EditorExampleActivity extends AppCompatActivity implements EditorFr
             return;
         }
 
-        Uri imageUri = data.getData();
+        Uri mediaUri = data.getData();
 
         MediaFile mediaFile = new MediaFile();
         String mediaId = String.valueOf(System.currentTimeMillis());
         mediaFile.setMediaId(mediaId);
-        mediaFile.setVideo(imageUri.toString().contains("video"));
+        mediaFile.setVideo(mediaUri.toString().contains("video"));
 
         switch (requestCode) {
             case ADD_MEDIA_ACTIVITY_REQUEST_CODE:
-                mEditorFragment.appendMediaFile(mediaFile, imageUri.toString(), null);
+                mEditorFragment.appendMediaFile(mediaFile, mediaUri.toString(), null);
 
                 if (mEditorFragment instanceof EditorMediaUploadListener) {
-                    simulateFileUpload(mediaId, imageUri.toString());
+                    simulateFileUpload(mediaId, mediaUri.toString());
                 }
                 break;
             case ADD_MEDIA_FAIL_ACTIVITY_REQUEST_CODE:
-                mEditorFragment.appendMediaFile(mediaFile, imageUri.toString(), null);
+                mEditorFragment.appendMediaFile(mediaFile, mediaUri.toString(), null);
 
                 if (mEditorFragment instanceof EditorMediaUploadListener) {
-                    simulateFileUploadFail(mediaId, imageUri.toString());
+                    simulateFileUploadFail(mediaId, mediaUri.toString());
                 }
                 break;
             case ADD_MEDIA_SLOW_NETWORK_REQUEST_CODE:
-                mEditorFragment.appendMediaFile(mediaFile, imageUri.toString(), null);
+                mEditorFragment.appendMediaFile(mediaFile, mediaUri.toString(), null);
 
                 if (mEditorFragment instanceof EditorMediaUploadListener) {
-                    simulateSlowFileUpload(mediaId, imageUri.toString());
+                    simulateSlowFileUpload(mediaId, mediaUri.toString());
                 }
                 break;
         }
