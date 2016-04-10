@@ -1037,6 +1037,13 @@ ZSSEditor.setProgressOnMedia = function(mediaNodeIdentifier, progress) {
         this.getMediaContainerNodeWithIdentifier(mediaNodeIdentifier).removeClass("compat");
     }
 
+    // Sometimes the progress bar can be stuck at 100% for a long time while further processing happens
+    // From a UX perspective, it's better to just keep the progress bars at 90% until the upload is really complete
+    // and the progress bar is removed entirely
+    if (progress > 0.9) {
+        return;
+    }
+
     mediaProgressNode.attr("value", progress);
 };
 
