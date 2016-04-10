@@ -899,13 +899,8 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 @Override
                 public void run() {
                     String progressString = String.format(Locale.US, "%.1f", progress);
-                    if (mediaType.equals(MediaType.IMAGE)) {
-                        mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnImage(" + mediaId + ", " +
-                                progressString + ");");
-                    } else if (mediaType.equals(MediaType.VIDEO)) {
-                        mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnVideo(" + mediaId + ", " +
-                                progressString + ");");
-                    }
+                    mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnMedia(" + mediaId + ", " +
+                            progressString + ");");
                 }
             });
         }
