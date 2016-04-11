@@ -1059,6 +1059,11 @@ ZSSEditor.sendOptimisticProgressUpdate = function(mediaNodeIdentifier, nCall) {
 
     var mediaNode = ZSSEditor.getMediaNodeWithIdentifier(mediaNodeIdentifier);
 
+    // Don't send progress updates to failed media
+    if (mediaNode.length != 0 && mediaNode[0].classList.contains("failed")) {
+        return;
+    }
+
     ZSSEditor.setProgressOnMedia(mediaNodeIdentifier, nCall / 100);
     ZSSEditor.setupOptimisticProgressUpdate(mediaNodeIdentifier, nCall + 1);
 };
