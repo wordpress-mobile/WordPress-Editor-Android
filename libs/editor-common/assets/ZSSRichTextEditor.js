@@ -1370,6 +1370,7 @@ ZSSEditor.markImageUploadFailed = function(imageNodeIdentifier, message) {
     var imageProgressNode = this.getImageProgressNodeWithIdentifier(imageNodeIdentifier);
     if (imageProgressNode.length != 0){
         imageProgressNode.addClass('failed');
+        imageProgressNode.attr("value", 0);
     }
 
     // Delete the compatibility overlay if present
@@ -1630,6 +1631,7 @@ ZSSEditor.markVideoUploadFailed = function(videoNodeIdentifier, message) {
     var videoProgressNode = this.getVideoProgressNodeWithIdentifier(videoNodeIdentifier);
     if (videoProgressNode.length != 0){
         videoProgressNode.addClass('failed');
+        videoProgressNode.attr("value", 0);
     }
 
     // Delete the compatibility overlay if present
