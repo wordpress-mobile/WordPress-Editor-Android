@@ -1408,6 +1408,10 @@ ZSSEditor.unmarkImageUploadFailed = function(imageNodeIdentifier) {
     imageContainerNode.find("span.upload-overlay").removeClass("failed");
 
     this.setProgressOnMedia(imageNodeIdentifier, 0);
+
+    if (nativeState.androidApiLevel > 18) {
+        setTimeout(ZSSEditor.setupOptimisticProgressUpdate, 300, imageNodeIdentifier, 1);
+    }
 };
 
 /**
@@ -1669,6 +1673,10 @@ ZSSEditor.unmarkVideoUploadFailed = function(videoNodeIdentifier) {
     videoContainerNode.find("span.upload-overlay").removeClass("failed");
 
     this.setProgressOnMedia(videoNodeIdentifier, 0);
+
+    if (nativeState.androidApiLevel > 18) {
+        setTimeout(ZSSEditor.setupOptimisticProgressUpdate, 300, videoNodeIdentifier, 1);
+    }
 };
 
 /**
