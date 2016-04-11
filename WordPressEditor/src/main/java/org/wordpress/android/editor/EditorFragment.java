@@ -1117,14 +1117,10 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                             case IMAGE:
                                 mWebView.execJavaScriptFromString("ZSSEditor.unmarkImageUploadFailed(" + mediaId
                                         + ");");
-                                mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnImage(" + mediaId + ", "
-                                        + 0 + ");");
                                 break;
                             case VIDEO:
                                 mWebView.execJavaScriptFromString("ZSSEditor.unmarkVideoUploadFailed(" + mediaId
                                         + ");");
-                                mWebView.execJavaScriptFromString("ZSSEditor.setProgressOnVideo(" + mediaId + ", "
-                                        + 0 + ");");
                         }
                         mFailedMediaIds.remove(mediaId);
                         mUploadingMedia.put(mediaId, mediaType);

@@ -1400,6 +1400,8 @@ ZSSEditor.unmarkImageUploadFailed = function(imageNodeIdentifier) {
 
     // Display the compatibility overlay again if present
     imageContainerNode.find("span.upload-overlay").removeClass("failed");
+
+    this.setProgressOnMedia(imageNodeIdentifier, 0);
 };
 
 /**
@@ -1658,6 +1660,8 @@ ZSSEditor.unmarkVideoUploadFailed = function(videoNodeIdentifier) {
 
     // Display the compatibility overlay again if present
     videoContainerNode.find("span.upload-overlay").removeClass("failed");
+
+    this.setProgressOnMedia(videoNodeIdentifier, 0);
 };
 
 /**
