@@ -1023,7 +1023,8 @@ ZSSEditor.setProgressOnMedia = function(mediaNodeIdentifier, progress) {
     var mediaNode = this.getMediaNodeWithIdentifier(mediaNodeIdentifier);
     var mediaProgressNode = this.getMediaProgressNodeWithIdentifier(mediaNodeIdentifier);
 
-    if (mediaNode.length == 0 || mediaProgressNode.length == 0){
+    // Don't allow the progress bar to move backward
+    if (mediaNode.length == 0 || mediaProgressNode.length == 0 || mediaProgressNode.attr("value") > progress) {
         return;
     }
 
@@ -1045,6 +1046,21 @@ ZSSEditor.setProgressOnMedia = function(mediaNodeIdentifier, progress) {
     }
 
     mediaProgressNode.attr("value", progress);
+};
+
+ZSSEditor.setupOptimisticProgressUpdate = function(mediaNodeIdentifier, nCall) {
+    setTimeout(ZSSEditor.sendOptimisticProgressUpdate, nCall * 100, mediaNodeIdentifier, nCall);
+};
+
+ZSSEditor.sendOptimisticProgressUpdate = function(mediaNodeIdentifier, nCall) {
+    if (nCall > 15) {
+        return;
+    }
+
+    var mediaNode = ZSSEditor.getMediaNodeWithIdentifier(mediaNodeIdentifier);
+
+    ZSSEditor.setProgressOnMedia(mediaNodeIdentifier, nCall / 100);
+    ZSSEditor.setupOptimisticProgressUpdate(mediaNodeIdentifier, nCall + 1);
 };
 
 ZSSEditor.sendMediaRemovedCallback = function(mediaNodeIdentifier) {
@@ -1175,6 +1191,10 @@ ZSSEditor.insertLocalImage = function(imageNodeIdentifier, localImageUrl) {
     ZSSEditor.trackNodeForMutation(this.getImageContainerNodeWithIdentifier(imageNodeIdentifier));
 
     this.setProgressOnMedia(imageNodeIdentifier, 0);
+
+    if (nativeState.androidApiLevel > 18) {
+        setTimeout(ZSSEditor.setupOptimisticProgressUpdate, 300, imageNodeIdentifier, 1);
+    }
 
     this.sendEnabledStyles();
 };
@@ -1480,6 +1500,10 @@ ZSSEditor.insertLocalVideo = function(videoNodeIdentifier, posterURL) {
     ZSSEditor.trackNodeForMutation(this.getVideoContainerNodeWithIdentifier(videoNodeIdentifier));
 
     this.setProgressOnMedia(videoNodeIdentifier, 0);
+
+    if (nativeState.androidApiLevel > 18) {
+        setTimeout(ZSSEditor.setupOptimisticProgressUpdate, 300, videoNodeIdentifier, 1);
+    }
 
     this.sendEnabledStyles();
 };
