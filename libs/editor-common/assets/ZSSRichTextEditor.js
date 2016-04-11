@@ -813,7 +813,13 @@ ZSSEditor.insertHTMLWrappedInParagraphTags = function(html) {
 // Needs addClass method
 
 ZSSEditor.insertLink = function(url, title) {
-    this.insertHTML('<a href="' + url + '">' + title + "</a>");
+    var html = '<a href="' + url + '">' + title + "</a>";
+
+    if (this.getFocusedField().getHTML().length == 0) {
+        html = '<' + this.defaultParagraphSeparator + '>' + html;
+    }
+
+    this.insertHTML(html);
 };
 
 ZSSEditor.updateLink = function(url, title) {
