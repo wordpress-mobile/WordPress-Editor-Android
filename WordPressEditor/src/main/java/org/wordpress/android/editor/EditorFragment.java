@@ -497,6 +497,43 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         }
     }
 
+    private void displayLinkDialog() {
+        final LinkDialogFragment linkDialogFragment = new LinkDialogFragment();
+        linkDialogFragment.setTargetFragment(this, LinkDialogFragment.LINK_DIALOG_REQUEST_CODE_ADD);
+
+        final Bundle dialogBundle = new Bundle();
+
+        // Pass potential URL from user clipboard
+        String clipboardUri = Utils.getUrlFromClipboard(getActivity());
+        if (clipboardUri != null) {
+            dialogBundle.putString(LinkDialogFragment.LINK_DIALOG_ARG_URL, clipboardUri);
+        }
+
+        // Pass selected text to dialog
+        if (mSourceView.getVisibility() == View.VISIBLE) {
+            // HTML mode
+            mSelectionStart = mSourceViewContent.getSelectionStart();
+            mSelectionEnd = mSourceViewContent.getSelectionEnd();
+
+            String selectedText = mSourceViewContent.getText().toString().substring(mSelectionStart, mSelectionEnd);
+            dialogBundle.putString(LinkDialogFragment.LINK_DIALOG_ARG_TEXT, selectedText);
+        } else {
+            // Visual mode
+            mGetSelectedTextCountDownLatch = new CountDownLatch(1);
+            mWebView.execJavaScriptFromString("ZSSEditor.execFunctionForResult('getSelectedTextToLinkify');");
+            try {
+                if (mGetSelectedTextCountDownLatch.await(1, TimeUnit.SECONDS)) {
+                    dialogBundle.putString(LinkDialogFragment.LINK_DIALOG_ARG_TEXT, mJavaScriptResult);
+                }
+            } catch (InterruptedException e) {
+                AppLog.d(T.EDITOR, "Failed to obtain selected text from JS editor.");
+            }
+        }
+
+        linkDialogFragment.setArguments(dialogBundle);
+        linkDialogFragment.show(getFragmentManager(), LinkDialogFragment.class.getSimpleName());
+    }
+
     @Override
     public void onClick(View v) {
         int id = v.getId();
@@ -525,40 +562,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
             ((ToggleButton) v).setChecked(false);
 
-            LinkDialogFragment linkDialogFragment = new LinkDialogFragment();
-            linkDialogFragment.setTargetFragment(this, LinkDialogFragment.LINK_DIALOG_REQUEST_CODE_ADD);
-
-            Bundle dialogBundle = new Bundle();
-
-            // Pass potential URL from user clipboard
-            String clipboardUri = Utils.getUrlFromClipboard(getActivity());
-            if (clipboardUri != null) {
-                dialogBundle.putString(LinkDialogFragment.LINK_DIALOG_ARG_URL, clipboardUri);
-            }
-
-            // Pass selected text to dialog
-            if (mSourceView.getVisibility() == View.VISIBLE) {
-                // HTML mode
-                mSelectionStart = mSourceViewContent.getSelectionStart();
-                mSelectionEnd = mSourceViewContent.getSelectionEnd();
-
-                String selectedText = mSourceViewContent.getText().toString().substring(mSelectionStart, mSelectionEnd);
-                dialogBundle.putString(LinkDialogFragment.LINK_DIALOG_ARG_TEXT, selectedText);
-            } else {
-                // Visual mode
-                mGetSelectedTextCountDownLatch = new CountDownLatch(1);
-                mWebView.execJavaScriptFromString("ZSSEditor.execFunctionForResult('getSelectedTextToLinkify');");
-                try {
-                    if (mGetSelectedTextCountDownLatch.await(1, TimeUnit.SECONDS)) {
-                        dialogBundle.putString(LinkDialogFragment.LINK_DIALOG_ARG_TEXT, mJavaScriptResult);
-                    }
-                } catch (InterruptedException e) {
-                    AppLog.d(T.EDITOR, "Failed to obtain selected text from JS editor.");
-                }
-            }
-
-            linkDialogFragment.setArguments(dialogBundle);
-            linkDialogFragment.show(getFragmentManager(), LinkDialogFragment.class.getSimpleName());
+            displayLinkDialog();
         } else {
             if (v instanceof ToggleButton) {
                 onFormattingButtonClicked((ToggleButton) v);
