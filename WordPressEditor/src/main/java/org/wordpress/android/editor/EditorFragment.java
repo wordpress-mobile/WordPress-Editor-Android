@@ -517,21 +517,38 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
             String selectedText = mSourceViewContent.getText().toString().substring(mSelectionStart, mSelectionEnd);
             dialogBundle.putString(LinkDialogFragment.LINK_DIALOG_ARG_TEXT, selectedText);
+
+            linkDialogFragment.setArguments(dialogBundle);
+            linkDialogFragment.show(getFragmentManager(), LinkDialogFragment.class.getSimpleName());
         } else {
             // Visual mode
-            mGetSelectedTextCountDownLatch = new CountDownLatch(1);
-            mWebView.execJavaScriptFromString("ZSSEditor.execFunctionForResult('getSelectedTextToLinkify');");
-            try {
-                if (mGetSelectedTextCountDownLatch.await(1, TimeUnit.SECONDS)) {
-                    dialogBundle.putString(LinkDialogFragment.LINK_DIALOG_ARG_TEXT, mJavaScriptResult);
-                }
-            } catch (InterruptedException e) {
-                AppLog.d(T.EDITOR, "Failed to obtain selected text from JS editor.");
-            }
-        }
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    mGetSelectedTextCountDownLatch = new CountDownLatch(1);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mWebView.execJavaScriptFromString(
+                                    "ZSSEditor.execFunctionForResult('getSelectedTextToLinkify');");
+                        }
+                    });
 
-        linkDialogFragment.setArguments(dialogBundle);
-        linkDialogFragment.show(getFragmentManager(), LinkDialogFragment.class.getSimpleName());
+                    try {
+                        if (mGetSelectedTextCountDownLatch.await(1, TimeUnit.SECONDS)) {
+                            dialogBundle.putString(LinkDialogFragment.LINK_DIALOG_ARG_TEXT, mJavaScriptResult);
+                        }
+                    } catch (InterruptedException e) {
+                        AppLog.d(T.EDITOR, "Failed to obtain selected text from JS editor.");
+                    }
+
+                    linkDialogFragment.setArguments(dialogBundle);
+                    linkDialogFragment.show(getFragmentManager(), LinkDialogFragment.class.getSimpleName());
+                }
+            });
+
+            thread.start();
+        }
     }
 
     @Override
