@@ -448,21 +448,39 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
         updateFormatBarEnabledState(true);
 
         if (toggleButton.isChecked()) {
-            mSourceViewTitle.setText(getTitle());
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    // Update mTitle and mContentHtml with the latest state from the ZSSEditor
+                    getTitle();
+                    getContent();
 
-            SpannableString spannableContent = new SpannableString(getContent());
-            HtmlStyleUtils.styleHtmlForDisplay(spannableContent);
-            mSourceViewContent.setText(spannableContent);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Set HTML mode state
+                            mSourceViewTitle.setText(mTitle);
 
-            mWebView.setVisibility(View.GONE);
-            mSourceView.setVisibility(View.VISIBLE);
+                            SpannableString spannableContent = new SpannableString(mContentHtml);
+                            HtmlStyleUtils.styleHtmlForDisplay(spannableContent);
+                            mSourceViewContent.setText(spannableContent);
 
-            mSourceViewContent.requestFocus();
-            mSourceViewContent.setSelection(0);
+                            mWebView.setVisibility(View.GONE);
+                            mSourceView.setVisibility(View.VISIBLE);
 
-            InputMethodManager imm = ((InputMethodManager) getActivity()
-                    .getSystemService(Context.INPUT_METHOD_SERVICE));
-            imm.showSoftInput(mSourceViewContent, InputMethodManager.SHOW_IMPLICIT);
+                            mSourceViewContent.requestFocus();
+                            mSourceViewContent.setSelection(0);
+
+                            InputMethodManager imm = ((InputMethodManager) getActivity()
+                                    .getSystemService(Context.INPUT_METHOD_SERVICE));
+                            imm.showSoftInput(mSourceViewContent, InputMethodManager.SHOW_IMPLICIT);
+                        }
+                    });
+                }
+            });
+
+            thread.start();
+
         } else {
             mWebView.setVisibility(View.VISIBLE);
             mSourceView.setVisibility(View.GONE);
