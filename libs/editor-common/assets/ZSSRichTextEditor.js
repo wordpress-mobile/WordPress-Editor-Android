@@ -3080,6 +3080,15 @@ ZSSField.prototype.handleKeyDownEvent = function(e) {
     } else if (wasEnterPressed && !this.isMultiline()) {
         e.preventDefault();
     } else if (this.isMultiline()) {
+        // For hardware keyboards, don't do any paragraph handling for non-printable keyCodes
+        // This avoids the filler zero-width space character from being inserted and displayed in the content field
+        // when special keys are pressed in new posts
+        var wasTabPressed = (e.keyCode == '9');
+        var intKeyCode = parseInt(e.keyCode, 10);
+        if (wasTabPressed || (intKeyCode > 13 && intKeyCode < 46)) {
+            return;
+        }
+
         this.wrapCaretInParagraphIfNecessary();
 
         if (wasEnterPressed) {
