@@ -634,7 +634,7 @@ ZSSEditor.setUnderline = function() {
 /**
  *  @brief      Turns blockquote ON or OFF for the current selection.
  *  @details    This method makes sure that the contents of the blockquotes are surrounded by the
- *              defaultParagraphSeparatorTag (by default '<p>').  This ensures parity with the web
+ *              defaultParagraphSeparator tag (by default '<p>').  This ensures parity with the web
  *              editor.
  */
 ZSSEditor.setBlockquote = function() {
