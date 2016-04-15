@@ -8,6 +8,6 @@ Util.buildClosingTag = function(tagName) {
     return '</' + tagName + '>';
 };
 
-Util.wrapHtmlInTag = function(html, tagName) {
+Util.wrapHTMLInTag = function(html, tagName) {
     return Util.buildOpeningTag(tagName) + html + Util.buildClosingTag(tagName);
 };

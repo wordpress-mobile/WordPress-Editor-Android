@@ -3085,9 +3085,25 @@ ZSSField.prototype.handleKeyDownEvent = function(e) {
             return;
         }
 
-        this.wrapCaretInParagraphIfNecessary();
+        // This is intended to work around an API19-only bug where paragraph wrapping the first character in a post
+        // will display a zero-width space character (from ZSSField.wrapCaretInParagraphIfNecessary)
+        // We can drop the if statement wrapping wrapCaretInParagraphIfNecessary() if we find a way to stop using
+        // zero-width space characters (e.g., autocorrect issues are fixed and we switch back to p tags)
+        var containsParagraphSeparators = this.getWrappedDomNode().innerHTML.search(
+                '<' + ZSSEditor.defaultParagraphSeparator) > -1;
+        if (nativeState.androidApiLevel != 19 || containsParagraphSeparators) {
+            this.wrapCaretInParagraphIfNecessary();
+        }
 
         if (wasEnterPressed) {
+            // Wrap the existing text in paragraph tags if necessary (this should only be needed if
+            // wrapCaretInParagraphIfNecessary() was skipped earlier (API19))
+            var currentHtml = this.getWrappedDomNode().innerHTML;
+            if (currentHtml.search('<' + ZSSEditor.defaultParagraphSeparator) == -1) {
+                ZSSEditor.focusedField.setHTML(Util.wrapHTMLInTag(currentHtml, ZSSEditor.defaultParagraphSeparator));
+                ZSSEditor.resetSelectionOnField('zss_field_content', 1);
+            }
+
             var sel = window.getSelection();
             if (sel.rangeCount < 1) {
                 return null;
