@@ -386,12 +386,14 @@ ZSSEditor.restoreRange = function(){
     }
 };
 
-ZSSEditor.resetSelectionOnField = function(fieldId) {
+ZSSEditor.resetSelectionOnField = function(fieldId, offset) {
+    offset = typeof offset !== 'undefined' ? offset : 0;
+
     var query = "div#" + fieldId;
     var field = document.querySelector(query);
     var range = document.createRange();
-    range.setStart(field, 0);
-    range.setEnd(field, 0);
+    range.setStart(field, offset);
+    range.setEnd(field, offset);
 
     var selection = document.getSelection();
     selection.removeAllRanges();
