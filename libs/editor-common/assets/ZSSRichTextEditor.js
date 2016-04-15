@@ -556,12 +556,6 @@ ZSSEditor.getYCaretInfo = function() {
     return this.caretInfo;
 };
 
-// MARK: - Default paragraph separator
-
-ZSSEditor.defaultParagraphSeparatorTag = function() {
-    return '<' + this.defaultParagraphSeparator + '>';
-};
-
 // MARK: - Styles
 
 ZSSEditor.setBold = function() {
@@ -684,9 +678,9 @@ ZSSEditor.setHeading = function(heading) {
 	var formatBlock = document.queryCommandValue('formatBlock');
 
 	if (formatBlock.length > 0 && formatBlock.toLowerCase() == formatTag) {
-		document.execCommand('formatBlock', false, this.defaultParagraphSeparatorTag());
+		document.execCommand('formatBlock', false, Util.buildOpeningTag(this.defaultParagraphSeparator));
 	} else {
-		document.execCommand('formatBlock', false, '<' + formatTag + '>');
+		document.execCommand('formatBlock', false, Util.buildOpeningTag(formatTag));
 	}
 
 	ZSSEditor.sendEnabledStyles();
@@ -697,9 +691,9 @@ ZSSEditor.setParagraph = function() {
 	var formatBlock = document.queryCommandValue('formatBlock');
 
 	if (formatBlock.length > 0 && formatBlock.toLowerCase() == formatTag) {
-		document.execCommand('formatBlock', false, this.defaultParagraphSeparatorTag());
+		document.execCommand('formatBlock', false, Util.buildOpeningTag(this.defaultParagraphSeparator));
 	} else {
-		document.execCommand('formatBlock', false, '<' + formatTag + '>');
+		document.execCommand('formatBlock', false, Util.buildOpeningTag(formatTag));
 	}
 
 	ZSSEditor.sendEnabledStyles();
@@ -792,8 +786,8 @@ ZSSEditor.setBackgroundColor = function(color) {
  */
 ZSSEditor.insertHTMLWrappedInParagraphTags = function(html) {
     var space = '<br>';
-    var paragraphOpenTag = '<' + this.defaultParagraphSeparator + '>';
-    var paragraphCloseTag = '</' + this.defaultParagraphSeparator + '>';
+    var paragraphOpenTag = Util.buildOpeningTag(this.defaultParagraphSeparator);
+    var paragraphCloseTag = Util.buildClosingTag(this.defaultParagraphSeparator);
 
     if (this.getFocusedField().getHTML().length == 0) {
         html = paragraphOpenTag + html;
@@ -818,7 +812,7 @@ ZSSEditor.insertLink = function(url, title) {
     var html = '<a href="' + url + '">' + title + "</a>";
 
     if (this.getFocusedField().getHTML().length == 0) {
-        html = '<' + this.defaultParagraphSeparator + '>' + html;
+        html = Util.buildOpeningTag(this.defaultParagraphSeparator) + html;
     }
 
     this.insertHTML(html);
