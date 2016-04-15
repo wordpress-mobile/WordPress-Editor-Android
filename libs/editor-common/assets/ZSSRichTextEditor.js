@@ -3101,7 +3101,7 @@ ZSSField.prototype.handleKeyDownEvent = function(e) {
             var currentHtml = this.getWrappedDomNode().innerHTML;
             if (currentHtml.search('<' + ZSSEditor.defaultParagraphSeparator) == -1) {
                 ZSSEditor.focusedField.setHTML(Util.wrapHTMLInTag(currentHtml, ZSSEditor.defaultParagraphSeparator));
-                ZSSEditor.resetSelectionOnField('zss_field_content', 1);
+                ZSSEditor.resetSelectionOnField(this.getWrappedDomNode().id, 1);
             }
 
             var sel = window.getSelection();
