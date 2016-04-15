@@ -2781,7 +2781,7 @@ ZSSEditor.joinAdjacentSiblingsBlockquotes = function(node) {
 ZSSEditor.joinAdjacentSiblingsOrAncestorBlockquotes = function(node) {
 
     var currentNode = node;
-    var rootNode = this.getFocusedField().wrappedDomNode();
+    var rootNode = this.getFocusedField().getWrappedDomNode();
     var joined = false;
 
     while (currentNode
@@ -3004,7 +3004,7 @@ function ZSSField(wrappedObject) {
     this.multiline = false;
     this.wrappedObject = wrappedObject;
 
-    if (this.wrappedDomNode().hasAttribute('nostyle')) {
+    if (this.getWrappedDomNode().hasAttribute('nostyle')) {
         this.hasNoStyle = true;
     }
 
@@ -3363,7 +3363,7 @@ ZSSField.prototype.disableEditing = function () {
 ZSSField.prototype.wrapCaretInParagraphIfNecessary = function()
 {
     var closerParentNode = ZSSEditor.closerParentNode();
-    var parentNodeShouldBeParagraph = (closerParentNode == this.wrappedDomNode()
+    var parentNodeShouldBeParagraph = (closerParentNode == this.getWrappedDomNode()
                                        || closerParentNode.nodeName == NodeName.BLOCKQUOTE);
 
     if (parentNodeShouldBeParagraph) {
@@ -3464,6 +3464,6 @@ ZSSField.prototype.setPlaceholderText = function(placeholder) {
 
 // MARK: - Wrapped Object
 
-ZSSField.prototype.wrappedDomNode = function() {
+ZSSField.prototype.getWrappedDomNode = function() {
     return this.wrappedObject[0];
 };
