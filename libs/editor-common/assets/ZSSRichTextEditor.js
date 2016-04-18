@@ -3419,7 +3419,14 @@ ZSSField.prototype.getHTML = function() {
 ZSSField.prototype.getHTMLForCallback = function() {
     var functionArgument = "function=getHTMLForCallback";
     var idArgument = "id=" + this.getNodeId();
-    var contentsArgument = "contents=" + this.getHTML();
+    var contentsArgument;
+
+    if (this.hasNoStyle) {
+        contentsArgument = "contents=" + this.strippedHTML();
+    } else {
+        contentsArgument = "contents=" + this.getHTML();
+    }
+
     var joinedArguments = functionArgument + defaultCallbackSeparator + idArgument + defaultCallbackSeparator +
         contentsArgument;
     ZSSEditor.callback('callback-response-string', joinedArguments);
