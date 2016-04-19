@@ -3089,13 +3089,20 @@ ZSSField.prototype.handleKeyDownEvent = function(e) {
             return;
         }
 
-        // This is intended to work around an API19-only bug where paragraph wrapping the first character in a post
-        // will display a zero-width space character (from ZSSField.wrapCaretInParagraphIfNecessary)
+        // This is intended to work around two bugs:
+        // 1. On API19 only, paragraph wrapping the first character in a post will display a zero-width space character
+        // (from ZSSField.wrapCaretInParagraphIfNecessary)
         // We can drop the if statement wrapping wrapCaretInParagraphIfNecessary() if we find a way to stop using
         // zero-width space characters (e.g., autocorrect issues are fixed and we switch back to p tags)
+        //
+        // 2. On all APIs, software pasting (long press -> paste) doesn't automatically wrap the paste in paragraph
+        // tags in new posts. On API19+ this is corrected by ZSSField.handlePasteEvent(), but earlier APIs don't support
+        // it. So, instead, we allow the editor not to wrap the paste in paragraph tags and it's automatically corrected
+        // after adding a newline. But allowing wrapCaretInParagraphIfNecessary() to go through will wrap the paragraph
+        // incorrectly, so we skip it for those API levels.
         var containsParagraphSeparators = this.getWrappedDomNode().innerHTML.search(
                 '<' + ZSSEditor.defaultParagraphSeparator) > -1;
-        if (nativeState.androidApiLevel != 19 || containsParagraphSeparators) {
+        if (nativeState.androidApiLevel > 19 || containsParagraphSeparators) {
             this.wrapCaretInParagraphIfNecessary();
         }
 
