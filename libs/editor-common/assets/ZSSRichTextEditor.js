@@ -3024,6 +3024,9 @@ ZSSField.prototype.bindListeners = function() {
     this.wrappedObject.bind('input', function(e) { thisObj.handleInputEvent(e); });
     this.wrappedObject.bind('compositionstart', function(e) { thisObj.handleCompositionStartEvent(e); });
     this.wrappedObject.bind('compositionend', function(e) { thisObj.handleCompositionEndEvent(e); });
+
+    // Only supported on API19+
+    this.wrappedObject.on('paste', function(e) { thisObj.handlePasteEvent(e); });
 };
 
 // MARK: - Emptying the field when it should be, well... empty (HTML madness)
@@ -3249,6 +3252,12 @@ ZSSField.prototype.handleTapEvent = function(e) {
                 return;
             }
         }
+    }
+};
+
+ZSSField.prototype.handlePasteEvent = function(e) {
+    if (this.isMultiline() && this.getHTML().length == 0) {
+        ZSSEditor.insertHTML(Util.wrapHTMLInTag('&#x200b;', ZSSEditor.defaultParagraphSeparator));
     }
 };
 
