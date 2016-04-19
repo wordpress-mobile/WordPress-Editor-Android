@@ -3077,11 +3077,12 @@ ZSSField.prototype.handleKeyDownEvent = function(e) {
         e.preventDefault();
     } else if (this.isMultiline()) {
         // For hardware keyboards, don't do any paragraph handling for non-printable keyCodes
+        // https://css-tricks.com/snippets/javascript/javascript-keycodes/
         // This avoids the filler zero-width space character from being inserted and displayed in the content field
         // when special keys are pressed in new posts
         var wasTabPressed = (e.keyCode == '9');
         var intKeyCode = parseInt(e.keyCode, 10);
-        if (wasTabPressed || (intKeyCode > 13 && intKeyCode < 46)) {
+        if (wasTabPressed || (intKeyCode > 13 && intKeyCode < 46) || intKeyCode == 192) {
             return;
         }
 
