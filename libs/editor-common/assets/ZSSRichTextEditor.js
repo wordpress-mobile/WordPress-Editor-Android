@@ -3089,7 +3089,7 @@ ZSSField.prototype.handleKeyDownEvent = function(e) {
             return;
         }
 
-        // This is intended to work around two bugs:
+        // The containsParagraphSeparators check is intended to work around three bugs:
         // 1. On API19 only, paragraph wrapping the first character in a post will display a zero-width space character
         // (from ZSSField.wrapCaretInParagraphIfNecessary)
         // We can drop the if statement wrapping wrapCaretInParagraphIfNecessary() if we find a way to stop using
@@ -3099,10 +3099,15 @@ ZSSField.prototype.handleKeyDownEvent = function(e) {
         // tags in new posts. On API19+ this is corrected by ZSSField.handlePasteEvent(), but earlier APIs don't support
         // it. So, instead, we allow the editor not to wrap the paste in paragraph tags and it's automatically corrected
         // after adding a newline. But allowing wrapCaretInParagraphIfNecessary() to go through will wrap the paragraph
-        // incorrectly, so we skip it for those API levels.
+        // incorrectly, so we skip it in this case.
+        //
+        // 3. On all APIs, hardware pasting (CTRL + V) doesn't automatically wrap the paste in paragraph tags in
+        // new posts. ZSSField.handlePasteEvent() does not address this problem. It's the same fix as #2 above, but we
+        // have to extend the `containsParagraphSeparators` check to all APIs, not just API19 and below, to fix
+        // hardware pasting.
         var containsParagraphSeparators = this.getWrappedDomNode().innerHTML.search(
                 '<' + ZSSEditor.defaultParagraphSeparator) > -1;
-        if (nativeState.androidApiLevel > 19 || containsParagraphSeparators) {
+        if (containsParagraphSeparators) {
             this.wrapCaretInParagraphIfNecessary();
         }
 
