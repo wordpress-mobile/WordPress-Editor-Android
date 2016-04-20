@@ -644,6 +644,13 @@ ZSSEditor.setBlockquote = function() {
     var range = selection.getRangeAt(0).cloneRange();
     var sendStyles = false;
 
+    // Make sure text being wrapped in blockquotes is inside paragraph tags
+    // (should be <blockquote><paragraph>contents</paragraph></blockquote>)
+    var currentHtml = ZSSEditor.focusedField.getWrappedDomNode().innerHTML;
+    if (currentHtml.search('<' + ZSSEditor.defaultParagraphSeparator) == -1) {
+        ZSSEditor.focusedField.setHTML(Util.wrapHTMLInTag(currentHtml, ZSSEditor.defaultParagraphSeparator));
+    }
+
     var ancestorElement = this.getAncestorElementForSettingBlockquote(range);
 
     if (ancestorElement) {
