@@ -3448,7 +3448,8 @@ ZSSField.prototype.getHTMLForCallback = function() {
     } else {
         var html;
         if (nativeState.androidApiLevel < 17) {
-            // URI Encode HTML on API < 17 because of the use of WebViewClient.shouldOverrideUrlLoading
+            // URI Encode HTML on API < 17 because of the use of WebViewClient.shouldOverrideUrlLoading. Data must
+            // be decoded in shouldOverrideUrlLoading.
             html = encodeURIComponent(this.getHTML());
         } else {
             html = this.getHTML();
