@@ -3446,9 +3446,16 @@ ZSSField.prototype.getHTMLForCallback = function() {
     if (this.hasNoStyle) {
         contentsArgument = "contents=" + this.strippedHTML();
     } else {
-        contentsArgument = "contents=" + this.getHTML();
+        var html;
+        if (nativeState.androidApiLevel < 17) {
+            // URI Encode HTML on API < 17 because of the use of WebViewClient.shouldOverrideUrlLoading. Data must
+            // be decoded in shouldOverrideUrlLoading.
+            html = encodeURIComponent(this.getHTML());
+        } else {
+            html = this.getHTML();
+        }
+        contentsArgument = "contents=" + html;
     }
-
     var joinedArguments = functionArgument + defaultCallbackSeparator + idArgument + defaultCallbackSeparator +
         contentsArgument;
     ZSSEditor.callback('callback-response-string', joinedArguments);
