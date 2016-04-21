@@ -3411,13 +3411,23 @@ ZSSField.prototype.wrapCaretInParagraphIfNecessary = function()
     var parentNodeShouldBeParagraph = (closerParentNode == this.getWrappedDomNode()
                                        || closerParentNode.nodeName == NodeName.BLOCKQUOTE);
 
-    if (parentNodeShouldBeParagraph) {
+    // When starting a post with a blockquote (before any text is entered), the paragraph tags inside the blockquote
+    // won't properly wrap the text once it's entered
+    // In that case, remove the paragraph tags and re-apply them, wrapping around the newly entered text
+    var fixNewPostBlockquoteBug = (closerParentNode.nodeName == NodeName.DIV
+                                       && closerParentNode.parentNode.nodeName == NodeName.BLOCKQUOTE
+                                       && closerParentNode.innerHTML.length == 0);
+
+    if (parentNodeShouldBeParagraph || fixNewPostBlockquoteBug) {
         var selection = window.getSelection();
 
         if (selection && selection.rangeCount > 0) {
             var range = selection.getRangeAt(0);
 
             if (range.startContainer == range.endContainer) {
+                if (fixNewPostBlockquoteBug) {
+                    closerParentNode.parentNode.removeChild(closerParentNode);
+                }
                 var paragraph = document.createElement("div");
                 var textNode = document.createTextNode("&#x200b;");
 
