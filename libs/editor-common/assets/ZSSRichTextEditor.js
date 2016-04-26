@@ -387,13 +387,18 @@ ZSSEditor.restoreRange = function(){
 };
 
 ZSSEditor.resetSelectionOnField = function(fieldId, offset) {
-    offset = typeof offset !== 'undefined' ? offset : 0;
-
     var query = "div#" + fieldId;
     var field = document.querySelector(query);
+
+    this.giveFocusToElement(field, offset);
+};
+
+ZSSEditor.giveFocusToElement = function(element, offset) {
+    offset = typeof offset !== 'undefined' ? offset : 0;
+
     var range = document.createRange();
-    range.setStart(field, offset);
-    range.setEnd(field, offset);
+    range.setStart(element, offset);
+    range.setEnd(element, offset);
 
     var selection = document.getSelection();
     selection.removeAllRanges();
@@ -3299,12 +3304,8 @@ ZSSField.prototype.afterKeyDownEvent = function(e) {
         range.startContainer.innerHTML = '<div><br></div>';
 
         // Give focus to new div
-        var newFocusEle = focusedNode.firstChild;
-        var newRange = document.createRange();
-        newRange.setStart(newFocusEle, 1);
-        newRange.setEnd(newFocusEle, 1);
-        selection.removeAllRanges();
-        selection.addRange(newRange);
+        var newFocusElement = focusedNode.firstChild;
+        ZSSEditor.giveFocusToElement(newFocusElement, 1);
     } else if (focusedNode.nodeName == NodeName.DIV && focusedNode.parentNode.nodeName == NodeName.BLOCKQUOTE
         && focusedNode.parentNode.childNodes.length == 1
         && (focusedNode.innerHTML.length == 0 || focusedNode.innerHTML == '<br>')) {
