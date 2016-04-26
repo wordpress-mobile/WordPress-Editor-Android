@@ -3296,19 +3296,20 @@ ZSSField.prototype.afterKeyDownEvent = function(e) {
     var range = selection.getRangeAt(0).cloneRange();
     var focusedNode = range.startContainer;
 
+    var focusedNodeIsEmpty = (focusedNode.innerHTML != undefined
+        && (focusedNode.innerHTML.length == 0 || focusedNode.innerHTML == '<br>'));
+
     // Blockquote handling
-    if (focusedNode.nodeName == NodeName.BLOCKQUOTE
-        && (focusedNode.innerHTML.length == 0 || focusedNode.innerHTML == '<br>')) {
+    if (focusedNode.nodeName == NodeName.BLOCKQUOTE && focusedNodeIsEmpty) {
         // When using backspace to delete the contents of a blockquote, the div within the blockquote is deleted
         // This makes the blockquote unable to be deleted using backspace, and also causes autocorrect issues on API19+
-        range.startContainer.innerHTML = '<div><br></div>';
+        range.startContainer.innerHTML = Util.wrapHTMLInTag('<br>', ZSSEditor.defaultParagraphSeparator);
 
         // Give focus to new div
         var newFocusElement = focusedNode.firstChild;
         ZSSEditor.giveFocusToElement(newFocusElement, 1);
     } else if (focusedNode.nodeName == NodeName.DIV && focusedNode.parentNode.nodeName == NodeName.BLOCKQUOTE
-        && focusedNode.parentNode.childNodes.length == 1
-        && (focusedNode.innerHTML.length == 0 || focusedNode.innerHTML == '<br>')) {
+        && focusedNode.parentNode.childNodes.length == 1 && focusedNodeIsEmpty) {
         // When a post begins with a blockquote, and there's content after that blockquote, backspacing inside that
         // blockquote will work until the blockquote is empty. After that, backspace will have no effect
         // This fix identifies that situation and makes the call to setBlockquote() to toggle off the blockquote
