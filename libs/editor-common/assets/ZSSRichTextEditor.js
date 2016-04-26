@@ -3081,6 +3081,9 @@ ZSSField.prototype.handleKeyDownEvent = function(e) {
 
     var wasEnterPressed = (e.keyCode == '13');
 
+    // Handle keyDownEvent actions that need to happen after the event has completed (and the field has been modified)
+    setTimeout(this.afterKeyDownEvent, 20, e);
+
     if (this.isComposing) {
         e.stopPropagation();
     } else if (wasEnterPressed && !this.isMultiline()) {
@@ -3277,6 +3280,31 @@ ZSSField.prototype.handleTapEvent = function(e) {
 ZSSField.prototype.handlePasteEvent = function(e) {
     if (this.isMultiline() && this.getHTML().length == 0) {
         ZSSEditor.insertHTML(Util.wrapHTMLInTag('&#x200b;', ZSSEditor.defaultParagraphSeparator));
+    }
+};
+
+/**
+ *  @brief      Fires after 'keydown' events, when the field contents have already been modified
+ */
+ZSSField.prototype.afterKeyDownEvent = function(e) {
+    var selection = document.getSelection();
+    var range = selection.getRangeAt(0).cloneRange();
+    var focusedNode = range.startContainer;
+
+    // Blockquote handling
+    if (focusedNode.nodeName == NodeName.BLOCKQUOTE
+        && (focusedNode.innerHTML.length == 0 || focusedNode.innerHTML == '<br>')) {
+        // When using backspace to delete the contents of a blockquote, the div within the blockquote is deleted
+        // This makes the blockquote unable to be deleted using backspace, and also causes autocorrect issues on API19+
+        range.startContainer.innerHTML = '<div><br></div>';
+
+        // Give focus to new div
+        var newFocusEle = focusedNode.firstChild;
+        var newRange = document.createRange();
+        newRange.setStart(newFocusEle, 1);
+        newRange.setEnd(newFocusEle, 1);
+        selection.removeAllRanges();
+        selection.addRange(newRange);
     }
 };
 
