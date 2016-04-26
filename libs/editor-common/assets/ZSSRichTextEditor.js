@@ -3305,6 +3305,13 @@ ZSSField.prototype.afterKeyDownEvent = function(e) {
         newRange.setEnd(newFocusEle, 1);
         selection.removeAllRanges();
         selection.addRange(newRange);
+    } else if (focusedNode.nodeName == NodeName.DIV && focusedNode.parentNode.nodeName == NodeName.BLOCKQUOTE
+        && focusedNode.parentNode.childNodes.length == 1
+        && (focusedNode.innerHTML.length == 0 || focusedNode.innerHTML == '<br>')) {
+        // When a post begins with a blockquote, and there's content after that blockquote, backspacing inside that
+        // blockquote will work until the blockquote is empty. After that, backspace will have no effect
+        // This fix identifies that situation and makes the call to setBlockquote() to toggle off the blockquote
+        ZSSEditor.setBlockquote();
     }
 };
 
