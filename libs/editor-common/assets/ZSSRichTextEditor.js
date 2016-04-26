@@ -3292,9 +3292,7 @@ ZSSField.prototype.handlePasteEvent = function(e) {
  *  @brief      Fires after 'keydown' events, when the field contents have already been modified
  */
 ZSSField.prototype.afterKeyDownEvent = function(beforeHTML, e) {
-    if (beforeHTML == e.target.innerHTML) {
-        return;
-    }
+    var htmlWasModified = (beforeHTML != e.target.innerHTML);
 
     var selection = document.getSelection();
     var range = selection.getRangeAt(0).cloneRange();
@@ -3305,6 +3303,12 @@ ZSSField.prototype.afterKeyDownEvent = function(beforeHTML, e) {
 
     // Blockquote handling
     if (focusedNode.nodeName == NodeName.BLOCKQUOTE && focusedNodeIsEmpty) {
+        if (!htmlWasModified) {
+            // We only want to handle this if the last character inside a blockquote was just deleted - if the HTML
+            // is unchanged, it might be that afterKeyDownEvent was called too soon, and we should avoid doing anything
+            return;
+        }
+
         // When using backspace to delete the contents of a blockquote, the div within the blockquote is deleted
         // This makes the blockquote unable to be deleted using backspace, and also causes autocorrect issues on API19+
         range.startContainer.innerHTML = Util.wrapHTMLInTag('<br>', ZSSEditor.defaultParagraphSeparator);
