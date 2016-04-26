@@ -3087,7 +3087,7 @@ ZSSField.prototype.handleKeyDownEvent = function(e) {
     var wasEnterPressed = (e.keyCode == '13');
 
     // Handle keyDownEvent actions that need to happen after the event has completed (and the field has been modified)
-    setTimeout(this.afterKeyDownEvent, 20, e);
+    setTimeout(this.afterKeyDownEvent, 20, e.target.innerHTML, e);
 
     if (this.isComposing) {
         e.stopPropagation();
@@ -3291,7 +3291,11 @@ ZSSField.prototype.handlePasteEvent = function(e) {
 /**
  *  @brief      Fires after 'keydown' events, when the field contents have already been modified
  */
-ZSSField.prototype.afterKeyDownEvent = function(e) {
+ZSSField.prototype.afterKeyDownEvent = function(beforeHTML, e) {
+    if (beforeHTML == e.target.innerHTML) {
+        return;
+    }
+
     var selection = document.getSelection();
     var range = selection.getRangeAt(0).cloneRange();
     var focusedNode = range.startContainer;
