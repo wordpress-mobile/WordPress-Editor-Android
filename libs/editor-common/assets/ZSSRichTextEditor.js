@@ -387,13 +387,18 @@ ZSSEditor.restoreRange = function(){
 };
 
 ZSSEditor.resetSelectionOnField = function(fieldId, offset) {
-    offset = typeof offset !== 'undefined' ? offset : 0;
-
     var query = "div#" + fieldId;
     var field = document.querySelector(query);
+
+    this.giveFocusToElement(field, offset);
+};
+
+ZSSEditor.giveFocusToElement = function(element, offset) {
+    offset = typeof offset !== 'undefined' ? offset : 0;
+
     var range = document.createRange();
-    range.setStart(field, offset);
-    range.setEnd(field, offset);
+    range.setStart(element, offset);
+    range.setEnd(element, offset);
 
     var selection = document.getSelection();
     selection.removeAllRanges();
@@ -3081,6 +3086,9 @@ ZSSField.prototype.handleKeyDownEvent = function(e) {
 
     var wasEnterPressed = (e.keyCode == '13');
 
+    // Handle keyDownEvent actions that need to happen after the event has completed (and the field has been modified)
+    setTimeout(this.afterKeyDownEvent, 20, e.target.innerHTML, e);
+
     if (this.isComposing) {
         e.stopPropagation();
     } else if (wasEnterPressed && !this.isMultiline()) {
@@ -3277,6 +3285,44 @@ ZSSField.prototype.handleTapEvent = function(e) {
 ZSSField.prototype.handlePasteEvent = function(e) {
     if (this.isMultiline() && this.getHTML().length == 0) {
         ZSSEditor.insertHTML(Util.wrapHTMLInTag('&#x200b;', ZSSEditor.defaultParagraphSeparator));
+    }
+};
+
+/**
+ *  @brief      Fires after 'keydown' events, when the field contents have already been modified
+ */
+ZSSField.prototype.afterKeyDownEvent = function(beforeHTML, e) {
+    var htmlWasModified = (beforeHTML != e.target.innerHTML);
+
+    var selection = document.getSelection();
+    var range = selection.getRangeAt(0).cloneRange();
+    var focusedNode = range.startContainer;
+
+    var focusedNodeIsEmpty = (focusedNode.innerHTML != undefined
+        && (focusedNode.innerHTML.length == 0 || focusedNode.innerHTML == '<br>'));
+
+    // Blockquote handling
+    if (focusedNode.nodeName == NodeName.BLOCKQUOTE && focusedNodeIsEmpty) {
+        if (!htmlWasModified) {
+            // We only want to handle this if the last character inside a blockquote was just deleted - if the HTML
+            // is unchanged, it might be that afterKeyDownEvent was called too soon, and we should avoid doing anything
+            return;
+        }
+
+        // When using backspace to delete the contents of a blockquote, the div within the blockquote is deleted
+        // This makes the blockquote unable to be deleted using backspace, and also causes autocorrect issues on API19+
+        range.startContainer.innerHTML = Util.wrapHTMLInTag('<br>', ZSSEditor.defaultParagraphSeparator);
+
+        // Give focus to new div
+        var newFocusElement = focusedNode.firstChild;
+        ZSSEditor.giveFocusToElement(newFocusElement, 1);
+    } else if (focusedNode.nodeName == NodeName.DIV && focusedNode.parentNode.nodeName == NodeName.BLOCKQUOTE
+        && focusedNode.parentNode.previousSibling == null && focusedNode.parentNode.childNodes.length == 1
+        && focusedNodeIsEmpty) {
+        // When a post begins with a blockquote, and there's content after that blockquote, backspacing inside that
+        // blockquote will work until the blockquote is empty. After that, backspace will have no effect
+        // This fix identifies that situation and makes the call to setBlockquote() to toggle off the blockquote
+        ZSSEditor.setBlockquote();
     }
 };
 
