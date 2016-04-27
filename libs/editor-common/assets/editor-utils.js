@@ -21,5 +21,6 @@ Util.rangeIsAtStartOfParent = function(range) {
 };
 
 Util.rangeIsAtEndOfParent = function(range) {
-    return (range.startContainer.nextSibling == null && range.endOffset == range.endContainer.length);
+    return ((range.startContainer.nextSibling == null || range.startContainer.nextSibling == "<br>")
+        && range.endOffset == range.endContainer.length);
 };
