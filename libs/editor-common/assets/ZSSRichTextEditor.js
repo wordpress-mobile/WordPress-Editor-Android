@@ -1037,13 +1037,13 @@ ZSSEditor.setProgressOnMedia = function(mediaNodeIdentifier, progress) {
     var mediaNode = this.getMediaNodeWithIdentifier(mediaNodeIdentifier);
     var mediaProgressNode = this.getMediaProgressNodeWithIdentifier(mediaNodeIdentifier);
 
+    if (progress == 0) {
+        mediaNode.addClass("uploading");
+    }
+
     // Don't allow the progress bar to move backward
     if (mediaNode.length == 0 || mediaProgressNode.length == 0 || mediaProgressNode.attr("value") > progress) {
         return;
-    }
-
-    if (progress == 0) {
-        mediaNode.addClass("uploading");
     }
 
     // Revert to non-compatibility image container once image upload has begun. This centers the overlays on the image
