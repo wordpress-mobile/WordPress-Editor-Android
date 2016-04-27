@@ -823,7 +823,11 @@ ZSSEditor.insertLink = function(url, title) {
 
     var parentBlockQuoteNode = ZSSEditor.closerParentNodeWithName('blockquote');
 
-    if (this.getFocusedField().getHTML().length == 0 || parentBlockQuoteNode) {
+    var currentRange = document.getSelection().getRangeAt(0);
+    var currentNode = currentRange.startContainer;
+    var currentNodeIsEmpty = (currentNode.innerHTML == '' || currentNode.innerHTML == '<br>');
+
+    if (this.getFocusedField().getHTML().length == 0 || (parentBlockQuoteNode && !currentNodeIsEmpty)) {
         // Wrap the link tag in paragraph tags when the post is empty, and also when inside a blockquote
         // The latter is to fix a bug with document.execCommand('insertHTML') inside a blockquote, where the div inside
         // the blockquote is ignored and the link tag is inserted outside it, on a new line with no wrapping div
