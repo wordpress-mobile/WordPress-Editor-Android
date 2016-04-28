@@ -2606,8 +2606,24 @@ ZSSEditor.completeListEditing = function() {
             if (node.nodeType == 1 &&
                     (node.tagName.toUpperCase() == NodeName.UL
                         || node.tagName.toUpperCase() == NodeName.OL)) {
-                // Make a new P node as a sibling to the parent node
-                document.execCommand('insertParagraph', false);
+
+                var focusedNode = document.getSelection().getRangeAt(0).startContainer;
+
+                if (focusedNode.nodeType == 3) {
+                    // If the focused node is a text node, the list item was not empty when toggled off
+                    // Wrap the text in a div and attach it as a sibling to the div wrapping the list
+                    var parentParagraph = focusedNode.parentNode;
+                    var paragraph = document.createElement('div');
+
+                    paragraph.appendChild(focusedNode);
+                    parentParagraph.insertAdjacentElement('afterEnd', paragraph);
+
+                    ZSSEditor.giveFocusToElement(paragraph, 1);
+                } else {
+                    // Attach a new paragraph node as a sibling to the parent node
+                    document.execCommand('insertParagraph', false);
+                }
+
                 // Remove any superfluous <br> tags that are created
                 ZSSEditor.scrubBRFromNode(node.parentNode);
                 break;
