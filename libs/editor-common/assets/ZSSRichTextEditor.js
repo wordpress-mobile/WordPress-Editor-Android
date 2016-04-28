@@ -2579,7 +2579,7 @@ ZSSEditor.previousNode = function(node) {
         return node;
     }
     var parent = node.parentNode;
-    if (parent && parent.nodeType.hasChildNodes()) {
+    if (parent && parent.hasChildNodes()) {
         return parent;
     }
     return null;
