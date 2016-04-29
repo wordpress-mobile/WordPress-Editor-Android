@@ -411,29 +411,31 @@ ZSSEditor.getSelectedText = function() {
 };
 
 ZSSEditor.canExpandBackward = function(range) {
-  var caretRange = range.cloneRange();
-  if (range.startOffset == 0) {
-  	return false;
-  }
-  caretRange.setStart(range.startContainer, range.startOffset - 1);
-  caretRange.setEnd(range.startContainer, range.startOffset);
-  if (!caretRange.toString().match(/\w/)) {
-  	return false;
-  }
-  return true;
+    var caretRange = range.cloneRange();
+    if (range.startOffset == 0) {
+    return false;
+    }
+    caretRange.setStart(range.startContainer, range.startOffset - 1);
+    caretRange.setEnd(range.startContainer, range.startOffset);
+    if (!caretRange.toString().match(/\w/)) {
+    return false;
+    }
+    return true;
 };
 
 ZSSEditor.canExpandForward = function(range) {
-  var caretRange = range.cloneRange();
-  if (range.endOffset == range.endContainer.length)  {
-  	return false;
-  }
-  caretRange.setStart(range.endContainer, range.endOffset);
-  caretRange.setEnd(range.endContainer, range.endOffset + 1);
-  if (!caretRange.toString().match(/\w/)) {
-  	return false;
-  }
-  return true;
+    var caretRange = range.cloneRange();
+    if (range.endOffset == range.endContainer.length)  {
+    return false;
+    }
+    caretRange.setStart(range.endContainer, range.endOffset);
+    if (range.endOffset )
+    caretRange.setEnd(range.endContainer, range.endOffset + 1);
+    var strin = caretRange.toString();
+    if (!caretRange.toString().match(/\w/)) {
+    return false;
+    }
+    return true;
 };
 
 ZSSEditor.getSelectedTextToLinkify = function() {
