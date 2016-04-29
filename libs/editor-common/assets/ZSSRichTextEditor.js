@@ -411,6 +411,10 @@ ZSSEditor.getSelectedText = function() {
 };
 
 ZSSEditor.canExpandBackward = function(range) {
+    // Can't expand if focus is not a text node
+    if (!range.endContainer.nodeType == 3) {
+        return false;
+    }
     var caretRange = range.cloneRange();
     if (range.startOffset == 0) {
     return false;
@@ -424,6 +428,10 @@ ZSSEditor.canExpandBackward = function(range) {
 };
 
 ZSSEditor.canExpandForward = function(range) {
+    // Can't expand if focus is not a text node
+    if (!range.endContainer.nodeType == 3) {
+        return false;
+    }
     var caretRange = range.cloneRange();
     if (range.endOffset == range.endContainer.length)  {
     return false;
