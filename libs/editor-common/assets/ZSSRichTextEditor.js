@@ -1919,6 +1919,8 @@ ZSSEditor.applyImageSelectionFormatting = function( imageNode ) {
         overlay = overlay + '<div class="edit-overlay-bg"></div>';
     }
 
+    overlay = '<span class="delete-overlay" contenteditable="false"></span>' + overlay;
+
     var html = '<span class="edit-container' + sizeClass + '">' + overlay + '</span>';
    	node.insertAdjacentHTML( 'beforebegin', html );
     var selectionNode = node.previousSibling;
