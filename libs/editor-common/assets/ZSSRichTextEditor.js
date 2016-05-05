@@ -3308,6 +3308,8 @@ ZSSField.prototype.handleTapEvent = function(e) {
                 targetNode.remove();
             }
 
+            this.emptyFieldIfNoContents();
+
             ZSSEditor.currentEditingImage = null;
             return;
         }
