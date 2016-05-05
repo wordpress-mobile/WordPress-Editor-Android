@@ -1905,21 +1905,21 @@ ZSSEditor.updateCurrentImageMeta = function( imageMetaString ) {
 ZSSEditor.applyImageSelectionFormatting = function( imageNode ) {
     var node = ZSSEditor.findImageCaptionNode( imageNode );
 
+    var overlay = '<span class="edit-overlay" contenteditable="false"><span class="edit-content">'
+                  + nativeState.localizedStringEdit + '</span></span>';
+
     var sizeClass = "";
     if ( imageNode.width < 100 || imageNode.height < 100 ) {
         sizeClass = " small";
+    } else {
+        overlay = '<span class="delete-overlay" contenteditable="false"></span>' + overlay;
     }
-
-    var overlay = '<span class="edit-overlay" contenteditable="false"><span class="edit-content">'
-                  + nativeState.localizedStringEdit + '</span></span>';
 
     if (document.body.style.filter == null) {
         // CSS Filters (including blur) are not supported
         // Use dark semi-transparent background for edit overlay instead of blur in this case
         overlay = overlay + '<div class="edit-overlay-bg"></div>';
     }
-
-    overlay = '<span class="delete-overlay" contenteditable="false"></span>' + overlay;
 
     var html = '<span class="edit-container' + sizeClass + '">' + overlay + '</span>';
    	node.insertAdjacentHTML( 'beforebegin', html );
