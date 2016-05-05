@@ -3296,8 +3296,18 @@ ZSSField.prototype.handleTapEvent = function(e) {
         }
 
         if (targetNode.className.indexOf('delete-overlay') != -1) {
-            targetNode.parentNode.parentNode.remove();
-            ZSSEditor.currentEditingImage = null;
+            var parentDiv = targetNode.parentElement.parentElement;
+
+            if (parentDiv && parentDiv.nodeName == NodeName.DIV && parentDiv.parentElement.nodeName != NodeName.BODY) {
+                // Remove the parent div with all its contents, unless it's the contenteditable div itself rather than
+                // a paragraph
+                parentDiv.remove();
+            } else if (targetNode.parentElement.classList.contains('edit-container')) {
+                targetNode.parentElement.remove();
+            } else {
+                targetNode.remove();
+            }
+
             return;
         }
 
