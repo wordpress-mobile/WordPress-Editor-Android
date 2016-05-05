@@ -3295,6 +3295,12 @@ ZSSField.prototype.handleTapEvent = function(e) {
             return;
         }
 
+        if (targetNode.className.indexOf('delete-overlay') != -1) {
+            targetNode.parentNode.parentNode.remove();
+            ZSSEditor.currentEditingImage = null;
+            return;
+        }
+
         if ( ZSSEditor.currentEditingImage ) {
             ZSSEditor.removeImageSelectionFormatting( ZSSEditor.currentEditingImage );
             ZSSEditor.currentEditingImage = null;
