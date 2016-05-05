@@ -1538,7 +1538,7 @@ ZSSEditor.insertLocalVideo = function(videoNodeIdentifier, posterURL) {
     var videoContainerEnd = '</span>';
 
     if (posterURL == '') {
-       posterURL = "wpposter.svg";
+       posterURL = "svg/wpposter.svg";
     }
 
     var image = '<img data-video_wpid="' + videoNodeIdentifier + '" src="' + posterURL + '" alt="" />';
@@ -1788,7 +1788,7 @@ ZSSEditor.applyVideoPressFormattingCallback = function( match ) {
         return match.content;
     }
     var videopressID = match.attrs.numeric[0];
-    var posterSVG = '"wpposter.svg"';
+    var posterSVG = '"svg/wpposter.svg"';
     // The empty 'onclick' is important. It prevents the cursor jumping to the end
     // of the content body when `-webkit-user-select: none` is set and the video is tapped.
     var out = '<video data-wpvideopress="' + videopressID + '" webkit-playsinline src="" preload="metadata" poster='
