@@ -298,7 +298,6 @@ span.video_container.failed.smallFail::after {
 
 .edit-container .delete-overlay {
     position: absolute;
-    transform: translateY(-10%);
     z-index: 100;
     right: 0%;
     height: 60px;
