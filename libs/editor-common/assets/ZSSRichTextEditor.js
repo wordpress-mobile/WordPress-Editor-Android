@@ -1905,8 +1905,8 @@ ZSSEditor.updateCurrentImageMeta = function( imageMetaString ) {
 ZSSEditor.applyImageSelectionFormatting = function( imageNode ) {
     var node = ZSSEditor.findImageCaptionNode( imageNode );
 
-    var overlay = '<span class="edit-overlay" contenteditable="false"><span class="edit-content">'
-                  + nativeState.localizedStringEdit + '</span></span>';
+    var overlay = '<span class="edit-overlay" contenteditable="false"><span class="edit-icon"></span>'
+                  + '<span class="edit-content">' + nativeState.localizedStringEdit + '</span></span>';
 
     var sizeClass = "";
     if ( imageNode.width < 100 || imageNode.height < 100 ) {
@@ -3280,7 +3280,8 @@ ZSSField.prototype.handleTapEvent = function(e) {
             return;
         }
 
-        if (targetNode.className.indexOf('edit-overlay') != -1 || targetNode.className.indexOf('edit-content') != -1) {
+        if (targetNode.className.indexOf('edit-overlay') != -1 || targetNode.className.indexOf('edit-content') != -1
+            || targetNode.className.indexOf('edit-icon') != -1) {
             ZSSEditor.removeImageSelectionFormatting( ZSSEditor.currentEditingImage );
             this.sendImageTappedCallback( ZSSEditor.currentEditingImage );
             return;
