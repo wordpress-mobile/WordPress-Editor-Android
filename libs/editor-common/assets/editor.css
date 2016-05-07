@@ -300,11 +300,16 @@ span.video_container.failed.smallFail::after {
     position: absolute;
     z-index: 100;
     right: 0%;
-    height: 60px;
-    width: 60px;
-    background:url('svg/delete-button.svg') no-repeat center;
-    min-height: 60px;
-    min-width: 60px;
+    height: 24px;
+    width: 24px;
+    min-height: 24px;
+    min-width: 24px;
+    border: 2px solid #FFFFFF;
+    border-radius: 50%;
+    background:url('svg/delete-image.svg') no-repeat center;
+    background-color: rgba(0,0,0,0.1);
+    margin-top: 12px;
+    margin-right: 12px;
 }
 
 .edit-container.small .edit-content {
