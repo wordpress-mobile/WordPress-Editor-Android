@@ -274,18 +274,6 @@ span.video_container.failed.smallFail::after {
     padding:1px;
 }
 
-.edit-container .edit-icon {
-    width: 48px;
-    height: 48px;
-    display: block;
-    margin: auto;
-    z-index: 100;
-    border: 2px solid #FFFFFF;
-    border-radius: 50%;
-    background: url('svg/edit-image.svg') no-repeat center;
-    background-color: rgba(0, 0, 0, 0.1);
-}
-
 /* default. use when images are > 100px w/h */
 .edit-container .edit-overlay {
     position: absolute;
@@ -304,6 +292,18 @@ span.video_container.failed.smallFail::after {
     min-height: 27px;
     min-width: 27px;
     background:url('svg/edit-image-small.svg') no-repeat center top;
+}
+
+.edit-container .edit-icon {
+    width: 48px;
+    height: 48px;
+    display: block;
+    margin: auto;
+    z-index: 100;
+    border: 2px solid #FFFFFF;
+    border-radius: 50%;
+    background: url('svg/edit-image.svg') no-repeat center;
+    background-color: rgba(0, 0, 0, 0.1);
 }
 
 .edit-container .delete-overlay {
