@@ -288,10 +288,9 @@ span.video_container.failed.smallFail::after {
 
 /* use when the image is < 100px w/h */
 .edit-container.small .edit-overlay {
-    height:27px;
-    min-height: 27px;
-    min-width: 27px;
-    background:url('svg/edit-image-small.svg') no-repeat center top;
+    height: 32px;
+    min-height: 32px;
+    min-width: 32px;
 }
 
 .edit-container .edit-icon {
@@ -304,6 +303,15 @@ span.video_container.failed.smallFail::after {
     border-radius: 50%;
     background: url('svg/edit-image.svg') no-repeat center;
     background-color: rgba(0, 0, 0, 0.1);
+}
+
+.edit-container.small .edit-icon {
+    height: 32px;
+    min-height: 32px;
+    min-width: 32px;
+    border: none;
+    border-radius: 0%;
+    background-color: initial;
 }
 
 .edit-container .delete-overlay {
