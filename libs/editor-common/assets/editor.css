@@ -337,7 +337,7 @@ span.video_container.failed.smallFail::after {
 .edit-container .edit-content {
     font-family: sans-serif;
     font-size:20px;
-    font-weight:600;
+    font-weight:500;
     text-align: center;
     text-shadow: 0px 1px 2px rgba(0,0,0,.06);
     color: white;
