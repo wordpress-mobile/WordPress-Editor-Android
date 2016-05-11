@@ -257,6 +257,18 @@ ZSSEditor.onMutationObserved = function(mutations) {
                     ZSSEditor.setRange(parentRange);
                 }
                 ZSSEditor.sendMediaRemovedCallback(mediaIdentifier);
+            } else if (mutation.target.className == "edit-container") {
+                // A media item wrapped in an edit container was deleted manually - remove its container
+                // No callback in this case since it's not an uploading or failed media item
+                var parentRange = ZSSEditor.getParentRangeOfFocusedNode();
+
+                mutation.target.remove();
+
+                if (parentRange != null) {
+                    ZSSEditor.setRange(parentRange);
+                }
+
+                ZSSEditor.getFocusedField().emptyFieldIfNoContents();
             }
         }
     });
@@ -1925,6 +1937,8 @@ ZSSEditor.applyImageSelectionFormatting = function( imageNode ) {
    	node.insertAdjacentHTML( 'beforebegin', html );
     var selectionNode = node.previousSibling;
     selectionNode.appendChild( node );
+
+    this.trackNodeForMutation($(selectionNode));
 }
 
 ZSSEditor.removeImageSelectionFormatting = function( imageNode ) {
