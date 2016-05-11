@@ -156,7 +156,7 @@ span.img_container.failed.largeFail::before {
 
 span.img_container.failed::after {
     position: absolute;
-    padding:27px 0 0 0;
+    padding: 37px 0 0 0;
     top:50%;
     left:0%;
     font-family: sans-serif;
