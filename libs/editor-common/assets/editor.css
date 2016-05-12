@@ -153,7 +153,8 @@ span.img_container.failed.largeFail::before {
     height: 120px;
     width: 120px;
     border: 4px solid #FFFFFF;
-    background:url('svg/retry-image-large.svg') no-repeat center;
+    background: url('svg/retry-image-large.svg') no-repeat center;
+    background-color: rgba(0, 0, 0, 0.1);
 }
 
 span.img_container.failed::after {
@@ -232,7 +233,8 @@ span.video_container.failed.largeFail::before {
     height: 120px;
     width: 120px;
     border: 4px solid #FFFFFF;
-    background:url('svg/retry-image-large.svg') no-repeat center;
+    background: url('svg/retry-image-large.svg') no-repeat center;
+    background-color: rgba(0, 0, 0, 0.1);
 }
 
 span.video_container.failed::after {
