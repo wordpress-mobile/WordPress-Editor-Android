@@ -3297,7 +3297,10 @@ ZSSField.prototype.handleTapEvent = function(e) {
         if (targetNode.className.indexOf('edit-overlay') != -1 || targetNode.className.indexOf('edit-content') != -1
             || targetNode.className.indexOf('edit-icon') != -1) {
             ZSSEditor.removeImageSelectionFormatting( ZSSEditor.currentEditingImage );
+
             this.sendImageTappedCallback( ZSSEditor.currentEditingImage );
+
+            ZSSEditor.currentEditingImage = null;
             return;
         }
 
