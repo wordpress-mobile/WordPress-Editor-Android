@@ -212,32 +212,37 @@ span.video_container.failed::before {
     position: absolute;
     top: 50%;
     -webkit-transform: translateY(-50%);
-    left:0%;
-    text-align: center;
-    color: white;
-    width:100%;
-    height:85px;
-    opacity:1;
-    z-index:10;
+    content:"";
+    left: 0;
+    right: 0;
+    width: 48px;
+    height: 48px;
+    display: block;
+    margin: auto;
+    z-index: 100;
+    border: 2px solid #FFFFFF;
+    border-radius: 50%;
+    background: url('svg/retry-image.svg') no-repeat center;
+    background-color: rgba(0, 0, 0, 0.1);
     -webkit-user-select: none;
     pointer-events: none;
-    content:"";
-    background:url('svg/retry-image.svg') no-repeat center top;
 }
 
 span.video_container.failed.largeFail::before {
-    height:170px;
-    background:url('svg/retry-image-large.svg') no-repeat center top;
+    height: 120px;
+    width: 120px;
+    border: 4px solid #FFFFFF;
+    background:url('svg/retry-image-large.svg') no-repeat center;
 }
 
 span.video_container.failed::after {
     position: absolute;
-    padding:27px 0 0 0;
+    padding: 37px 0 0 0;
     top:50%;
     left:0%;
     font-family: sans-serif;
     font-size:20px;
-    font-weight:600;
+    font-weight: 500;
     text-align: center;
     text-shadow: 0 1px 2px rgba(0,0,0,.06);
     background:clear;
@@ -250,7 +255,7 @@ span.video_container.failed::after {
 }
 
 span.video_container.failed.largeFail::after {
-    padding:62px 0 0 0;
+    padding: 72px 0 0 0;
 }
 
 span.video_container.failed.smallFail::after {
