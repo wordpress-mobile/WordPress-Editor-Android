@@ -150,8 +150,10 @@ span.img_container.failed::before {
 }
 
 span.img_container.failed.largeFail::before {
-    height:170px;
-    background:url('svg/retry-image-large.svg') no-repeat center top;
+    height: 120px;
+    width: 120px;
+    border: 4px solid #FFFFFF;
+    background:url('svg/retry-image-large.svg') no-repeat center;
 }
 
 span.img_container.failed::after {
@@ -174,7 +176,7 @@ span.img_container.failed::after {
 }
 
 span.img_container.failed.largeFail::after {
-    padding:62px 0 0 0;
+    padding: 72px 0 0 0;
 }
 
 span.img_container.failed.smallFail::after {
