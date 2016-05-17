@@ -1887,6 +1887,10 @@ ZSSEditor.pauseAllVideos = function () {
     });
 }
 
+ZSSEditor.clearCurrentEditingImage = function() {
+    ZSSEditor.currentEditingImage = null;
+};
+
 /**
  *  @brief      Updates the currently selected image, replacing its markup with
  *  new markup based on the specified meta data string.
@@ -3299,8 +3303,6 @@ ZSSField.prototype.handleTapEvent = function(e) {
             ZSSEditor.removeImageSelectionFormatting( ZSSEditor.currentEditingImage );
 
             this.sendImageTappedCallback( ZSSEditor.currentEditingImage );
-
-            ZSSEditor.currentEditingImage = null;
             return;
         }
 

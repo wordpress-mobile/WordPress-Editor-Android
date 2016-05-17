@@ -668,6 +668,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             }
         } else if (requestCode == ImageSettingsDialogFragment.IMAGE_SETTINGS_DIALOG_REQUEST_CODE) {
             if (data == null) {
+                mWebView.execJavaScriptFromString("ZSSEditor.clearCurrentEditingImage();");
                 return;
             }
 
