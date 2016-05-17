@@ -668,6 +668,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             }
         } else if (requestCode == ImageSettingsDialogFragment.IMAGE_SETTINGS_DIALOG_REQUEST_CODE) {
             if (data == null) {
+                mWebView.execJavaScriptFromString("ZSSEditor.clearCurrentEditingImage();");
                 return;
             }
 
@@ -1190,7 +1191,11 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 // Request and add an authorization header for HTTPS images
                 // Use https:// when requesting the auth header, in case the image is incorrectly using http://.
                 // If an auth header is returned, force https:// for the actual HTTP request.
-                HashMap<String, String> headerMap = new HashMap<>(mCustomHttpHeaders);
+                HashMap<String, String> headerMap = new HashMap<>();
+                if (mCustomHttpHeaders != null) {
+                    headerMap.putAll(mCustomHttpHeaders);
+                }
+
                 try {
                     final String imageSrc = meta.getString("src");
                     String authHeader = mEditorFragmentListener.onAuthHeaderRequested(UrlUtils.makeHttps(imageSrc));
