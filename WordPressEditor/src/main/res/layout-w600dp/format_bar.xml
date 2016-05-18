@@ -33,7 +33,7 @@
                 android:id="@+id/format_bar_button_media"
                 style="@style/FormatBarButtonTablet"
                 android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:contentDescription="@string/format_bar_description_media"
                 android:background="@drawable/format_bar_button_media_selector"/>
         </LinearLayout>
@@ -47,7 +47,7 @@
                 android:id="@+id/format_bar_button_bold"
                 style="@style/FormatBarButtonTablet"
                 android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:contentDescription="@string/format_bar_description_bold"
                 android:background="@drawable/format_bar_button_bold_selector"
                 android:tag="@string/format_bar_tag_bold"/>
@@ -56,7 +56,7 @@
                 android:id="@+id/format_bar_button_italic"
                 style="@style/FormatBarButtonTablet"
                 android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:contentDescription="@string/format_bar_description_italic"
                 android:background="@drawable/format_bar_button_italic_selector"
                 android:tag="@string/format_bar_tag_italic"/>
@@ -65,7 +65,7 @@
                 android:id="@+id/format_bar_button_strikethrough"
                 style="@style/FormatBarButtonTablet"
                 android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:background="@drawable/format_bar_button_strikethrough_selector"
                 android:tag="@string/format_bar_tag_strikethrough"/>
         </LinearLayout>
@@ -79,7 +79,7 @@
                 android:id="@+id/format_bar_button_link"
                 style="@style/FormatBarButtonTablet"
                 android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:contentDescription="@string/format_bar_description_link"
                 android:background="@drawable/format_bar_button_link_selector"
                 android:tag="@string/format_bar_tag_link"/>
@@ -94,7 +94,7 @@
                 android:id="@+id/format_bar_button_ul"
                 style="@style/FormatBarButtonTablet"
                 android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:contentDescription="@string/format_bar_description_ul"
                 android:background="@drawable/format_bar_button_ul_selector"
                 android:tag="@string/format_bar_tag_unorderedList"/>
@@ -103,7 +103,7 @@
                 android:id="@+id/format_bar_button_ol"
                 style="@style/FormatBarButtonTablet"
                 android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:contentDescription="@string/format_bar_description_ol"
                 android:background="@drawable/format_bar_button_ol_selector"
                 android:tag="@string/format_bar_tag_orderedList"/>
@@ -112,7 +112,7 @@
                 android:id="@+id/format_bar_button_quote"
                 style="@style/FormatBarButtonTablet"
                 android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:contentDescription="@string/format_bar_description_quote"
                 android:background="@drawable/format_bar_button_quote_selector"
                 android:tag="@string/format_bar_tag_blockquote"/>
@@ -127,7 +127,7 @@
                 android:id="@+id/format_bar_button_html"
                 style="@style/FormatBarButtonTablet"
                 android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:contentDescription="@string/format_bar_description_html"
                 android:background="@drawable/format_bar_button_html_selector"/>
         </LinearLayout>
