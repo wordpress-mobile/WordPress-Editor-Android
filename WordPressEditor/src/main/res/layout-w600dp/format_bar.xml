@@ -27,7 +27,8 @@
         <LinearLayout
             style="@style/FormatBarTabletGroup"
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent"
+            android:gravity="center">
 
             <org.wordpress.android.editor.RippleToggleButton
                 android:id="@+id/format_bar_button_media"
@@ -41,7 +42,8 @@
         <LinearLayout
             style="@style/FormatBarTabletGroup"
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent"
+            android:gravity="center">
 
             <org.wordpress.android.editor.RippleToggleButton
                 android:id="@+id/format_bar_button_bold"
@@ -73,7 +75,8 @@
         <LinearLayout
             style="@style/FormatBarTabletGroup"
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent"
+            android:gravity="center">
 
             <org.wordpress.android.editor.RippleToggleButton
                 android:id="@+id/format_bar_button_link"
@@ -88,7 +91,8 @@
         <LinearLayout
             style="@style/FormatBarTabletGroup"
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent"
+            android:gravity="center">
 
             <org.wordpress.android.editor.RippleToggleButton
                 android:id="@+id/format_bar_button_ul"
@@ -121,7 +125,8 @@
         <LinearLayout
             style="@style/FormatBarTabletGroup"
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent"
+            android:gravity="center">
 
             <org.wordpress.android.editor.RippleToggleButton
                 android:id="@+id/format_bar_button_html"
