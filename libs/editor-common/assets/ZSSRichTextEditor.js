@@ -3256,14 +3256,8 @@ ZSSField.prototype.handleTapEvent = function(e) {
         if (targetNode.nodeName.toLowerCase() == 'a') {
             var arguments = ['url=' + encodeURIComponent(targetNode.href),
                              'title=' + encodeURIComponent(targetNode.innerHTML)];
-
             var joinedArguments = arguments.join(defaultCallbackSeparator);
-
-            var thisObj = this;
-
-            // WORKAROUND: force the event to become sort of "after-tap" through setTimeout()
-            //
-            setTimeout(function() { thisObj.callback('callback-link-tap', joinedArguments);}, 500);
+            this.callback('callback-link-tap', joinedArguments);
         }
 
         if (targetNode.nodeName.toLowerCase() == 'img') {
