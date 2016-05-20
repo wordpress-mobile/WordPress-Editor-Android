@@ -3289,6 +3289,8 @@ ZSSField.prototype.handleTapEvent = function(e) {
             ZSSEditor.currentEditingImage = targetNode;
             ZSSEditor.applyImageSelectionFormatting( targetNode );
 
+
+            ZSSEditor.giveFocusToElement(targetNode, 0);
             return;
         }
 
