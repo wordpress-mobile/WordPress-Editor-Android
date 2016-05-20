@@ -677,7 +677,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
                 return;
             }
 
-            final String imageMeta = extras.getString("imageMeta");
+            final String imageMeta = Utils.escapeQuotes(StringUtils.notNullStr(extras.getString("imageMeta")));
             final int imageRemoteId = extras.getInt("imageRemoteId");
             final boolean isFeaturedImage = extras.getBoolean("isFeatured");
 
