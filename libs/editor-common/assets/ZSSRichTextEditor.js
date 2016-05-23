@@ -417,6 +417,19 @@ ZSSEditor.giveFocusToElement = function(element, offset) {
     selection.addRange(range);
 };
 
+ZSSEditor.setFocusAfterElement = function(element) {
+    var selection = window.getSelection();
+
+    if (selection.rangeCount) {
+        var range = document.createRange();
+
+        range.setStartAfter(element);
+        range.setEndAfter(element);
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
+};
+
 ZSSEditor.getSelectedText = function() {
 	var selection = window.getSelection();
 	return selection.toString();
@@ -3263,7 +3276,7 @@ ZSSField.prototype.handleTapEvent = function(e) {
         if (targetNode.nodeName.toLowerCase() == 'img') {
             // If the image is uploading, or is a local image do not select it.
             if ( targetNode.dataset.wpid || targetNode.dataset.video_wpid ) {
-                this.sendImageTappedCallback( targetNode );
+                this.sendImageTappedCallback(targetNode);
                 return;
             }
 
@@ -3275,19 +3288,21 @@ ZSSField.prototype.handleTapEvent = function(e) {
 
             // Is the tapped image the image we're editing?
             if ( targetNode == ZSSEditor.currentEditingImage ) {
-                ZSSEditor.removeImageSelectionFormatting( targetNode );
-                this.sendImageTappedCallback( targetNode );
+                ZSSEditor.removeImageSelectionFormatting(targetNode);
+                this.sendImageTappedCallback(targetNode);
                 return;
             }
 
             // If there is a selected image, deselect it. A different image was tapped.
             if ( ZSSEditor.currentEditingImage ) {
-                ZSSEditor.removeImageSelectionFormatting( ZSSEditor.currentEditingImage );
+                ZSSEditor.removeImageSelectionFormatting(ZSSEditor.currentEditingImage);
             }
 
             // Format and flag the image as selected.
             ZSSEditor.currentEditingImage = targetNode;
-            ZSSEditor.applyImageSelectionFormatting( targetNode );
+            ZSSEditor.applyImageSelectionFormatting(targetNode);
+
+            ZSSEditor.setFocusAfterElement(targetNode);
 
             return;
         }
