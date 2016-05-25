@@ -439,3 +439,8 @@ div.field[placeholderText][contenteditable=true]:empty:focus:before {
     padding-left: 80px;
     padding-right: 80px;
 }
+
+.more-tag {
+  border: none;
+  border-top: 2px dashed grey;
+}
