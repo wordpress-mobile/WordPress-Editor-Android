@@ -441,6 +441,10 @@ div.field[placeholderText][contenteditable=true]:empty:focus:before {
 }
 
 .more-tag {
-  border: none;
-  border-top: 2px dashed grey;
+  border: 0;
+  width: 96%;
+  height: 16px;
+  display: block;
+  background: transparent url('svg/more-2x.png') repeat-y scroll center center;
+  background-size: 1900px 20px;
 }
