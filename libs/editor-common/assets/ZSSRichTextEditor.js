@@ -2439,8 +2439,8 @@ ZSSEditor.applyVisualFormatting  = function( html ) {
     str = wp.shortcode.replace( 'video', str, ZSSEditor.applyVideoFormattingCallback );
 
     // More tag
-    str = str.replace(/<!--more(.*?)-->/igm, "<span class=\"more-tag\" wp-more-data=\"$1\"></span>")
-    str = str.replace(/<!--nextpage-->/igm, "<span class=\"nextpage-tag\"></span>")
+    str = str.replace(/<!--more(.*?)-->/igm, "<hr class=\"more-tag\" wp-more-data=\"$1\">")
+    str = str.replace(/<!--nextpage-->/igm, "<hr class=\"nextpage-tag\">")
     return str;
 }
 
@@ -2460,8 +2460,8 @@ ZSSEditor.removeVisualFormatting = function( html ) {
     str = ZSSEditor.replaceVideosForShortcode( str );
 
     // More tag
-    str = str.replace(/<span class="more-tag" wp-more-data="(.*?)"><\/span>/igm, "<!--more$1-->")
-    str = str.replace(/<span class="nextpage-tag"><\/span>/igm, "<!--nextpage-->")
+    str = str.replace(/<hr class="more-tag" wp-more-data="(.*?)">/igm, "<!--more$1-->")
+    str = str.replace(/<hr class="nextpage-tag">/igm, "<!--nextpage-->")
     return str;
 };
 
