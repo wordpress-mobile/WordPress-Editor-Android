@@ -238,7 +238,7 @@ ZSSEditor.onMutationObserved = function(mutations) {
             if (!removedNode.attributes) {
                 // Fix for https://github.com/wordpress-mobile/WordPress-Editor-Android/issues/394
                 // If removedNode doesn't have an attributes property, it's not of type Node and we shouldn't proceed
-                return;
+                continue;
             }
             if (ZSSEditor.isMediaContainerNode(removedNode)) {
                 // An uploading or failed container node was deleted manually - notify native
