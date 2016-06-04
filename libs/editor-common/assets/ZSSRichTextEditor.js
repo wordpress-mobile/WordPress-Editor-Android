@@ -3413,15 +3413,19 @@ ZSSField.prototype.afterKeyDownEvent = function(beforeHTML, e) {
     var range = selection.getRangeAt(0).cloneRange();
     var focusedNode = range.startContainer;
 
-
     // Correct situation where autocorrect can remove blockquotes at start of document
     // https://github.com/wordpress-mobile/WordPress-Editor-Android/issues/385
     if (htmlWasModified) {
         var blockquoteMatch = beforeHTML.match('^<blockquote><div>(.*)</div></blockquote>');
-        if (blockquoteMatch != null) {
-            if (afterHTML.match('<blockquote>') == null && afterHTML.match('^<div>(.*?)</div>') != null) {
+
+        if (blockquoteMatch != null && afterHTML.match('<blockquote>') == null) {
+            // Blockquote at start of post was removed
+            var newParagraphMatch = afterHTML.match('^<div>(.*?)</div><div><br></div>');
+
+            if (newParagraphMatch != null) {
+                // The blockquote was removed in a newline operation
                 var originalText = blockquoteMatch[1];
-                var newText = afterHTML.match('^<div>(.*?)</div>')[1];
+                var newText = newParagraphMatch[1];
 
                 if (originalText != newText) {
                     // Blockquote was removed and its inner text changed - this points to autocorrect removing the
