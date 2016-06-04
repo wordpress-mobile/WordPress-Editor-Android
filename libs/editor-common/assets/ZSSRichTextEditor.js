@@ -3407,13 +3407,15 @@ ZSSField.prototype.handlePasteEvent = function(e) {
  *  @brief      Fires after 'keydown' events, when the field contents have already been modified
  */
 ZSSField.prototype.afterKeyDownEvent = function(beforeHTML, e) {
-    var htmlWasModified = (beforeHTML != e.target.innerHTML);
+    var afterHTML = e.target.innerHTML;
+    var htmlWasModified = (beforeHTML != afterHTML);
 
     var selection = document.getSelection();
     var range = selection.getRangeAt(0).cloneRange();
     var focusedNode = range.startContainer;
 
-    // Correct situation where autocorrect can remove blockquotes at start of document
+    // Correct situation where autocorrect can remove blockquotes at start of document, either when pressing enter
+    // inside a blockquote, or pressing backspace immediately after one
     // https://github.com/wordpress-mobile/WordPress-Editor-Android/issues/385
     if (htmlWasModified) {
         var blockquoteMatch = beforeHTML.match('^<blockquote><div>(.*)</div></blockquote>');
@@ -3432,6 +3434,10 @@ ZSSField.prototype.afterKeyDownEvent = function(beforeHTML, e) {
                     // blockquote when changing the text in the previous paragraph, so we replace the blockquote
                     ZSSEditor.turnBlockquoteOnForNode(focusedNode.parentNode.firstChild);
                 }
+            } else if (afterHTML.match('^<div>(.*?)</div>') != null) {
+                // The blockquote was removed in a backspace operation
+                ZSSEditor.turnBlockquoteOnForNode(focusedNode.parentNode);
+                ZSSEditor.setFocusAfterElement(focusedNode);
             }
         }
     }
