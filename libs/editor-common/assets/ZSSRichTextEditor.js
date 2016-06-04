@@ -3431,13 +3431,25 @@ ZSSField.prototype.afterKeyDownEvent = function(beforeHTML, e) {
         // Give focus to new div
         var newFocusElement = focusedNode.firstChild;
         ZSSEditor.giveFocusToElement(newFocusElement, 1);
-    } else if (focusedNode.nodeName == NodeName.DIV && focusedNode.parentNode.nodeName == NodeName.BLOCKQUOTE
-        && focusedNode.parentNode.previousSibling == null && focusedNode.parentNode.childNodes.length == 1
-        && focusedNodeIsEmpty) {
-        // When a post begins with a blockquote, and there's content after that blockquote, backspacing inside that
-        // blockquote will work until the blockquote is empty. After that, backspace will have no effect
-        // This fix identifies that situation and makes the call to setBlockquote() to toggle off the blockquote
-        ZSSEditor.setBlockquote();
+    } else if (focusedNode.nodeName == NodeName.DIV && focusedNode.parentNode.nodeName == NodeName.BLOCKQUOTE) {
+        if (focusedNode.parentNode.previousSibling == null && focusedNode.parentNode.childNodes.length == 1
+            && focusedNodeIsEmpty) {
+            // When a post begins with a blockquote, and there's content after that blockquote, backspacing inside that
+            // blockquote will work until the blockquote is empty. After that, backspace will have no effect
+            // This fix identifies that situation and makes the call to setBlockquote() to toggle off the blockquote
+            ZSSEditor.setBlockquote();
+        } else {
+            // Remove extraneous break tags sometimes added to blockquotes by autocorrect actions
+            // https://github.com/wordpress-mobile/WordPress-Editor-Android/issues/385
+            var blockquoteChildNodes = focusedNode.parentNode.childNodes;
+
+            for (var i = 0; i < blockquoteChildNodes.length; i++) {
+                var childNode = blockquoteChildNodes[i];
+                if (childNode.nodeName == NodeName.BR) {
+                    childNode.parentNode.removeChild(childNode);
+                }
+            }
+        }
     }
 };
 
