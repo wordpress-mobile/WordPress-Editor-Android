@@ -3580,10 +3580,19 @@ ZSSField.prototype.wrapCaretInParagraphIfNecessary = function() {
     // won't properly wrap the text once it's entered
     // In that case, remove the paragraph tags and re-apply them, wrapping around the newly entered text
     var fixNewPostBlockquoteBug = (closerParentNode.nodeName == NodeName.DIV
-                                       && closerParentNode.parentNode.nodeName == NodeName.BLOCKQUOTE
-                                       && closerParentNode.innerHTML.length == 0);
+            && closerParentNode.parentNode.nodeName == NodeName.BLOCKQUOTE
+            && closerParentNode.innerHTML.length == 0);
 
-    if (parentNodeShouldBeParagraph || fixNewPostBlockquoteBug) {
+    // On API 19 and below, identifying the situation where the blockquote bug for new posts occurs works a little
+    // differently than above, with the focused node being the parent blockquote rather than the empty div inside it.
+    // We still remove the empty div so it can be re-applied correctly to the newly entered text, but we select it
+    // differently
+    // https://github.com/wordpress-mobile/WordPress-Editor-Android/issues/398
+    var fixNewPostBlockquoteBugOldApi = (closerParentNode.nodeName == NodeName.BLOCKQUOTE
+            && closerParentNode.parentNode.nodeName == NodeName.DIV
+            && closerParentNode.innerHTML == '<div></div>');
+
+    if (parentNodeShouldBeParagraph || fixNewPostBlockquoteBug || fixNewPostBlockquoteBugOldApi) {
         var selection = window.getSelection();
 
         if (selection && selection.rangeCount > 0) {
@@ -3592,7 +3601,10 @@ ZSSField.prototype.wrapCaretInParagraphIfNecessary = function() {
             if (range.startContainer == range.endContainer) {
                 if (fixNewPostBlockquoteBug) {
                     closerParentNode.parentNode.removeChild(closerParentNode);
+                } else if (fixNewPostBlockquoteBugOldApi) {
+                    closerParentNode.removeChild(closerParentNode.firstChild);
                 }
+
                 var paragraph = document.createElement("div");
                 var textNode = document.createTextNode("&#x200b;");
 
