@@ -703,12 +703,28 @@ ZSSEditor.setBlockquote = function() {
 
         var childNodes = this.getChildNodesIntersectingRange(ancestorElement, range);
 
+        // On older APIs, the rangy selection node is targeted when turning off empty blockquotes at the start of a post
+        // In that case, add the empty DIV element next to the rangy selection to the childNodes array to correctly
+        // turn the blockquote off
+        // https://github.com/wordpress-mobile/WordPress-Editor-Android/issues/401
+        var nextChildNode = childNodes[childNodes.length-1].nextSibling;
+        if (nextChildNode && nextChildNode.nodeName == NodeName.DIV && nextChildNode.innerHTML == "") {
+            childNodes.push(nextChildNode);
+        }
+
         if (childNodes && childNodes.length) {
             this.toggleBlockquoteForSpecificChildNodes(ancestorElement, childNodes);
         }
     }
 
     rangy.restoreSelection(savedSelection);
+
+    // When turning off an empty blockquote in an empty post, ensure there aren't any leftover empty paragraph tags
+    // https://github.com/wordpress-mobile/WordPress-Editor-Android/issues/401
+    var currentContenteditableDiv = ZSSEditor.focusedField.getWrappedDomNode();
+    if (currentContenteditableDiv.children.length == 1 && currentContenteditableDiv.firstChild.innerHTML == "") {
+        ZSSEditor.focusedField.emptyFieldIfNoContents();
+    }
 
     if (sendStyles) {
         ZSSEditor.sendEnabledStyles();
