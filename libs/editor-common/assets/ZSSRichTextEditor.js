@@ -688,7 +688,6 @@ ZSSEditor.setBlockquote = function() {
     var selection = document.getSelection();
     var range = selection.getRangeAt(0).cloneRange();
     var sendStyles = false;
-    var doEmptyFieldCleanup = false;
 
     // Make sure text being wrapped in blockquotes is inside paragraph tags
     // (should be <blockquote><paragraph>contents</paragraph></blockquote>)
@@ -711,7 +710,6 @@ ZSSEditor.setBlockquote = function() {
         var nextChildNode = childNodes[childNodes.length-1].nextSibling;
         if (nextChildNode && nextChildNode.nodeName == NodeName.DIV && nextChildNode.innerHTML == "") {
             childNodes.push(nextChildNode);
-            doEmptyFieldCleanup = true;
         }
 
         if (childNodes && childNodes.length) {
@@ -723,7 +721,8 @@ ZSSEditor.setBlockquote = function() {
 
     // When turning off an empty blockquote in an empty post, ensure there aren't any leftover empty paragraph tags
     // https://github.com/wordpress-mobile/WordPress-Editor-Android/issues/401
-    if (doEmptyFieldCleanup) {
+    var currentContenteditableDiv = ZSSEditor.focusedField.getWrappedDomNode();
+    if (currentContenteditableDiv.children.length == 1 && currentContenteditableDiv.firstChild.innerHTML == "") {
         ZSSEditor.focusedField.emptyFieldIfNoContents();
     }
 
