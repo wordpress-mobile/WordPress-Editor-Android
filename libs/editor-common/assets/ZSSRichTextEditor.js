@@ -3407,11 +3407,40 @@ ZSSField.prototype.handlePasteEvent = function(e) {
  *  @brief      Fires after 'keydown' events, when the field contents have already been modified
  */
 ZSSField.prototype.afterKeyDownEvent = function(beforeHTML, e) {
-    var htmlWasModified = (beforeHTML != e.target.innerHTML);
+    var afterHTML = e.target.innerHTML;
+    var htmlWasModified = (beforeHTML != afterHTML);
 
     var selection = document.getSelection();
     var range = selection.getRangeAt(0).cloneRange();
     var focusedNode = range.startContainer;
+
+    // Correct situation where autocorrect can remove blockquotes at start of document, either when pressing enter
+    // inside a blockquote, or pressing backspace immediately after one
+    // https://github.com/wordpress-mobile/WordPress-Editor-Android/issues/385
+    if (htmlWasModified) {
+        var blockquoteMatch = beforeHTML.match('^<blockquote><div>(.*)</div></blockquote>');
+
+        if (blockquoteMatch != null && afterHTML.match('<blockquote>') == null) {
+            // Blockquote at start of post was removed
+            var newParagraphMatch = afterHTML.match('^<div>(.*?)</div><div><br></div>');
+
+            if (newParagraphMatch != null) {
+                // The blockquote was removed in a newline operation
+                var originalText = blockquoteMatch[1];
+                var newText = newParagraphMatch[1];
+
+                if (originalText != newText) {
+                    // Blockquote was removed and its inner text changed - this points to autocorrect removing the
+                    // blockquote when changing the text in the previous paragraph, so we replace the blockquote
+                    ZSSEditor.turnBlockquoteOnForNode(focusedNode.parentNode.firstChild);
+                }
+            } else if (afterHTML.match('^<div>(.*?)</div>') != null) {
+                // The blockquote was removed in a backspace operation
+                ZSSEditor.turnBlockquoteOnForNode(focusedNode.parentNode);
+                ZSSEditor.setFocusAfterElement(focusedNode);
+            }
+        }
+    }
 
     var focusedNodeIsEmpty = (focusedNode.innerHTML != undefined
         && (focusedNode.innerHTML.length == 0 || focusedNode.innerHTML == '<br>'));
@@ -3431,13 +3460,25 @@ ZSSField.prototype.afterKeyDownEvent = function(beforeHTML, e) {
         // Give focus to new div
         var newFocusElement = focusedNode.firstChild;
         ZSSEditor.giveFocusToElement(newFocusElement, 1);
-    } else if (focusedNode.nodeName == NodeName.DIV && focusedNode.parentNode.nodeName == NodeName.BLOCKQUOTE
-        && focusedNode.parentNode.previousSibling == null && focusedNode.parentNode.childNodes.length == 1
-        && focusedNodeIsEmpty) {
-        // When a post begins with a blockquote, and there's content after that blockquote, backspacing inside that
-        // blockquote will work until the blockquote is empty. After that, backspace will have no effect
-        // This fix identifies that situation and makes the call to setBlockquote() to toggle off the blockquote
-        ZSSEditor.setBlockquote();
+    } else if (focusedNode.nodeName == NodeName.DIV && focusedNode.parentNode.nodeName == NodeName.BLOCKQUOTE) {
+        if (focusedNode.parentNode.previousSibling == null && focusedNode.parentNode.childNodes.length == 1
+            && focusedNodeIsEmpty) {
+            // When a post begins with a blockquote, and there's content after that blockquote, backspacing inside that
+            // blockquote will work until the blockquote is empty. After that, backspace will have no effect
+            // This fix identifies that situation and makes the call to setBlockquote() to toggle off the blockquote
+            ZSSEditor.setBlockquote();
+        } else {
+            // Remove extraneous break tags sometimes added to blockquotes by autocorrect actions
+            // https://github.com/wordpress-mobile/WordPress-Editor-Android/issues/385
+            var blockquoteChildNodes = focusedNode.parentNode.childNodes;
+
+            for (var i = 0; i < blockquoteChildNodes.length; i++) {
+                var childNode = blockquoteChildNodes[i];
+                if (childNode.nodeName == NodeName.BR) {
+                    childNode.parentNode.removeChild(childNode);
+                }
+            }
+        }
     }
 };
 
