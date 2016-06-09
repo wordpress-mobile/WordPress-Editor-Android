@@ -1239,6 +1239,7 @@ ZSSEditor.insertImage = function(url, remoteId, alt) {
     this.insertHTMLWrappedInParagraphTags(html);
 
     this.sendEnabledStyles();
+    this.callback("callback-action-finished");
 };
 
 /**
@@ -1550,6 +1551,7 @@ ZSSEditor.insertVideo = function(videoURL, posterURL, videopressID) {
     this.insertHTMLWrappedInParagraphTags(html);
 
     this.sendEnabledStyles();
+    this.callback("callback-action-finished");
 };
 
 /**
@@ -1977,9 +1979,16 @@ ZSSEditor.applyImageSelectionFormatting = function( imageNode ) {
     selectionNode.appendChild( node );
 
     this.trackNodeForMutation($(selectionNode));
+
+    return selectionNode;
 }
 
 ZSSEditor.removeImageSelectionFormatting = function( imageNode ) {
+    if (!$('#zss_field_content')[0].contains(imageNode)) {
+        // The image node has already been removed from the document
+        return;
+    }
+
     var node = ZSSEditor.findImageCaptionNode( imageNode );
     if ( !node.parentNode || node.parentNode.className.indexOf( "edit-container" ) == -1 ) {
         return;
@@ -3341,9 +3350,14 @@ ZSSField.prototype.handleTapEvent = function(e) {
 
             // Format and flag the image as selected.
             ZSSEditor.currentEditingImage = targetNode;
-            ZSSEditor.applyImageSelectionFormatting(targetNode);
+            var containerNode = ZSSEditor.applyImageSelectionFormatting(targetNode);
 
-            ZSSEditor.setFocusAfterElement(targetNode);
+            // Move the cursor to the tapped image, to prevent scrolling to the bottom of the document when the
+            // keyboard comes up. On API 19 and below does not work properly, with the image sometimes getting removed
+            // from the post instead of the edit overlay being displayed
+            if (nativeState.androidApiLevel > 19) {
+                ZSSEditor.setFocusAfterElement(containerNode);
+            }
 
             return;
         }
