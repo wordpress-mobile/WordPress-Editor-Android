@@ -1830,6 +1830,13 @@ ZSSEditor.replaceVideosForShortcode = function ( html) {
     return str;
 }
 
+ZSSEditor.removeVideoContainers = function(html) {
+    var containerRegex = /<span class="edit-container">(?:<span class="delete-overlay"[^<>]*><\/span>)?(\[[^<>]*)<\/span>/g;
+    var str = html.replace(containerRegex, ZSSEditor.removeVideoContainerCallback);
+
+    return str;
+}
+
 ZSSEditor.removeVideoPressVisualFormattingCallback = function( match, content ) {
     return "[wpvideo " + content + "]";
 }
@@ -1860,6 +1867,10 @@ ZSSEditor.removeVideoVisualFormattingCallback = function( match, content ) {
     var shortcode = videoElement.outerHTML.replace(/</g, "[");
     shortcode = shortcode.replace(/>/g, "]");
     return shortcode;
+}
+
+ZSSEditor.removeVideoContainerCallback = function( match, content ) {
+    return content;
 }
 
 ZSSEditor.applyVideoPressFormattingCallback = function( match ) {
@@ -2519,6 +2530,7 @@ ZSSEditor.removeVisualFormatting = function( html ) {
     str = ZSSEditor.removeCaptionFormatting( str );
     str = ZSSEditor.replaceVideoPressVideosForShortcode( str );
     str = ZSSEditor.replaceVideosForShortcode( str );
+    str = ZSSEditor.removeVideoContainers( str );
 
     // More tag
     str = str.replace(/<hr class="more-tag" wp-more-data="(.*?)">/igm, "<!--more$1-->")
