@@ -1536,7 +1536,8 @@ ZSSEditor.removeAllFailedMediaUploads = function() {
  *
  */
 ZSSEditor.insertVideo = function(videoURL, posterURL, videopressID) {
-    var html = '<video webkit-playsinline src="' + videoURL + '" onclick="" controls="controls" preload="metadata"';
+    var videoId = Date.now();
+    var html = '<video id=' + videoId + ' webkit-playsinline src="' + videoURL + '" onclick="" controls="controls" preload="metadata"';
 
     if (posterURL != '') {
         html += ' poster="' + posterURL + '"';
@@ -1549,6 +1550,11 @@ ZSSEditor.insertVideo = function(videoURL, posterURL, videopressID) {
     html += '></video>';
 
     this.insertHTMLWrappedInParagraphTags(html);
+
+    // Wrap video in edit-container node for a permanent delete button overlay
+    var videoNode = $('video[id=' + videoId + ']')[0];
+    this.applyEditContainer(videoNode);
+    videoNode.removeAttribute('id');
 
     this.sendEnabledStyles();
     this.callback("callback-action-finished");
@@ -1658,11 +1664,7 @@ ZSSEditor.replaceLocalVideoWithRemoteVideo = function(videoNodeIdentifier, remot
         containerNode.replaceWith(videoNode);
     }
 
-    // Wrap video in edit-container node for a permanent delete button overlay
-    var containerHtml = '<span class="edit-container"><span class="delete-overlay" contenteditable="false"></span></span>';
-    videoNode.insertAdjacentHTML('beforebegin', containerHtml);
-    var selectionNode = videoNode.previousSibling;
-    selectionNode.appendChild(videoNode);
+    this.applyEditContainer(videoNode);
 
     var joinedArguments = ZSSEditor.getJoinedFocusedFieldIdAndCaretArguments();
     ZSSEditor.callback("callback-input", joinedArguments);
@@ -1789,6 +1791,19 @@ ZSSEditor.removeVideo = function(videoNodeIdentifier) {
         videoContainerNode.remove();
     }
 };
+
+/**
+ *  @brief      Wrap the video in an edit-container with a delete button overlay.
+ */
+ZSSEditor.applyEditContainer = function(videoNode) {
+    var containerHtml = '<span class="edit-container"><span class="delete-overlay" contenteditable="false"></span></span>';
+    videoNode.insertAdjacentHTML('beforebegin', containerHtml);
+
+    var selectionNode = videoNode.previousSibling;
+    selectionNode.appendChild(videoNode);
+
+    return selectionNode;
+}
 
 ZSSEditor.replaceVideoPressVideosForShortcode = function ( html) {
     // call methods to restore any transformed content from its visual presentation to its source code.
