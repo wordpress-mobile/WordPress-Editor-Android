@@ -1672,7 +1672,7 @@ ZSSEditor.replaceLocalVideoWithRemoteVideo = function(videoNodeIdentifier, remot
         containerNode.replaceWith(videoNode);
     }
 
-    this.applyEditContainer(videoNode);
+    var selectionNode = this.applyEditContainer(videoNode);
 
     ZSSEditor.trackNodeForMutation($(selectionNode));
 
