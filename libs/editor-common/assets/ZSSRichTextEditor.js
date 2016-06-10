@@ -2545,19 +2545,21 @@ ZSSEditor.sendEnabledStyles = function(e) {
         // Find all relevant parent tags
         var parentTags = ZSSEditor.parentTags();
 
-        for (var i = 0; i < parentTags.length; i++) {
-            var currentNode = parentTags[i];
+        if (parentTags != null) {
+            for (var i = 0; i < parentTags.length; i++) {
+                var currentNode = parentTags[i];
 
-            if (currentNode.nodeName.toLowerCase() == 'a') {
-                ZSSEditor.currentEditingLink = currentNode;
+                if (currentNode.nodeName.toLowerCase() == 'a') {
+                    ZSSEditor.currentEditingLink = currentNode;
 
-                var title = encodeURIComponent(currentNode.text);
-                var href = encodeURIComponent(currentNode.href);
+                    var title = encodeURIComponent(currentNode.text);
+                    var href = encodeURIComponent(currentNode.href);
 
-                items.push('link-title:' + title);
-                items.push('link:' + href);
-            } else if (currentNode.nodeName == NodeName.BLOCKQUOTE) {
-                items.push('blockquote');
+                    items.push('link-title:' + title);
+                    items.push('link:' + href);
+                } else if (currentNode.nodeName == NodeName.BLOCKQUOTE) {
+                    items.push('blockquote');
+                }
             }
         }
 
