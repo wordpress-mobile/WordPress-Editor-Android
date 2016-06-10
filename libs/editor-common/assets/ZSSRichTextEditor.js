@@ -1884,7 +1884,10 @@ ZSSEditor.applyVideoPressFormattingCallback = function( match ) {
     var out = '<video data-wpvideopress="' + videopressID + '" webkit-playsinline src="" preload="metadata" poster='
            + posterSVG +' onclick="" onerror="ZSSEditor.sendVideoPressInfoRequest(\'' + videopressID +'\');"></video>';
 
-    out = out + '<br>';
+    // Wrap video in edit-container node for a permanent delete button overlay
+    var containerStart = '<span class="edit-container"><span class="delete-overlay" contenteditable="false"></span>';
+    out = containerStart + out + '</span><br>';
+
     return out;
 }
 
@@ -1919,7 +1922,11 @@ ZSSEditor.applyVideoFormattingCallback = function( match ) {
         out += ' preload="metadata"';
     }
 
-    out += ' onclick="" controls="controls"></video><br>';
+    out += ' onclick="" controls="controls"></video>';
+
+    // Wrap video in edit-container node for a permanent delete button overlay
+    var containerStart = '<span class="edit-container"><span class="delete-overlay" contenteditable="false"></span>';
+    out = containerStart + out + '</span><br>';
 
     return out;
 }
