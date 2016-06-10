@@ -1562,6 +1562,8 @@ ZSSEditor.insertVideo = function(videoURL, posterURL, videopressID) {
         zeroWidthNode.parentNode.removeChild(zeroWidthNode);
     }
 
+    ZSSEditor.trackNodeForMutation($(selectionNode));
+
     this.sendEnabledStyles();
     this.callback("callback-action-finished");
 };
@@ -1671,6 +1673,8 @@ ZSSEditor.replaceLocalVideoWithRemoteVideo = function(videoNodeIdentifier, remot
     }
 
     this.applyEditContainer(videoNode);
+
+    ZSSEditor.trackNodeForMutation($(selectionNode));
 
     var joinedArguments = ZSSEditor.getJoinedFocusedFieldIdAndCaretArguments();
     ZSSEditor.callback("callback-input", joinedArguments);
