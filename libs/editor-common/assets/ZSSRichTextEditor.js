@@ -1549,12 +1549,18 @@ ZSSEditor.insertVideo = function(videoURL, posterURL, videopressID) {
 
     html += '></video>';
 
-    this.insertHTMLWrappedInParagraphTags(html);
+    this.insertHTMLWrappedInParagraphTags('&#x200b;' + html);
 
     // Wrap video in edit-container node for a permanent delete button overlay
     var videoNode = $('video[id=' + videoId + ']')[0];
-    this.applyEditContainer(videoNode);
+    var selectionNode = this.applyEditContainer(videoNode);
     videoNode.removeAttribute('id');
+
+    // Remove the zero-width space node (it's not needed now that the paragraph-wrapped video is in place)
+    var zeroWidthNode = selectionNode.previousSibling;
+    if (zeroWidthNode != null && zeroWidthNode.nodeType == 3) {
+        zeroWidthNode.parentNode.removeChild(zeroWidthNode);
+    }
 
     this.sendEnabledStyles();
     this.callback("callback-action-finished");
