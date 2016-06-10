@@ -3819,6 +3819,12 @@ ZSSField.prototype.setHTML = function(html) {
     }
 
     this.wrappedObject.html(mutatedHTML);
+
+    // Track video container nodes for mutation
+    var videoNodes = $('span.edit-container > video');
+    for (var i = 0; i < videoNodes.length; i++) {
+        ZSSEditor.trackNodeForMutation($(videoNodes[i].parentNode));
+    }
 };
 
 // MARK: - Placeholder
