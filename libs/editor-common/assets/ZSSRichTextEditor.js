@@ -1658,6 +1658,12 @@ ZSSEditor.replaceLocalVideoWithRemoteVideo = function(videoNodeIdentifier, remot
         containerNode.replaceWith(videoNode);
     }
 
+    // Wrap video in edit-container node for a permanent delete button overlay
+    var containerHtml = '<span class="edit-container"><span class="delete-overlay" contenteditable="false"></span></span>';
+    videoNode.insertAdjacentHTML('beforebegin', containerHtml);
+    var selectionNode = videoNode.previousSibling;
+    selectionNode.appendChild(videoNode);
+
     var joinedArguments = ZSSEditor.getJoinedFocusedFieldIdAndCaretArguments();
     ZSSEditor.callback("callback-input", joinedArguments);
     // We invoke the sendVideoReplacedCallback with a delay to avoid for
