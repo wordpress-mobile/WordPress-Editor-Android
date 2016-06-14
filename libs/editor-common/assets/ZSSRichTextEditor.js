@@ -1947,11 +1947,11 @@ ZSSEditor.setVideoPressLinks = function(videopressID, videoURL, posterURL ) {
         return;
     }
 
+    // It's safest to drop the onError now, to avoid endless calls if the video can't be loaded
+    // Even if sendVideoPressInfoRequest failed, it's still possible to request a reload by tapping the video
+    videoNode.attr('onError', '');
+
     if (videoURL.length == 0) {
-        // If no URL is being passed, the host activity probably doesn't have a record of this videopressID
-        // Drop the error event since it can cause an infinite loop in this case
-        // The user is still able to manually retry by tapping the video element
-        videoNode.attr('onError', '');
         return;
     }
 
