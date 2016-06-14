@@ -1806,7 +1806,7 @@ ZSSEditor.removeVideo = function(videoNodeIdentifier) {
  *  @brief      Wrap the video in an edit-container with a delete button overlay.
  */
 ZSSEditor.applyEditContainer = function(videoNode) {
-    var containerHtml = '<span class="edit-container"><span class="delete-overlay" contenteditable="false"></span></span>';
+    var containerHtml = '<span class="edit-container" contenteditable="false"><span class="delete-overlay"></span></span>';
     videoNode.insertAdjacentHTML('beforebegin', containerHtml);
 
     var selectionNode = videoNode.previousSibling;
@@ -1831,7 +1831,7 @@ ZSSEditor.replaceVideosForShortcode = function ( html) {
 }
 
 ZSSEditor.removeVideoContainers = function(html) {
-    var containerRegex = /<span class="edit-container">(?:<span class="delete-overlay"[^<>]*><\/span>)?(\[[^<>]*)<\/span>/g;
+    var containerRegex = /<span class="edit-container" contenteditable="false">(?:<span class="delete-overlay"[^<>]*><\/span>)?(\[[^<>]*)<\/span>/g;
     var str = html.replace(containerRegex, ZSSEditor.removeVideoContainerCallback);
 
     return str;
@@ -1885,7 +1885,7 @@ ZSSEditor.applyVideoPressFormattingCallback = function( match ) {
            + posterSVG +' onclick="" onerror="ZSSEditor.sendVideoPressInfoRequest(\'' + videopressID +'\');"></video>';
 
     // Wrap video in edit-container node for a permanent delete button overlay
-    var containerStart = '<span class="edit-container"><span class="delete-overlay" contenteditable="false"></span>';
+    var containerStart = '<span class="edit-container" contenteditable="false"><span class="delete-overlay"></span>';
     out = containerStart + out + '</span><br>';
 
     return out;
@@ -1925,7 +1925,7 @@ ZSSEditor.applyVideoFormattingCallback = function( match ) {
     out += ' onclick="" controls="controls"></video>';
 
     // Wrap video in edit-container node for a permanent delete button overlay
-    var containerStart = '<span class="edit-container"><span class="delete-overlay" contenteditable="false"></span>';
+    var containerStart = '<span class="edit-container" contenteditable="false"><span class="delete-overlay"></span>';
     out = containerStart + out + '</span><br>';
 
     return out;
