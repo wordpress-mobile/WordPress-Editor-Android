@@ -1536,7 +1536,8 @@ ZSSEditor.removeAllFailedMediaUploads = function() {
  *
  */
 ZSSEditor.insertVideo = function(videoURL, posterURL, videopressID) {
-    var html = '<video webkit-playsinline src="' + videoURL + '" onclick="" controls="controls" preload="metadata"';
+    var videoId = Date.now();
+    var html = '<video id=' + videoId + ' webkit-playsinline src="' + videoURL + '" onclick="" controls="controls" preload="metadata"';
 
     if (posterURL != '') {
         html += ' poster="' + posterURL + '"';
@@ -1548,7 +1549,20 @@ ZSSEditor.insertVideo = function(videoURL, posterURL, videopressID) {
 
     html += '></video>';
 
-    this.insertHTMLWrappedInParagraphTags(html);
+    this.insertHTMLWrappedInParagraphTags('&#x200b;' + html);
+
+    // Wrap video in edit-container node for a permanent delete button overlay
+    var videoNode = $('video[id=' + videoId + ']')[0];
+    var selectionNode = this.applyEditContainer(videoNode);
+    videoNode.removeAttribute('id');
+
+    // Remove the zero-width space node (it's not needed now that the paragraph-wrapped video is in place)
+    var zeroWidthNode = selectionNode.previousSibling;
+    if (zeroWidthNode != null && zeroWidthNode.nodeType == 3) {
+        zeroWidthNode.parentNode.removeChild(zeroWidthNode);
+    }
+
+    ZSSEditor.trackNodeForMutation($(selectionNode));
 
     this.sendEnabledStyles();
     this.callback("callback-action-finished");
@@ -1657,6 +1671,10 @@ ZSSEditor.replaceLocalVideoWithRemoteVideo = function(videoNodeIdentifier, remot
         var containerNode = imagePlaceholderNode.parent();
         containerNode.replaceWith(videoNode);
     }
+
+    var selectionNode = this.applyEditContainer(videoNode);
+
+    ZSSEditor.trackNodeForMutation($(selectionNode));
 
     var joinedArguments = ZSSEditor.getJoinedFocusedFieldIdAndCaretArguments();
     ZSSEditor.callback("callback-input", joinedArguments);
@@ -1784,6 +1802,19 @@ ZSSEditor.removeVideo = function(videoNodeIdentifier) {
     }
 };
 
+/**
+ *  @brief      Wrap the video in an edit-container with a delete button overlay.
+ */
+ZSSEditor.applyEditContainer = function(videoNode) {
+    var containerHtml = '<span class="edit-container" contenteditable="false"><span class="delete-overlay"></span></span>';
+    videoNode.insertAdjacentHTML('beforebegin', containerHtml);
+
+    var selectionNode = videoNode.previousSibling;
+    selectionNode.appendChild(videoNode);
+
+    return selectionNode;
+}
+
 ZSSEditor.replaceVideoPressVideosForShortcode = function ( html) {
     // call methods to restore any transformed content from its visual presentation to its source code.
     var regex = /<video[^>]*data-wpvideopress="([\s\S]+?)"[^>]*>*<\/video>/g;
@@ -1795,6 +1826,13 @@ ZSSEditor.replaceVideoPressVideosForShortcode = function ( html) {
 ZSSEditor.replaceVideosForShortcode = function ( html) {
     var regex = /<video(?:(?!data-wpvideopress).)*><\/video>/g;
     var str = html.replace( regex, ZSSEditor.removeVideoVisualFormattingCallback );
+
+    return str;
+}
+
+ZSSEditor.removeVideoContainers = function(html) {
+    var containerRegex = /<span class="edit-container" contenteditable="false">(?:<span class="delete-overlay"[^<>]*><\/span>)?(\[[^<>]*)<\/span>/g;
+    var str = html.replace(containerRegex, ZSSEditor.removeVideoContainerCallback);
 
     return str;
 }
@@ -1831,6 +1869,10 @@ ZSSEditor.removeVideoVisualFormattingCallback = function( match, content ) {
     return shortcode;
 }
 
+ZSSEditor.removeVideoContainerCallback = function( match, content ) {
+    return content;
+}
+
 ZSSEditor.applyVideoPressFormattingCallback = function( match ) {
     if (match.attrs.numeric.length == 0) {
         return match.content;
@@ -1842,7 +1884,10 @@ ZSSEditor.applyVideoPressFormattingCallback = function( match ) {
     var out = '<video data-wpvideopress="' + videopressID + '" webkit-playsinline src="" preload="metadata" poster='
            + posterSVG +' onclick="" onerror="ZSSEditor.sendVideoPressInfoRequest(\'' + videopressID +'\');"></video>';
 
-    out = out + '<br>';
+    // Wrap video in edit-container node for a permanent delete button overlay
+    var containerStart = '<span class="edit-container" contenteditable="false"><span class="delete-overlay"></span>';
+    out = containerStart + out + '</span><br>';
+
     return out;
 }
 
@@ -1877,7 +1922,11 @@ ZSSEditor.applyVideoFormattingCallback = function( match ) {
         out += ' preload="metadata"';
     }
 
-    out += ' onclick="" controls="controls"></video><br>';
+    out += ' onclick="" controls="controls"></video>';
+
+    // Wrap video in edit-container node for a permanent delete button overlay
+    var containerStart = '<span class="edit-container" contenteditable="false"><span class="delete-overlay"></span>';
+    out = containerStart + out + '</span><br>';
 
     return out;
 }
@@ -1898,11 +1947,11 @@ ZSSEditor.setVideoPressLinks = function(videopressID, videoURL, posterURL ) {
         return;
     }
 
+    // It's safest to drop the onError now, to avoid endless calls if the video can't be loaded
+    // Even if sendVideoPressInfoRequest failed, it's still possible to request a reload by tapping the video
+    videoNode.attr('onError', '');
+
     if (videoURL.length == 0) {
-        // If no URL is being passed, the host activity probably doesn't have a record of this videopressID
-        // Drop the error event since it can cause an infinite loop in this case
-        // The user is still able to manually retry by tapping the video element
-        videoNode.attr('onError', '');
         return;
     }
 
@@ -2488,6 +2537,7 @@ ZSSEditor.removeVisualFormatting = function( html ) {
     str = ZSSEditor.removeCaptionFormatting( str );
     str = ZSSEditor.replaceVideoPressVideosForShortcode( str );
     str = ZSSEditor.replaceVideosForShortcode( str );
+    str = ZSSEditor.removeVideoContainers( str );
 
     // More tag
     str = str.replace(/<hr class="more-tag" wp-more-data="(.*?)">/igm, "<!--more$1-->")
@@ -2514,19 +2564,21 @@ ZSSEditor.sendEnabledStyles = function(e) {
         // Find all relevant parent tags
         var parentTags = ZSSEditor.parentTags();
 
-        for (var i = 0; i < parentTags.length; i++) {
-            var currentNode = parentTags[i];
+        if (parentTags != null) {
+            for (var i = 0; i < parentTags.length; i++) {
+                var currentNode = parentTags[i];
 
-            if (currentNode.nodeName.toLowerCase() == 'a') {
-                ZSSEditor.currentEditingLink = currentNode;
+                if (currentNode.nodeName.toLowerCase() == 'a') {
+                    ZSSEditor.currentEditingLink = currentNode;
 
-                var title = encodeURIComponent(currentNode.text);
-                var href = encodeURIComponent(currentNode.href);
+                    var title = encodeURIComponent(currentNode.text);
+                    var href = encodeURIComponent(currentNode.href);
 
-                items.push('link-title:' + title);
-                items.push('link:' + href);
-            } else if (currentNode.nodeName == NodeName.BLOCKQUOTE) {
-                items.push('blockquote');
+                    items.push('link-title:' + title);
+                    items.push('link:' + href);
+                } else if (currentNode.nodeName == NodeName.BLOCKQUOTE) {
+                    items.push('blockquote');
+                }
             }
         }
 
@@ -3767,6 +3819,12 @@ ZSSField.prototype.setHTML = function(html) {
     }
 
     this.wrappedObject.html(mutatedHTML);
+
+    // Track video container nodes for mutation
+    var videoNodes = $('span.edit-container > video');
+    for (var i = 0; i < videoNodes.length; i++) {
+        ZSSEditor.trackNodeForMutation($(videoNodes[i].parentNode));
+    }
 };
 
 // MARK: - Placeholder
