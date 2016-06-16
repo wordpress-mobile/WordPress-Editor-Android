@@ -67,10 +67,6 @@ ZSSEditor.lastTappedNode = null;
 // The default paragraph separator
 ZSSEditor.defaultParagraphSeparator = 'div';
 
-// Video format tags supported by the [video] shortcode: https://codex.wordpress.org/Video_Shortcode
-// mp4, m4v and webm prioritized since they're supported by the stock player as of Android API 23
-ZSSEditor.videoShortcodeFormats = ["mp4", "m4v", "webm", "ogv", "wmv", "flv"];
-
 // We use a MutationObserver to catch user deletions of uploading or failed media
 // This is only officially supported on API>18; when the WebView doesn't recognize the MutationObserver,
 // we fall back to the deprecated DOMNodeRemoved event
@@ -1856,8 +1852,8 @@ ZSSEditor.removeVideoVisualFormattingCallback = function( match, content ) {
     }
 
     // If filetype attributes exist, the src attribute wasn't there originally and we should remove it
-    for (var i = 0; i < ZSSEditor.videoShortcodeFormats.length; i++) {
-        var format = ZSSEditor.videoShortcodeFormats[i];
+    for (var i = 0; i < Formatter.videoShortcodeFormats.length; i++) {
+        var format = Formatter.videoShortcodeFormats[i];
         if (videoElement.hasAttribute(format)) {
             videoElement.removeAttribute("src");
             break;
@@ -1871,66 +1867,6 @@ ZSSEditor.removeVideoVisualFormattingCallback = function( match, content ) {
 
 ZSSEditor.removeVideoContainerCallback = function( match, content ) {
     return content;
-}
-
-ZSSEditor.applyVideoPressFormattingCallback = function( match ) {
-    if (match.attrs.numeric.length == 0) {
-        return match.content;
-    }
-    var videopressID = match.attrs.numeric[0];
-    var posterSVG = '"svg/wpposter.svg"';
-    // The empty 'onclick' is important. It prevents the cursor jumping to the end
-    // of the content body when `-webkit-user-select: none` is set and the video is tapped.
-    var out = '<video data-wpvideopress="' + videopressID + '" webkit-playsinline src="" preload="metadata" poster='
-           + posterSVG +' onclick="" onerror="ZSSEditor.sendVideoPressInfoRequest(\'' + videopressID +'\');"></video>';
-
-    // Wrap video in edit-container node for a permanent delete button overlay
-    var containerStart = '<span class="edit-container" contenteditable="false"><span class="delete-overlay"></span>';
-    out = containerStart + out + '</span>';
-
-    return out;
-}
-
-ZSSEditor.applyVideoFormattingCallback = function( match ) {
-    // Find the tag containing the video source
-    var srcTag = "";
-
-    if (match.attrs.named['src']) {
-        srcTag = "src";
-    } else {
-        for (var i = 0; i < ZSSEditor.videoShortcodeFormats.length; i++) {
-            var format = ZSSEditor.videoShortcodeFormats[i];
-            if (match.attrs.named[format]) {
-                srcTag = format;
-                break;
-            }
-        }
-    }
-
-    if (srcTag.length == 0) {
-        return match.content;
-    }
-
-    var out = '<video webkit-playsinline src="' + match.attrs.named[srcTag] + '"';
-
-    // Preserve all existing tags
-    for (var item in match.attrs.named) {
-        if (item != srcTag) {
-            out += ' ' + item + '="' + match.attrs.named[item] + '"';
-        }
-    }
-
-    if (!match.attrs.named['preload']) {
-        out += ' preload="metadata"';
-    }
-
-    out += ' onclick="" controls="controls"></video>';
-
-    // Wrap video in edit-container node for a permanent delete button overlay
-    var containerStart = '<span class="edit-container" contenteditable="false"><span class="delete-overlay"></span>';
-    out = containerStart + out + '</span>';
-
-    return out;
 }
 
 /**
@@ -2209,7 +2145,7 @@ ZSSEditor.createImageFromMeta = function( props ) {
             content: html + ' ' + props.caption
         });
 
-        html = ZSSEditor.applyVisualFormatting( html );
+        html = Formatter.applyVisualFormatting( html );
     }
 
     return html;
@@ -2368,36 +2304,6 @@ ZSSEditor.captionMetaForImage = function( imageNode ) {
 }
 
 /**
- *  @brief      Adds visual formatting to a caption shortcodes.
- *
- *  @param      html   The markup containing caption shortcodes to process.
- *
- *  @return     The html with caption shortcodes replaced with editor specific markup.
- *  See shortcode.js::next or details
- */
-ZSSEditor.applyCaptionFormatting = function( match ) {
-    var attrs = match.attrs.named;
-    // The empty 'onclick' is important. It prevents the cursor jumping to the end
-    // of the content body when `-webkit-user-select: none` is set and the caption is tapped.
-    var out = '<label class="wp-temp" data-wp-temp="caption" contenteditable="false" onclick="">';
-    out += '<span class="wp-caption"';
-
-    if ( attrs.width ) {
-        out += ' style="width:' + attrs.width + 'px; max-width:100% !important;"';
-    }
-    $.each( attrs, function( key, value ) {
-        out += " data-caption-" + key + '="' + value + '"';
-    } );
-
-    out += '>';
-    out += match.content;
-    out += '</span>';
-    out += '</label>';
-
-    return out;
-}
-
-/**
  *  @brief      Removes custom visual formatting for caption shortcodes.
  *
  *  @param      html   The markup to process
@@ -2506,24 +2412,6 @@ ZSSEditor.replacePlaceholderGallery = function( placeholderId, imageIds, type, c
 }
 
 // MARK: - Commands
-
-/**
- *  @brief      Applies editor specific visual formatting.
- *
- *  @param      html   The markup to format
- *
- *  @return     Returns the string with the visual formatting applied.
- */
-ZSSEditor.applyVisualFormatting  = function( html ) {
-    var str = wp.shortcode.replace( 'caption', html, ZSSEditor.applyCaptionFormatting );
-    str = wp.shortcode.replace( 'wpvideo', str, ZSSEditor.applyVideoPressFormattingCallback );
-    str = wp.shortcode.replace( 'video', str, ZSSEditor.applyVideoFormattingCallback );
-
-    // More tag
-    str = str.replace(/<!--more(.*?)-->/igm, "<hr class=\"more-tag\" wp-more-data=\"$1\">")
-    str = str.replace(/<!--nextpage-->/igm, "<hr class=\"nextpage-tag\">")
-    return str;
-}
 
 /**
  *  @brief      Removes editor specific visual formatting
@@ -3809,21 +3697,10 @@ ZSSField.prototype.setPlainText = function(text) {
 
 ZSSField.prototype.setHTML = function(html) {
     ZSSEditor.currentEditingImage = null;
-    var mutatedHTML = wp.loadText(html);
-    mutatedHTML = ZSSEditor.applyVisualFormatting(mutatedHTML);
+    var mutatedHTML = Formatter.htmlToVisual(html);
 
     if (ZSSEditor.defaultParagraphSeparator == 'div') {
-        // Replace the paragraph tags we get from wpload with divs
-        mutatedHTML = mutatedHTML.replace(/(<p(?=[>\s]))/igm, '<div').replace(/<\/p>/igm, '</div>');
-
-        // Replace break tags around media items with paragraphs
-        // The break tags appear when text and media are separated by only a line break rather than a paragraph break,
-        // which can happen when inserting media inline and switching to HTML mode and back, or by deleting line breaks
-        // in HTML mode
-        mutatedHTML = mutatedHTML.replace(/<br \/>(?=\s*(<a href|<img|<video|<span class="edit-container"))/igm,
-                '</div><div>');
-        mutatedHTML = mutatedHTML.replace(/(<img [^<>]*>|<\/a>|<\/video>|<\/span>)<br \/>/igm,
-                function replaceBrWithDivs(match) { return match.substr(0, match.length - 6) + '</div><div>'; });
+        mutatedHTML = Formatter.convertPToDiv(mutatedHTML);
     }
 
     this.wrappedObject.html(mutatedHTML);
