@@ -1886,7 +1886,7 @@ ZSSEditor.applyVideoPressFormattingCallback = function( match ) {
 
     // Wrap video in edit-container node for a permanent delete button overlay
     var containerStart = '<span class="edit-container" contenteditable="false"><span class="delete-overlay"></span>';
-    out = containerStart + out + '</span><br>';
+    out = containerStart + out + '</span>';
 
     return out;
 }
@@ -1928,7 +1928,7 @@ ZSSEditor.applyVideoFormattingCallback = function( match ) {
 
     // Wrap video in edit-container node for a permanent delete button overlay
     var containerStart = '<span class="edit-container" contenteditable="false"><span class="delete-overlay"></span>';
-    out = containerStart + out + '</span><br>';
+    out = containerStart + out + '</span>';
 
     return out;
 }
