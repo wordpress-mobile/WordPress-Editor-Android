@@ -3815,6 +3815,15 @@ ZSSField.prototype.setHTML = function(html) {
     if (ZSSEditor.defaultParagraphSeparator == 'div') {
         // Replace the paragraph tags we get from wpload with divs
         mutatedHTML = mutatedHTML.replace(/(<p(?=[>\s]))/igm, '<div').replace(/<\/p>/igm, '</div>');
+
+        // Replace break tags around media items with paragraphs
+        // The break tags appear when text and media are separated by only a line break rather than a paragraph break,
+        // which can happen when inserting media inline and switching to HTML mode and back, or by deleting line breaks
+        // in HTML mode
+        mutatedHTML = mutatedHTML.replace(/<br \/>(?=\s*(<a href|<img|<video|<span class="edit-container"))/igm,
+                '</div><div>');
+        mutatedHTML = mutatedHTML.replace(/(<img [^<>]*>|<\/a>|<\/video>|<\/span>)<br \/>/igm,
+                function replaceBrWithDivs(match) { return match.substr(0, match.length - 6) + '</div><div>'; });
     }
 
     this.wrappedObject.html(mutatedHTML);
