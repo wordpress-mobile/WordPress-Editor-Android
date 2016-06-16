@@ -1915,7 +1915,9 @@ ZSSEditor.applyVideoFormattingCallback = function( match ) {
 
     // Preserve all existing tags
     for (var item in match.attrs.named) {
-        out += ' ' + item + '="' + match.attrs.named[item] + '"';
+        if (item != srcTag) {
+            out += ' ' + item + '="' + match.attrs.named[item] + '"';
+        }
     }
 
     if (!match.attrs.named['preload']) {
