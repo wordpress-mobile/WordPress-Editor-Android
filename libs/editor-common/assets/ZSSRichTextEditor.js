@@ -3435,11 +3435,8 @@ ZSSField.prototype.handleTapEvent = function(e) {
             var parentEditContainer = targetNode.parentElement;
             var parentDiv = parentEditContainer.parentElement;
 
-            if (parentDiv && parentDiv.nodeName == NodeName.DIV && parentDiv.parentElement.nodeName != NodeName.BODY) {
-                // Remove the parent div with all its contents, unless it's the contenteditable div itself rather than
-                // a paragraph
-                parentDiv.parentElement.removeChild(parentDiv);
-            } else if (parentEditContainer.classList.contains('edit-container')) {
+            // If the delete button was tapped, removing the media item and its container from the document
+            if (parentEditContainer.classList.contains('edit-container')) {
                 parentEditContainer.parentElement.removeChild(parentEditContainer);
             } else {
                 parentEditContainer.removeChild(targetNode);
