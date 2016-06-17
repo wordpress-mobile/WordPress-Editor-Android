@@ -142,3 +142,7 @@ Formatter.applyVideoFormattingCallback = function(match) {
 
     return out;
 }
+
+if (typeof module !== 'undefined' && module.exports != null) {
+    exports.Formatter = Formatter;
+}
