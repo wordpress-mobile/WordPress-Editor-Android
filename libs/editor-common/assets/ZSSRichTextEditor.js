@@ -3656,9 +3656,9 @@ ZSSField.prototype.isEmpty = function() {
 ZSSField.prototype.getHTML = function() {
     var html = this.wrappedObject.html();
     if (ZSSEditor.defaultParagraphSeparator == 'div') {
-        html = html.replace(/(<div(?=[>\s]))/igm, '<p').replace(/<\/div>/igm, '</p>');
+        html = Formatter.convertDivToP(html);
     }
-    html = wp.saveText(html);
+    html = Formatter.visualToHtml(html);
     html = ZSSEditor.removeVisualFormatting( html );
     return html;
 };

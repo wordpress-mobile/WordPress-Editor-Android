@@ -26,6 +26,15 @@ Formatter.convertPToDiv = function(html) {
     return mutatedHTML;
 }
 
+Formatter.visualToHtml = function(html) {
+    return wp.saveText(html);
+    return Formatter.removeVisualFormatting(mutatedHTML);
+}
+
+Formatter.convertDivToP = function(html) {
+    return html.replace(/(<div(?=[>\s]))/igm, '<p').replace(/<\/div>/igm, '</p>');
+}
+
 /**
  *  @brief      Applies editor specific visual formatting.
  *
