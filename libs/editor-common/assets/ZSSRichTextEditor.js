@@ -1886,7 +1886,7 @@ ZSSEditor.applyVideoPressFormattingCallback = function( match ) {
 
     // Wrap video in edit-container node for a permanent delete button overlay
     var containerStart = '<span class="edit-container" contenteditable="false"><span class="delete-overlay"></span>';
-    out = containerStart + out + '</span><br>';
+    out = containerStart + out + '</span>';
 
     return out;
 }
@@ -1915,7 +1915,9 @@ ZSSEditor.applyVideoFormattingCallback = function( match ) {
 
     // Preserve all existing tags
     for (var item in match.attrs.named) {
-        out += ' ' + item + '="' + match.attrs.named[item] + '"';
+        if (item != srcTag) {
+            out += ' ' + item + '="' + match.attrs.named[item] + '"';
+        }
     }
 
     if (!match.attrs.named['preload']) {
@@ -1926,7 +1928,7 @@ ZSSEditor.applyVideoFormattingCallback = function( match ) {
 
     // Wrap video in edit-container node for a permanent delete button overlay
     var containerStart = '<span class="edit-container" contenteditable="false"><span class="delete-overlay"></span>';
-    out = containerStart + out + '</span><br>';
+    out = containerStart + out + '</span>';
 
     return out;
 }
@@ -3433,11 +3435,8 @@ ZSSField.prototype.handleTapEvent = function(e) {
             var parentEditContainer = targetNode.parentElement;
             var parentDiv = parentEditContainer.parentElement;
 
-            if (parentDiv && parentDiv.nodeName == NodeName.DIV && parentDiv.parentElement.nodeName != NodeName.BODY) {
-                // Remove the parent div with all its contents, unless it's the contenteditable div itself rather than
-                // a paragraph
-                parentDiv.parentElement.removeChild(parentDiv);
-            } else if (parentEditContainer.classList.contains('edit-container')) {
+            // If the delete button was tapped, removing the media item and its container from the document
+            if (parentEditContainer.classList.contains('edit-container')) {
                 parentEditContainer.parentElement.removeChild(parentEditContainer);
             } else {
                 parentEditContainer.removeChild(targetNode);
@@ -3814,6 +3813,15 @@ ZSSField.prototype.setHTML = function(html) {
     if (ZSSEditor.defaultParagraphSeparator == 'div') {
         // Replace the paragraph tags we get from wpload with divs
         mutatedHTML = mutatedHTML.replace(/(<p(?=[>\s]))/igm, '<div').replace(/<\/p>/igm, '</div>');
+
+        // Replace break tags around media items with paragraphs
+        // The break tags appear when text and media are separated by only a line break rather than a paragraph break,
+        // which can happen when inserting media inline and switching to HTML mode and back, or by deleting line breaks
+        // in HTML mode
+        mutatedHTML = mutatedHTML.replace(/<br \/>(?=\s*(<a href|<img|<video|<span class="edit-container"))/igm,
+                '</div><div>');
+        mutatedHTML = mutatedHTML.replace(/(<img [^<>]*>|<\/a>|<\/video>|<\/span>)<br \/>/igm,
+                function replaceBrWithDivs(match) { return match.substr(0, match.length - 6) + '</div><div>'; });
     }
 
     this.wrappedObject.html(mutatedHTML);
