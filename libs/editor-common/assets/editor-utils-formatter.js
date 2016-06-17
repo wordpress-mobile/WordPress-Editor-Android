@@ -22,7 +22,6 @@ Formatter.convertPToDiv = function(html) {
     mutatedHTML = mutatedHTML.replace(/(<img [^<>]*>|<\/a>|<\/video>|<\/span>)<br \/>/igm,
             function replaceBrWithDivs(match) { return match.substr(0, match.length - 6) + '</div><div>'; });
 
-    // if document ends with media item and </div>, add <div><br></div>? to fix that last media issue
     return mutatedHTML;
 }
 
