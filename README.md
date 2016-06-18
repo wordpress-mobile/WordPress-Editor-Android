@@ -36,7 +36,7 @@ Add new unit tests to `src/test/java/` and integration tests to `stc/androidTest
 
 ### JavaScript Tests ###
 
-This project also has functional tests for the JS part of the editor using [Mocha](https://mochajs.org/).
+This project also has unit tests for the JS part of the editor using [Mocha](https://mochajs.org/).
 
 To be able to run the tests, [npm](https://www.npmjs.com/) and Mocha (`npm install -g mocha`) are required.
 
