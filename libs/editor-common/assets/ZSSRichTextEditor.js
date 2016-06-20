@@ -1147,6 +1147,14 @@ ZSSEditor.sendOptimisticProgressUpdate = function(mediaNodeIdentifier, nCall) {
     ZSSEditor.setupOptimisticProgressUpdate(mediaNodeIdentifier, nCall + 1);
 };
 
+ZSSEditor.removeMedia = function(mediaNodeIdentifier) {
+    if (this.getImageNodeWithIdentifier(mediaNodeIdentifier).length != 0) {
+        this.removeImage(mediaNodeIdentifier);
+    } else if (this.getVideoNodeWithIdentifier(mediaNodeIdentifier).length != 0) {
+        this.removeVideo(mediaNodeIdentifier);
+    }
+};
+
 ZSSEditor.sendMediaRemovedCallback = function(mediaNodeIdentifier) {
     var arguments = ['id=' + encodeURIComponent(mediaNodeIdentifier)];
     var joinedArguments = arguments.join(defaultCallbackSeparator);
@@ -1518,7 +1526,7 @@ ZSSEditor.removeAllFailedMediaUploads = function() {
     console.log("Remove all failed media");
     var failedMediaArray = ZSSEditor.getFailedMediaIdArray();
     for (var i = 0; i < failedMediaArray.length; i++) {
-        ZSSEditor.removeImage(failedMediaArray[i]);
+        ZSSEditor.removeMedia(failedMediaArray[i]);
     }
 }
 
