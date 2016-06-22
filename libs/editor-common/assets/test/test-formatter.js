@@ -43,8 +43,8 @@ describe('HTML to Visual formatter should correctly convert', function () {
     assert.equal('<p>Some text</p>\n<p>More text</p>\n', formatter.htmlToVisual('Some text\n\nMore text'));
   });
 
-  testMediaParagraphWrapping('image wrapped in link', plainImageHtml, plainImageHtml);
-  testMediaParagraphWrapping('image not wrapped in link', imageWrappedInLinkHtml, imageWrappedInLinkHtml);
+  testMediaParagraphWrapping('non-linked image', plainImageHtml, plainImageHtml);
+  testMediaParagraphWrapping('linked image', imageWrappedInLinkHtml, imageWrappedInLinkHtml);
   testMediaParagraphWrapping('non-VideoPress video', videoShortcode, videoHtml);
   testMediaParagraphWrapping('VideoPress video', vpVideoShortcode, vpVideoHtml);
 });
