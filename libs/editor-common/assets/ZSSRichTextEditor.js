@@ -3229,7 +3229,7 @@ ZSSField.prototype.handleKeyDownEvent = function(e) {
                 ZSSEditor.setBlockquote();
             // When pressing enter inside an image caption, clear the caption styling from the new line
             } else if (parentNode.nodeName == NodeName.SPAN && $(parentNode).hasClass('wp-caption')) {
-                setTimeout(this.handleCaptionEnter, 100);
+                setTimeout(this.handleCaptionNewLine, 100);
             }
         }
     }
@@ -3643,12 +3643,17 @@ ZSSField.prototype.wrapCaretInParagraphIfNecessary = function() {
  *  @brief      Called when enter is pressed inside an image caption. Clears away the span and label tags the new line
  *              inherits from the caption styling.
  */
-ZSSField.prototype.handleCaptionEnter = function() {
-    var selection = document.getSelection();
+ZSSField.prototype.handleCaptionNewLine = function() {
+    var selectedNode = document.getSelection().baseNode;
 
-    var contentsNode = selection.baseNode.firstChild.cloneNode();
+    var contentsNode;
+    if (selectedNode.firstChild != null) {
+        contentsNode = selectedNode.firstChild.cloneNode();
+    } else {
+        contentsNode = selectedNode.cloneNode();
+    }
 
-    var parentSpan = selection.baseNode.parentNode.parentNode;
+    var parentSpan = selectedNode.parentNode.parentNode;
     var parentDiv = parentSpan.parentNode;
 
     var paragraph = document.createElement("div");
