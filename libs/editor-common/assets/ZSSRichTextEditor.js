@@ -1942,11 +1942,15 @@ ZSSEditor.updateCurrentImageMeta = function( imageMetaString ) {
     // in certain cases, modify the current and inserted markup depending on what
     // elements surround the targeted node.  This approach is safer.
     var node = ZSSEditor.findImageCaptionNode( ZSSEditor.currentEditingImage );
+    var parent = node.parentNode;
+
     node.insertAdjacentHTML( 'afterend', html );
     // Use {node}.{parent}.removeChild() instead of {node}.remove(), since Android API<19 doesn't support Node.remove()
     node.parentNode.removeChild(node);
 
     ZSSEditor.currentEditingImage = null;
+
+    ZSSEditor.setFocusAfterElement(parent);
 }
 
 ZSSEditor.applyImageSelectionFormatting = function( imageNode ) {
