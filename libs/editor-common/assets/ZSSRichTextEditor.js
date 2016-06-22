@@ -2152,7 +2152,7 @@ ZSSEditor.createImageFromMeta = function( props ) {
         html = wp.shortcode.string({
             tag:     'caption',
             attrs:   shortcode,
-            content: html + ' ' + props.caption
+            content: html + props.caption
         });
 
         html = Formatter.applyVisualFormatting( html );
