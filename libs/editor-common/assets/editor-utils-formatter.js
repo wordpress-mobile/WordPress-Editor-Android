@@ -17,13 +17,13 @@ Formatter.convertPToDiv = function(html) {
     // The break tags appear when text and media are separated by only a line break rather than a paragraph break,
     // which can happen when inserting media inline and switching to HTML mode and back, or by deleting line breaks
     // in HTML mode
-    mutatedHTML = mutatedHTML.replace(/<br \/>(?=\s*(<a href|<img|<video|<span class="edit-container"))/igm,
+    mutatedHTML = mutatedHTML.replace(/<br \/>(?=\s*(<img|<a href|<label|<video|<span class="edit-container"))/igm,
             '</div><div>');
-    mutatedHTML = mutatedHTML.replace(/(<img [^<>]*>|<\/a>|<\/video>|<\/span>)<br \/>/igm,
+    mutatedHTML = mutatedHTML.replace(/(<img [^<>]*>|<\/a>|<\/label>|<\/video>|<\/span>)<br \/>/igm,
             function replaceBrWithDivs(match) { return match.substr(0, match.length - 6) + '</div><div>'; });
 
     // Append paragraph-wrapped break tag under media at the end of a post
-    mutatedHTML = mutatedHTML.replace(/(<img [^<>]*>|<\/a>|<\/video>|<\/span>)[^<>]*<\/div>\s$/igm,
+    mutatedHTML = mutatedHTML.replace(/(<img [^<>]*>|<\/a>|<\/label>|<\/video>|<\/span>)[^<>]*<\/div>\s$/igm,
             function replaceBrWithDivs(match) { return match + '<div><br></div>'; });
 
     return mutatedHTML;
