@@ -3227,6 +3227,9 @@ ZSSField.prototype.handleKeyDownEvent = function(e) {
             } else if (sel.isCollapsed && sel.baseOffset == 0 && parentNode && parentNode.nodeName == 'BLOCKQUOTE') {
                 e.preventDefault();
                 ZSSEditor.setBlockquote();
+            // When pressing enter inside an image caption, clear the caption styling from the new line
+            } else if (parentNode.nodeName == NodeName.SPAN && $(parentNode).hasClass('wp-caption')) {
+                setTimeout(this.handleCaptionEnter, 100);
             }
         }
     }
@@ -3634,6 +3637,27 @@ ZSSField.prototype.wrapCaretInParagraphIfNecessary = function() {
             }
         }
     }
+};
+
+/**
+ *  @brief      Called when enter is pressed inside an image caption. Clears away the span and label tags the new line
+ *              inherits from the caption styling.
+ */
+ZSSField.prototype.handleCaptionEnter = function() {
+    var selection = document.getSelection();
+
+    var contentsNode = selection.baseNode.firstChild.cloneNode();
+
+    var parentSpan = selection.baseNode.parentNode.parentNode;
+    var parentDiv = parentSpan.parentNode;
+
+    var paragraph = document.createElement("div");
+    paragraph.appendChild(contentsNode);
+
+    parentDiv.insertBefore(paragraph, parentSpan);
+    parentDiv.removeChild(parentSpan);
+
+    ZSSEditor.giveFocusToElement(contentsNode);
 };
 
 // MARK: - i18n
