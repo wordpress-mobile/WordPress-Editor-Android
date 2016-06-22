@@ -74,9 +74,9 @@ Formatter.applyCaptionFormatting = function(match) {
     if (attrs.width) {
         out += ' style="width:' + attrs.width + 'px; max-width:100% !important;"';
     }
-    $.each(attrs, function(key, value) {
-        out += " data-caption-" + key + '="' + value + '"';
-    });
+    for (var key in attrs) {
+        out += " data-caption-" + key + '="' + attrs[key] + '"';
+    }
 
     out += '>';
     out += match.content;
