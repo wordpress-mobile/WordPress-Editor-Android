@@ -6,6 +6,13 @@ Formatter.videoShortcodeFormats = ["mp4", "m4v", "webm", "ogv", "wmv", "flv"];
 
 Formatter.htmlToVisual = function(html) {
     var mutatedHTML = wp.loadText(html);
+
+    // Perform extra transformations to properly wrap captioned images in paragraphs
+    mutatedHTML = mutatedHTML.replace(/^\[caption([^\]]*\])/igm, '<p>[caption$1');
+    mutatedHTML = mutatedHTML.replace(/([^\n>])\[caption/igm, '$1<br />\n[caption');
+    mutatedHTML = mutatedHTML.replace(/\[\/caption\]\n(?=<|$)/igm, '[/caption]</p>\n');
+    mutatedHTML = mutatedHTML.replace(/\[\/caption\]\n(?=[^<])/igm, '[/caption]<br />\n');
+
     return Formatter.applyVisualFormatting(mutatedHTML);
 }
 
