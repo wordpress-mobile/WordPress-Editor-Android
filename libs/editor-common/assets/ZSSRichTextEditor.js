@@ -436,6 +436,23 @@ ZSSEditor.getSelectedText = function() {
 	return selection.toString();
 };
 
+ZSSEditor.selectWordAroundCursor = function() {
+    var selection = window.getSelection();
+    // If there is no text selected, try to expand it to the word under the cursor
+    if (selection.rangeCount == 1) {
+        var range = selection.getRangeAt(0);
+        while (ZSSEditor.canExpandBackward(range)) {
+          range.setStart(range.startContainer, range.startOffset - 1);
+        }
+        while (ZSSEditor.canExpandForward(range)) {
+          range.setEnd(range.endContainer, range.endOffset + 1);
+        }
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
+    return selection;
+};
+
 ZSSEditor.canExpandBackward = function(range) {
     // Can't expand if focus is not a text node
     if (!range.endContainer.nodeType == 3) {
@@ -473,21 +490,8 @@ ZSSEditor.canExpandForward = function(range) {
 };
 
 ZSSEditor.getSelectedTextToLinkify = function() {
-    var selection = window.getSelection();
-    var element = ZSSEditor.getField("zss_field_content");
-    // If there is no text selected, try to expand it to the word under the cursor
-    if (selection.rangeCount == 1) {
-        var range = selection.getRangeAt(0);
-        while (ZSSEditor.canExpandBackward(range)) {
-          range.setStart(range.startContainer, range.startOffset - 1);
-        }
-        while (ZSSEditor.canExpandForward(range)) {
-          range.setEnd(range.endContainer, range.endOffset + 1);
-        }
-        selection.removeAllRanges();
-        selection.addRange(range);
-    }
-    return selection.toString();
+    ZSSEditor.selectWordAroundCursor();
+    return document.getSelection().toString();
 };
 
 ZSSEditor.getCaretArguments = function() {
