@@ -441,14 +441,16 @@ ZSSEditor.selectWordAroundCursor = function() {
     // If there is no text selected, try to expand it to the word under the cursor
     if (selection.rangeCount == 1) {
         var range = selection.getRangeAt(0);
-        while (ZSSEditor.canExpandBackward(range)) {
-          range.setStart(range.startContainer, range.startOffset - 1);
+        if (range.startOffset == range.endOffset) {
+            while (ZSSEditor.canExpandBackward(range)) {
+              range.setStart(range.startContainer, range.startOffset - 1);
+            }
+            while (ZSSEditor.canExpandForward(range)) {
+              range.setEnd(range.endContainer, range.endOffset + 1);
+            }
+            selection.removeAllRanges();
+            selection.addRange(range);
         }
-        while (ZSSEditor.canExpandForward(range)) {
-          range.setEnd(range.endContainer, range.endOffset + 1);
-        }
-        selection.removeAllRanges();
-        selection.addRange(range);
     }
     return selection;
 };
