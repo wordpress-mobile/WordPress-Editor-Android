@@ -606,26 +606,31 @@ ZSSEditor.getYCaretInfo = function() {
 // MARK: - Styles
 
 ZSSEditor.setBold = function() {
+    ZSSEditor.selectWordAroundCursor();
 	document.execCommand('bold', false, null);
 	ZSSEditor.sendEnabledStyles();
 };
 
 ZSSEditor.setItalic = function() {
+    ZSSEditor.selectWordAroundCursor();
 	document.execCommand('italic', false, null);
 	ZSSEditor.sendEnabledStyles();
 };
 
 ZSSEditor.setSubscript = function() {
+    ZSSEditor.selectWordAroundCursor();
 	document.execCommand('subscript', false, null);
 	ZSSEditor.sendEnabledStyles();
 };
 
 ZSSEditor.setSuperscript = function() {
+    ZSSEditor.selectWordAroundCursor();
 	document.execCommand('superscript', false, null);
 	ZSSEditor.sendEnabledStyles();
 };
 
 ZSSEditor.setStrikeThrough = function() {
+    ZSSEditor.selectWordAroundCursor();
 	var commandName = 'strikeThrough';
 	var isDisablingStrikeThrough = ZSSEditor.isCommandEnabled(commandName);
 
@@ -674,6 +679,7 @@ ZSSEditor.setStrikeThrough = function() {
 };
 
 ZSSEditor.setUnderline = function() {
+    ZSSEditor.selectWordAroundCursor();
 	document.execCommand('underline', false, null);
 	ZSSEditor.sendEnabledStyles();
 };
@@ -832,6 +838,7 @@ ZSSEditor.setOutdent = function() {
 };
 
 ZSSEditor.setTextColor = function(color) {
+    ZSSEditor.selectWordAroundCursor();
     ZSSEditor.restoreRange();
 	document.execCommand("styleWithCSS", null, true);
 	document.execCommand('foreColor', false, color);
@@ -841,6 +848,7 @@ ZSSEditor.setTextColor = function(color) {
 };
 
 ZSSEditor.setBackgroundColor = function(color) {
+    ZSSEditor.selectWordAroundCursor();
 	ZSSEditor.restoreRange();
 	document.execCommand("styleWithCSS", null, true);
 	document.execCommand('hiliteColor', false, color);
