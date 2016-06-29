@@ -2598,6 +2598,31 @@ ZSSEditor.sendEnabledStyles = function(e) {
 	ZSSEditor.stylesCallback(items);
 };
 
+ZSSEditor.storeInlineStylesAsFunctions = function() {
+    var styles = [];
+
+    if (ZSSEditor.isCommandEnabled('bold')) {
+        styles.push(ZSSEditor.setBold);
+    }
+    if (ZSSEditor.isCommandEnabled('italic')) {
+        styles.push(ZSSEditor.setItalic);
+    }
+    if (ZSSEditor.isCommandEnabled('strikeThrough')) {
+        styles.push(ZSSEditor.setStrikeThrough);
+    }
+    if (ZSSEditor.isCommandEnabled('underline')) {
+        styles.push(ZSSEditor.setUnderline);
+    }
+    if (ZSSEditor.isCommandEnabled('subscript')) {
+        styles.push(ZSSEditor.setSubscript);
+    }
+    if (ZSSEditor.isCommandEnabled('superscript')) {
+        styles.push(ZSSEditor.setSuperscript);
+    }
+
+    return styles;
+};
+
 // MARK: - Commands: High Level Editing
 
 /**
@@ -3642,6 +3667,14 @@ ZSSField.prototype.wrapCaretInParagraphIfNecessary = function() {
                     closerParentNode.removeChild(closerParentNode.firstChild);
                 }
 
+                var storedStyles = [];
+                if (this.getWrappedDomNode().innerHTML.length == 0) {
+                    // If the post is empty, store any active in-line formatting so it can be re-applied after the
+                    // DOM manipulations are completed
+                    // (Fix for https://github.com/wordpress-mobile/WordPress-Editor-Android/issues/204)
+                    storedStyles = ZSSEditor.storeInlineStylesAsFunctions();
+                }
+
                 var paragraph = document.createElement("div");
                 var textNode = document.createTextNode("&#x200b;");
 
@@ -3652,6 +3685,11 @@ ZSSField.prototype.wrapCaretInParagraphIfNecessary = function() {
 
                 selection.removeAllRanges();
                 selection.addRange(range);
+
+                // Re-apply inline styles that were cleared
+                storedStyles.map(function(styleFunction) {
+                    styleFunction();
+                });
             }
         }
     }
