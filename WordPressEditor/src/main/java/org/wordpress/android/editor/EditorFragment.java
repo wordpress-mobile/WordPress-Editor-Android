@@ -26,6 +26,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.URLUtil;
 import android.webkit.WebView;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.ToggleButton;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -154,6 +155,7 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
             int index = parent.indexOfChild(mWebView);
             parent.removeView(mWebView);
             mWebView = new EditorWebViewCompatibility(getActivity(), null);
+            mWebView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
             parent.addView(mWebView, index);
         }
 
