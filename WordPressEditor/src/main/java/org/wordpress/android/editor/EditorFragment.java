@@ -148,6 +148,15 @@ public class EditorFragment extends EditorFragmentAbstract implements View.OnCli
 
         mWebView = (EditorWebViewAbstract) view.findViewById(R.id.webview);
 
+        // Revert to compatibility WebView for custom ROMs using a 4.3 WebView in Android 4.4
+        if (mWebView.shouldSwitchToCompatibilityMode()) {
+            ViewGroup parent = (ViewGroup) mWebView.getParent();
+            int index = parent.indexOfChild(mWebView);
+            parent.removeView(mWebView);
+            mWebView = new EditorWebViewCompatibility(getActivity(), null);
+            parent.addView(mWebView, index);
+        }
+
         mWebView.setOnTouchListener(this);
         mWebView.setOnImeBackListener(this);
         mWebView.setAuthHeaderRequestListener(this);

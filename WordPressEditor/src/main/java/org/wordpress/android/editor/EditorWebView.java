@@ -13,11 +13,19 @@ public class EditorWebView extends EditorWebViewAbstract {
 
     @SuppressLint("NewApi")
     public void execJavaScriptFromString(String javaScript) {
-        if (Build.VERSION.SDK_INT >= 19) {
-            this.evaluateJavascript(javaScript, null);
-        } else {
-            this.loadUrl("javascript:" + javaScript);
-        }
+        this.evaluateJavascript(javaScript, null);
     }
 
+    @SuppressLint("NewApi")
+    @Override
+    public boolean shouldSwitchToCompatibilityMode() {
+        if (Build.VERSION.SDK_INT <= 19) {
+            try {
+                this.evaluateJavascript("", null);
+            } catch (NoSuchMethodError | IllegalStateException e) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
