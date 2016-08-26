@@ -160,8 +160,8 @@ public class ImageSettingsDialogFragment extends DialogFragment {
 
                 String alignment = mImageMeta.getString("align");
                 mAlignmentKeyArray = getResources().getStringArray(R.array.alignment_key_array);
-                int alignementIndex = Arrays.asList(mAlignmentKeyArray).indexOf(alignment);
-                mAlignmentSpinner.setSelection(alignementIndex == -1 ? 0 : alignementIndex);
+                int alignmentIndex = Arrays.asList(mAlignmentKeyArray).indexOf(alignment);
+                mAlignmentSpinner.setSelection(alignmentIndex == -1 ? 0 : alignmentIndex);
 
                 mLinkTo.setText(mImageMeta.getString("linkUrl"));
 

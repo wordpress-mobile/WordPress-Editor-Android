@@ -52,10 +52,10 @@
     <string name="image_link_to">Link to</string>
     <string name="image_width">Width</string>
 
-    <string name="alignement_none">None</string>
-    <string name="alignement_left">Left</string>
-    <string name="alignement_center">Center</string>
-    <string name="alignement_right">Right</string>
+    <string name="alignment_none">None</string>
+    <string name="alignment_left">Left</string>
+    <string name="alignment_center">Center</string>
+    <string name="alignment_right">Right</string>
 
     <string-array name="alignment_key_array" translatable="false">
         <item>none</item>
@@ -65,10 +65,10 @@
     </string-array>
 
     <string-array name="alignment_array" translatable="false">
-        <item>@string/alignement_none</item>
-        <item>@string/alignement_left</item>
-        <item>@string/alignement_center</item>
-        <item>@string/alignement_right</item>
+        <item>@string/alignment_none</item>
+        <item>@string/alignment_left</item>
+        <item>@string/alignment_center</item>
+        <item>@string/alignment_right</item>
     </string-array>
 
     <!-- Accessibility - format bar button descriptions -->
